@@ -1,0 +1,14 @@
+{
+  "name": "discord-bot-platform",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck",
+    "db:push": "pnpm --filter @platform/core db:push",
+    "check": "pnpm --filter @platform/core check"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

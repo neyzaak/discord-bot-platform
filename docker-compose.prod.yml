@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: platform
+      POSTGRES_PASSWORD: platform
+      POSTGRES_DB: platform
+    volumes: ["pgdata_prod:/var/lib/postgresql/data"]
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  api:
+    build: { context: ., dockerfile: apps/api/Dockerfile }
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://platform:platform@postgres:5432/platform
+      REDIS_URL: redis://redis:6379
+    ports: ["4001:4001"]
+    depends_on: [postgres, redis]
+    restart: unless-stopped
+
+  worker:
+    build: { context: ., dockerfile: apps/worker/Dockerfile }
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://platform:platform@postgres:5432/platform
+      REDIS_URL: redis://redis:6379
+    depends_on: [postgres, redis]
+    restart: unless-stopped
+
+  web:
+    build: { context: ., dockerfile: apps/web/Dockerfile }
+    env_file: .env
+    environment:
+      # proxy internal web -> API (rewrite /api/*). Origin publik = PUBLIC_API_URL di .env
+      API_URL: http://api:4001
+    ports: ["3000:3000"]
+    depends_on: [api]
+    restart: unless-stopped
+
+  # HTTPS produksi — uncomment setelah DOMAIN & Caddyfile siap:
+  # caddy:
+  #   image: caddy:2-alpine
+  #   ports: ["80:80", "443:443"]
+  #   volumes:
+  #     - ./Caddyfile:/etc/caddy/Caddyfile:ro
+  #     - caddydata:/data
+  #   depends_on: [api, web]
+  #   restart: unless-stopped
+
+volumes:
+  pgdata_prod:
+  # caddydata:
