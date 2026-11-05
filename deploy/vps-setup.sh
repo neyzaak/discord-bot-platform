@@ -19,6 +19,13 @@ if ! command -v docker >/dev/null 2>&1; then
 fi
 docker compose version >/dev/null 2>&1 || { echo "docker compose plugin tidak ada"; exit 1; }
 
+# 1b) Swap 2 GB jika RAM < 3 GB (anti-OOM saat docker build)
+if [ "$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo)" -lt 3 ] && ! swapon --show | grep -q .; then
+  fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+  grep -q /swapfile /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+  echo "swap 2GB diaktifkan"
+fi
+
 # 2) Kode
 mkdir -p "$(dirname "$APP_DIR")"
 [ -d "$APP_DIR/.git" ] || git clone "$GITHUB_REPO" "$APP_DIR"
