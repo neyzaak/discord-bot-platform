@@ -118,7 +118,7 @@ export const quizQuestionsSchema = z.array(z.object({
 
 export const quizConfigSchema = z.object({
   enabled: z.boolean().default(true),
-  title: z.string().trim().min(1).max(100).default('🧩 Tebak-Tebean'),
+  title: z.string().trim().min(1).max(100).default('🧩 Tebak-Tebakan'),
   pointsName: z.string().trim().min(1).max(32).default('Activity Points'),
   timePerQuestionSec: z.number().int().min(5).max(600).default(240),
   pointsPerQuestion: z.number().int().min(10).max(1000).default(100),
