@@ -58,6 +58,8 @@ for (const f of files) {
     const correct = norm(item.correct);
     if (!question || !correct || choices.length < 2) { skipped++; continue; }
     if (question.length > 300 || choices.some((c) => c.length > 100)) { skipped++; continue; }
+    // tolak pilihan duplikat — skema runtime menolak seluruh bank jika ada satu saja
+    if (new Set(choices.map((c) => c.toLowerCase())).size !== choices.length) { skipped++; continue; }
     const ci = choices.findIndex((c) => c.toLowerCase() === correct.toLowerCase());
     if (ci < 0) { skipped++; continue; }
     // acak posisi pilihan agar jawaban benar tidak selalu di posisi yang sama
