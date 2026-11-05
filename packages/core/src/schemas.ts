@@ -109,6 +109,13 @@ export const webhooksConfigSchema = z.object({
   enabled: z.boolean().default(true),
 });
 
+export const quizQuestionsSchema = z.array(z.object({
+  question: z.string().trim().min(1).max(300),
+  choices: z.array(z.string().trim().min(1).max(100)).min(2).max(4),
+  correctIndex: z.number().int().min(0).max(3),
+  explanation: z.string().trim().max(500).default(''),
+})).max(5000, 'maksimal 5000 soal per server').default([]);
+
 export const quizConfigSchema = z.object({
   enabled: z.boolean().default(true),
   title: z.string().trim().min(1).max(100).default('🧩 Tebak-Tebean'),
@@ -116,12 +123,7 @@ export const quizConfigSchema = z.object({
   timePerQuestionSec: z.number().int().min(5).max(600).default(240),
   pointsPerQuestion: z.number().int().min(10).max(1000).default(100),
   questionsPerSession: z.number().int().min(1).max(50).default(10),
-  questions: z.array(z.object({
-    question: z.string().trim().min(1).max(300),
-    choices: z.array(z.string().trim().min(1).max(100)).min(2).max(4),
-    correctIndex: z.number().int().min(0).max(3),
-    explanation: z.string().trim().max(500).default(''),
-  })).max(50, 'maksimal 50 soal per server').default([]),
+  questions: quizQuestionsSchema,
 }).superRefine((v, ctx) => {
   for (const [i, q] of v.questions.entries()) {
     if (q.correctIndex >= q.choices.length) {

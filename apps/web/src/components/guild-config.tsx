@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useState } from 'react';
 import { useI18n } from '../lib/i18n';
 
 export interface Opt { id: string; name: string; type?: number }
@@ -57,6 +58,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
   const { t } = useI18n();
   const textChannels = channels.filter((c) => c.type !== 4);
   const categories = channels.filter((c) => c.type === 4);
+  const [showSoal, setShowSoal] = useState(25);
   const set = <K extends keyof GuildConfigData>(k: K, v: GuildConfigData[K]) => onChange({ ...cfg, [k]: v });
 
   return (
@@ -321,8 +323,10 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
         </div>
 
         <label className={labelCls}>{t('mod.quiz.questions')}</label>
+        <p className="mb-2 text-xs text-slate-500">{cfg.quiz.questions.length} {t('mod.quiz.stored')}</p>
+        <QuizImport existing={cfg.quiz.questions} onImport={(qs) => set('quiz', { ...cfg.quiz, questions: qs })} />
         <div className="space-y-3">
-          {cfg.quiz.questions.map((q, qi) => (
+          {cfg.quiz.questions.slice(0, showSoal).map((q, qi) => (
             <div key={qi} className="rounded-lg border border-slate-800 p-3">
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-xs text-slate-500">#{qi + 1}</span>
@@ -387,6 +391,12 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
             </div>
           ))}
         </div>
+        {cfg.quiz.questions.length > showSoal && (
+          <button type="button" onClick={() => setShowSoal(showSoal + 25)}
+            className="mt-3 rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500">
+            + {t('mod.quiz.showMore')} ({cfg.quiz.questions.length - showSoal})
+          </button>
+        )}
         {cfg.quiz.questions.length < 50 && (
           <button type="button"
             onClick={() => set('quiz', { ...cfg.quiz, questions: [...cfg.quiz.questions, { question: '', choices: ['', ''], correctIndex: 0, explanation: '' }] })}
@@ -395,6 +405,71 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+/** Import massal soal via paste/file JSON — digabung (dedupe) ke bank yang ada. */
+function QuizImport({ existing, onImport }: { existing: QuizQuestion[]; onImport: (qs: QuizQuestion[]) => void }) {
+  const { t } = useI18n();
+  const [text, setText] = useState('');
+  const [msg, setMsg] = useState('');
+  const [err, setErr] = useState('');
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const doImport = () => {
+    setErr(''); setMsg('');
+    try {
+      const parsed = JSON.parse(text) as unknown;
+      const raw = Array.isArray(parsed) ? parsed : (parsed as { questions?: unknown }).questions;
+      if (!Array.isArray(raw)) throw new Error('format: array soal atau { "questions": [...] }');
+      const seen = new Set(existing.map((q) => q.question.trim().toLowerCase()));
+      const add: QuizQuestion[] = [];
+      for (const q of raw as Array<Record<string, unknown>>) {
+        if (typeof q.question !== 'string' || !Array.isArray(q.choices) || q.choices.length < 2 || q.choices.length > 4) continue;
+        const ci = Number(q.correctIndex);
+        if (!Number.isInteger(ci) || ci < 0 || ci >= q.choices.length) continue;
+        const key = q.question.trim().toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        add.push({
+          question: q.question.trim().slice(0, 300),
+          choices: (q.choices as unknown[]).map((c) => String(c).trim().slice(0, 100)),
+          correctIndex: ci,
+          explanation: typeof q.explanation === 'string' ? q.explanation.trim().slice(0, 500) : '',
+        });
+        if (existing.length + add.length >= 5000) break;
+      }
+      if (add.length === 0) throw new Error('tidak ada soal valid baru ditemukan');
+      onImport([...existing, ...add]);
+      setMsg(`+${add.length} ${t('mod.quiz.importDone')} (total ${existing.length + add.length})`);
+      setText('');
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    }
+  };
+
+  return (
+    <div className="mb-3 rounded-lg border border-slate-800 p-3">
+      <p className="mb-2 text-xs font-medium text-slate-400">{t('mod.quiz.import')}</p>
+      <input type="file" accept=".json,application/json" ref={fileRef} style={{ display: 'none' }}
+        onChange={async (e) => {
+          const f = e.target.files?.[0];
+          if (f) setText(await f.text());
+        }} />
+      <button type="button" onClick={() => fileRef.current?.click()}
+        className="mb-2 rounded-lg border border-slate-700 px-2 py-1 text-xs hover:border-slate-500">
+        {t('mod.quiz.importPick')}
+      </button>
+      <textarea value={text} onChange={(e) => setText(e.target.value)} rows={3}
+        placeholder={t('mod.quiz.importHint')}
+        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 font-mono text-xs outline-none focus:border-indigo-400" />
+      <button type="button" onClick={doImport} disabled={!text.trim()}
+        className="mt-2 rounded-lg bg-indigo-500 px-3 py-1.5 text-xs font-medium hover:bg-indigo-400 disabled:opacity-50">
+        {t('mod.quiz.importBtn')}
+      </button>
+      {msg && <p className="mt-2 text-xs text-emerald-400">{msg}</p>}
+      {err && <p className="mt-2 text-xs text-rose-400">{err}</p>}
     </div>
   );
 }
