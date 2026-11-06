@@ -53,6 +53,58 @@ const clean = (s) => norm(s)
   .replace(/\s+([,.;:!?])/g, '$1')
   .replace(/\(\s+/g, '(')
   .replace(/\s+\)/g, ')');
+// Typo yang ditemukan lewat audit KBBI V (scripts/kbbi-check.mjs). Hanya kata Indonesia
+// yang jelas salah ketik; kata daerah, nama diri, dan istilah asing sengaja dibiarkan.
+const TYPO = {
+  alinia: 'alinea', anatara: 'antara', apartride: 'apatride', baiik: 'baik',
+  balakang: 'belakang', bayangn: 'bayangan', bebuat: 'berbuat', betujuan: 'bertujuan',
+  beumur: 'berumur', beupa: 'berupa', bungga: 'bunga', butsir: 'butir', cahay: 'cahaya',
+  cekugan: 'cekungan', cirri: 'ciri', dajam: 'dalam', dalm: 'dalam', dasr: 'dasar',
+  dengann: 'dengan', dengang: 'dengan', dtiup: 'ditiup', ekslusif: 'eksklusif',
+  factor: 'faktor', falasafah: 'falsafah', gerobag: 'gerobak', hadist: 'hadis',
+  hadits: 'hadis', hidrogren: 'hidrogen', hukun: 'hukum', inbuhan: 'imbuhan',
+  inividu: 'individu', inpor: 'impor', inport: 'impor', jangung: 'jagung',
+  kalmat: 'kalimat', keaadaan: 'keadaan', keamana: 'keamanan', keatuan: 'kesatuan',
+  kebenaaran: 'kebenaran', kebituhan: 'kebutuhan', keidupan: 'kehidupan',
+  keistimewan: 'keistimewaan', kekerabatn: 'kekerabatan', kematiaan: 'kematian',
+  kerajaaan: 'kerajaan', kerjasaa: 'kerjasama', kesejateraan: 'kesejahteraan',
+  ketatatnegaraan: 'ketatanegaraan', keterunan: 'keturunan', ketia: 'ketiga',
+  keuasaan: 'kekuasaan', kharakteristik: 'karakteristik', komensialisme: 'komensalisme',
+  konfflik: 'konflik', konsekkuen: 'konsekuen', konsititusi: 'konstitusi',
+  konstitiusi: 'konstitusi', koropsi: 'korupsi', kosumen: 'konsumen', kramik: 'keramik',
+  krativitas: 'kreativitas', kuwintal: 'kuintal', kuwitansi: 'kuitansi',
+  lingkugan: 'lingkungan', lingkungaa: 'lingkungan', linkungan: 'lingkungan',
+  makhlik: 'makhluk', makrometer: 'mikrometer', mandapatkan: 'mendapatkan',
+  matrilinial: 'matrilineal', megikuti: 'mengikuti', meiliki: 'memiliki',
+  melaksanakaan: 'melaksanakan', membetuk: 'membentuk', memberintahkan: 'memerintahkan',
+  memilki: 'memiliki', mempuyai: 'mempunyai', mengankat: 'mengangkat',
+  mengelillingi: 'mengelilingi', mengetahuai: 'mengetahui', menghasilka: 'menghasilkan',
+  meniggal: 'meninggal', menngunakan: 'menggunakan', menunjuukan: 'menunjukkan',
+  menyelessaikan: 'menyelesaikan', menentapkan: 'menetapkan', mewujuddkan: 'mewujudkan',
+  miirip: 'mirip', mmemulai: 'memulai', mnggunakan: 'menggunakan', muhammmad: 'muhammad',
+  naiak: 'naik', negera: 'negara', nomatif: 'normatif', olahrga: 'olahraga',
+  oranf: 'orang', partkel: 'partikel', pemanfaatn: 'pemanfaatan', pemamfaatan: 'pemanfaatan',
+  perghormatan: 'penghormatan', permukaaan: 'permukaan', perncanaan: 'perencanaan',
+  peryataan: 'pernyataan', piramid: 'piramida', postif: 'positif', praktet: 'praktik',
+  prediket: 'predikat', prespitasi: 'presipitasi', prinsif: 'prinsip', pujjian: 'pujian',
+  resolus: 'resolusi', rokaat: 'rakaat', salendang: 'selendang', sdikit: 'sedikit',
+  sehinga: 'sehingga', sekolag: 'sekolah', seluaruh: 'seluruh', semagat: 'semangat',
+  sepert: 'seperti', seranga: 'serangga', seseudah: 'sesudah', sndiri: 'sendiri',
+  sosia: 'sosial', strukur: 'struktur', surst: 'surat', sovenir: 'suvenir',
+  susasana: 'suasana', tanamana: 'tanaman', tediri: 'terdiri', tegolong: 'tergolong',
+  tekhnik: 'teknik', temabaga: 'tembaga', temoat: 'tempat', temometer: 'termometer',
+  termometr: 'termometer', termaksuk: 'termasuk', tertinngi: 'tertinggi', tewujud: 'terwujud',
+  tidah: 'tidak', tidaka: 'tidak', tingggal: 'tinggal', tntang: 'tentang',
+  tradisonal: 'tradisional', tuisan: 'tulisan', ultrasonic: 'ultrasonik', volum: 'volume',
+  walapun: 'walaupun', wewenag: 'wewenang', yng: 'yang', alloh: 'allah',
+  keberadaanya: 'keberadaan', kecualio: 'kecuali', kembing: 'kambing', balalang: 'belalang',
+  // penulisan yang disatukan
+  orangtua: 'orang tua', beladiri: 'bela diri', berkembangbiak: 'berkembang biak',
+  barangsiapa: 'barang siapa',
+};
+const TYPO_RE = new RegExp(`\\b(${Object.keys(TYPO).join('|')})\\b`, 'gi');
+const fixTypos = (s) => s.replace(TYPO_RE, (m) => TYPO[m.toLowerCase()]);
+
 const shuffle = (arr) => {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -76,12 +128,12 @@ for (const r of rows.slice(1)) {
   if (!easy) { skipped++; continue; }
   if (norm(r[idx.is_for_fewshot] ?? '0') === '1') { skipped++; continue; }
 
-  const question = clean(r[idx.soal] ?? '');
+  const question = fixTypos(clean(r[idx.soal] ?? ''));
   if (NON_LATIN.test(question)) { skipped++; continue; }
   if (question.length < 12 || question.length > 300) { skipped++; continue; }
 
   const lines = String(r[idx.jawaban] ?? '').split('\n').map((l) => l.trim()).filter((l) => /^[A-E]\.\s*/.test(l));
-  let opts = lines.map((l) => ({ letter: l[0], text: clean(l.slice(2)) }));
+  let opts = lines.map((l) => ({ letter: l[0], text: fixTypos(clean(l.slice(2))) }));
   const correctLetter = String(r[idx.kunci] ?? '').trim().toUpperCase()[0];
   const ci0 = opts.findIndex((o) => o.letter === correctLetter);
   if (opts.length < 3 || ci0 < 0) { skipped++; continue; }
