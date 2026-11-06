@@ -1,5 +1,6 @@
-// Konversi openai/MMMLU (terjemahan Indonesia profesional, MIT) -> deploy/quiz-bank.json
-// Pakai: node scripts/build-quiz-bank-id.mjs <mmmlu_ID-ID.csv> <output.json> [target=5000]
+// Konversi IndoMMLU (soal asli Indonesia, indolem/IndoMMLU) -> deploy/quiz-bank.json
+// Hanya jenjang SD–SMP (soal relatif mudah), 4 pilihan (soal 5 opsi: buang 1 pengecoh acak).
+// Pakai: node scripts/build-quiz-bank-id.mjs <IndoMMLU.csv> <out.json> [target=5000]
 import fs from 'node:fs';
 
 const csvPath = process.argv[2];
@@ -7,17 +8,14 @@ const out = process.argv[3];
 const target = Number(process.argv[4] ?? 5000);
 if (!csvPath || !out) { console.error('pakai: node build-quiz-bank-id.mjs <csv> <out.json> [target]'); process.exit(1); }
 
-// --- parser CSV RFC4180 mini (field ber-quote, quote digandakan) ---
+// --- parser CSV RFC4180 mini (field ber-quote, quote digandakan, newline di dalam quote) ---
 function parseCsv(text) {
-  const rows = [];
-  let row = [], field = '', inQ = false;
+  const rows = []; let row = [], field = '', inQ = false;
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
     if (inQ) {
-      if (c === '"') {
-        if (text[i + 1] === '"') { field += '"'; i++; }
-        else inQ = false;
-      } else field += c;
+      if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else inQ = false; }
+      else field += c;
     } else if (c === '"') inQ = true;
     else if (c === ',') { row.push(field); field = ''; }
     else if (c === '\n') { row.push(field); field = ''; rows.push(row); row = []; }
@@ -28,24 +26,17 @@ function parseCsv(text) {
   return rows;
 }
 
-// subjek pengetahuan umum yang pantas buat kuis santai — sisanya (matematika,
-// logika formal, hukum US, moral_scenarios, kedokteran berat) dibuang
-const SUBJECTS = new Set([
-  'miscellaneous', 'prehistory', 'nutrition', 'high_school_biology',
-  'high_school_world_history', 'high_school_geography', 'world_religions',
-  'astronomy', 'global_facts', 'high_school_european_history',
-  'conceptual_physics', 'sociology', 'high_school_psychology',
-  'logical_fallacies', 'human_aging', 'marketing', 'high_school_chemistry',
-  'high_school_us_history', 'clinical_knowledge', 'virology',
-  'high_school_physics', 'college_biology', 'human_sexuality',
-  'public_relations', 'management', 'business_ethics',
-  'elementary_mathematics', 'high_school_macroeconomics', 'high_school_microeconomics',
+// jenjang mudah saja; SMA/Seleksi PTN sengaja dibuang (terlalu susah untuk kuis santai)
+const LEVELS = new Set([
+  'SD', 'Kelas I SD', 'Kelas II SD', 'Kelas III SD', 'Kelas IV SD',
+  'V SD', 'VI SD', 'SD-SMP', 'SD-SMP-SMA',
+  'SMP', 'VII SMP', 'VIII SMP', 'IX SMP',
 ]);
 
 const text = fs.readFileSync(csvPath, 'utf8');
 const rows = parseCsv(text);
-const header = rows[0];
-const idx = Object.fromEntries(header.map((h, i) => [h.trim(), i]));
+const header = rows[0].map((h) => h.trim());
+const idx = Object.fromEntries(header.map((h, i) => [h, i]));
 
 const norm = (s) => s.replace(/\s+/g, ' ').trim();
 const shuffle = (arr) => {
@@ -59,32 +50,48 @@ const shuffle = (arr) => {
 const seen = new Set();
 const questions = [];
 let skipped = 0;
+const byLevel = {};
 
 for (const r of rows.slice(1)) {
-  const subject = norm(r[idx.Subject] ?? '').toLowerCase();
-  if (!SUBJECTS.has(subject)) { skipped++; continue; }
-  const question = norm(r[idx.Question] ?? '');
-  const choices = ['A', 'B', 'C', 'D'].map((k) => norm(r[idx[k]] ?? ''));
-  const answer = norm(r[idx.Answer] ?? '').toUpperCase(); // A-D
-  if (!question || choices.some((c) => !c) || !'ABCD'.includes(answer)) { skipped++; continue; }
+  const level = norm(r[idx.level] ?? '');
+  if (!LEVELS.has(level)) { skipped++; continue; }
+  if (norm(r[idx.is_for_fewshot] ?? '0') === '1') { skipped++; continue; }
+  const question = norm(r[idx.soal] ?? '');
+  // baris opsi: "A. teks", satu per baris di dalam sel
+  const lines = String(r[idx.jawaban] ?? '').split('\n').map((l) => l.trim()).filter((l) => /^[A-E]\.\s*/.test(l));
+  let opts = lines.map((l) => ({ letter: l[0], text: norm(l.slice(2)) }));
+  const correctLetter = String(r[idx.kunci] ?? '').trim().toUpperCase()[0];
+  const ci0 = opts.findIndex((o) => o.letter === correctLetter);
+  if (!question || opts.length < 4 || ci0 < 0) { skipped++; continue; }
+  const correctOpt = opts[ci0];
+  if (opts.length > 4) {
+    // buang satu pengecoh secara acak supaya tersisa tepat 4 pilihan
+    const wrongIdx = opts.map((_, i) => i).filter((i) => i !== ci0);
+    const drop = wrongIdx[Math.floor(Math.random() * wrongIdx.length)];
+    opts = opts.filter((_, i) => i !== drop);
+  }
+  const choices = opts.map((o) => o.text);
+  if (choices.some((c) => !c)) { skipped++; continue; }
   if (question.length > 300 || choices.some((c) => c.length > 100)) { skipped++; continue; }
   if (new Set(choices.map((c) => c.toLowerCase())).size !== 4) { skipped++; continue; }
   const key = question.toLowerCase();
   if (seen.has(key)) { skipped++; continue; }
   seen.add(key);
-  const correctText = choices[answer.charCodeAt(0) - 65];
+  const correctText = correctOpt.text;
   shuffle(choices);
   questions.push({ question, choices, correctIndex: choices.indexOf(correctText), explanation: '' });
+  byLevel[level] = (byLevel[level] || 0) + 1;
 }
 
 shuffle(questions);
 const bank = questions.slice(0, target);
 
 fs.writeFileSync(out, JSON.stringify({
-  source: 'openai/MMMLU test/mmlu_ID-ID.csv — terjemahan Indonesia profesional (lisensi MIT) — huggingface.co/datasets/openai/MMMLU',
+  source: 'IndoMMLU — soal asli Indonesia (indolem/IndoMMLU), jenjang SD–SMP — huggingface.co/datasets/indolem/IndoMMLU',
   generatedAt: new Date().toISOString(),
   count: bank.length,
   questions: bank,
 }, null, 1) + '\n');
 
-console.log(`baris: ${rows.length - 1}, lolos filter: ${questions.length}, dilewati: ${skipped}, ditulis: ${bank.length}`);
+console.log(`lolos filter: ${questions.length}, dilewati: ${skipped}, ditulis: ${bank.length}`);
+console.log('per jenjang:', JSON.stringify(byLevel));
