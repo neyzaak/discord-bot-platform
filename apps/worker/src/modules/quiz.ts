@@ -191,7 +191,6 @@ async function startQuiz(
     message: null, timer: null, nextTimer: null, stopped: false,
   };
   sessions.set(key, session);
-  await reply(`🧠 **${config.title}** dimulai di <#${channel.id}> — **${questions.length} soal**, ${fmtDuration(config.timePerQuestionSec ?? 240)}/soal. Klik tombol untuk menjawab!`);
   await nextQuestion(ctx, session);
 }
 
