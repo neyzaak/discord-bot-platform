@@ -49242,7 +49242,7 @@ var require_dist6 = __commonJS({
     }
     __name(getDefaultStrategy, "getDefaultStrategy");
     var import_node_http2 = __require("http");
-    var import_node_url = __require("url");
+    var import_node_url2 = __require("url");
     var import_node_util = __require("util");
     var import_undici = require_undici();
     async function makeRequest(url, init) {
@@ -49281,7 +49281,7 @@ var require_dist6 = __commonJS({
         return body;
       } else if (import_node_util.types.isArrayBuffer(body)) {
         return new Uint8Array(body);
-      } else if (body instanceof import_node_url.URLSearchParams) {
+      } else if (body instanceof import_node_url2.URLSearchParams) {
         return body.toString();
       } else if (body instanceof DataView) {
         return new Uint8Array(body.buffer);
@@ -85870,7 +85870,7 @@ var require_dist10 = __commonJS({
     var import_node_events2 = __require("events");
     var import_node_timers = __require("timers");
     var import_promises2 = __require("timers/promises");
-    var import_node_url = __require("url");
+    var import_node_url2 = __require("url");
     var import_node_util = __require("util");
     var import_node_zlib = __require("zlib");
     var import_collection5 = require_dist3();
@@ -86060,7 +86060,7 @@ var require_dist10 = __commonJS({
           throw new Error("Tried to connect a shard that wasn't idle");
         }
         const { version: version22, encoding, compression } = this.strategy.options;
-        const params = new import_node_url.URLSearchParams({ v: version22, encoding });
+        const params = new import_node_url2.URLSearchParams({ v: version22, encoding });
         if (compression) {
           const zlib = await getZlibSync();
           if (zlib) {
@@ -100069,6 +100069,7 @@ function mapRelationalRow(tablesConfig, tableConfig, row, buildQueryResultSelect
 // packages/core/src/env.ts
 var import_dotenv = __toESM(require_main(), 1);
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 // node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/external.js
 var external_exports = {};
@@ -104112,7 +104113,7 @@ var coerce = {
 var NEVER = INVALID;
 
 // packages/core/src/env.ts
-(0, import_dotenv.config)({ path: path.resolve(import.meta.dirname, "../../../.env") });
+(0, import_dotenv.config)({ path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../.env") });
 (0, import_dotenv.config)();
 var optionalUrl = external_exports.preprocess(
   (v) => typeof v === "string" && v.trim() === "" ? void 0 : v,
