@@ -1,0 +1,24 @@
+# Deploy gratis TANPA kartu: bot saja (worker) + Postgres Supabase + Redis Upstash.
+# Dashboard web/api TIDAK ikut — hanya bot yang online 24/7.
+#
+# Pakai: Render Dashboard -> New -> Blueprint -> pilih repo ini.
+# Isi 3 secret di bawah dari akun Supabase/Upstash (keduanya gratis, tanpa kartu).
+services:
+  - type: web
+    name: quiz-bot
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/worker/Dockerfile
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: DATABASE_URL # Supabase -> Connection string (Session pooler), tambahkan ?sslmode=require
+        sync: false
+      - key: REDIS_URL # Upstash -> Redis URL (rediss://...)
+        sync: false
+      - key: TOKEN_ENCRYPTION_KEY # WAJIB sama dengan .env lokal, kalau beda token bot gagal didekripsi
+        sync: false

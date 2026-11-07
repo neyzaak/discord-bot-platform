@@ -1,3 +1,4 @@
+import { createServer } from 'node:http';
 import { eq } from 'drizzle-orm';
 import {
   BOTS_CHANNEL, bots, createRedis, db, env, logger, recordError,
@@ -83,3 +84,8 @@ main().catch((e) => {
   logger.error({ err: e }, 'worker gagal start');
   process.exit(1);
 });
+
+// Port HTTP untuk host yang menuntut web service (Render free) + dipakai pinger keep-alive.
+const port = Number(process.env.PORT ?? 8080);
+createServer((_, res) => { res.writeHead(200, { 'content-type': 'text/plain' }); res.end('ok'); })
+  .listen(port, () => logger.info({ port }, 'health server siap'));
