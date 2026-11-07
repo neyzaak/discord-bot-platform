@@ -16,7 +16,12 @@ async function startBot(botId: number): Promise<void> {
   try {
     await runner.start();
     attempts.delete(botId);
-    logger.info({ botId }, 'runner aktif');
+    logger.info({ botId }, 'startBot: panggil runner.start');
+    try {
+      await runner.start();
+      logger.info({ botId }, 'startBot: runner.start selesai');
+      attempts.delete(botId);
+      logger.info({ botId }, 'runner aktif');
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     await recordError(botId, e);
@@ -50,10 +55,12 @@ async function reloadBot(botId: number): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  logger.info('main: mulai ambil bot dari DB');
   const rows = await db.select({ id: bots.id }).from(bots).where(eq(bots.status, 'running'));
   logger.info(`memuat ${rows.length} bot...`);
   for (const r of rows) await startBot(r.id);
 
+  logger.info('main: buat redis subscribe');
   const sub = createRedis();
   await sub.subscribe(BOTS_CHANNEL);
   sub.on('message', (channel, message) => {
