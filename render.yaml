@@ -16,7 +16,7 @@ services:
         value: production
       - key: LOG_LEVEL
         value: info
-      - key: DATABASE_URL # Supabase -> Connection string (Session pooler), tambahkan ?sslmode=require
+      - key: DATABASE_URL # Supabase -> Session pooler; PENTING: pakai ?sslmode=no-verify (sslmode=require ditolak node-pg: self-signed cert chain)
         sync: false
       - key: REDIS_URL # Upstash -> Redis URL (rediss://...)
         sync: false
