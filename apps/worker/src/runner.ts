@@ -124,7 +124,9 @@ export class BotRunner {
     client.on(Events.ShardError, (e) => void recordError(bot.id, e));
     client.on(Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, 'gateway terputus — discord.js reconnect otomatis'));
 
+    logger.info({ botId }, 'runner: memanggil client.login');
     await client.login(token);
+    logger.info({ botId }, 'runner: client.login selesai');
     this.startHeartbeat();
   }
 
