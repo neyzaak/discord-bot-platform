@@ -63,6 +63,7 @@ function questionRow(s: QuizSession, q: QuizQuestion): ActionRowBuilder<ButtonBu
 function lockedRow(q: QuizQuestion): ActionRowBuilder<ButtonBuilder> {
   return new ActionRowBuilder<ButtonBuilder>().addComponents(
     q.choices.map((_, i) => new ButtonBuilder()
+      .setCustomId(`quiz:locked:${i}`)
       .setLabel(letter(i))
       .setStyle(i === q.correctIndex ? ButtonStyle.Success : ButtonStyle.Danger)
       .setDisabled(true)),
