@@ -152,7 +152,7 @@ async function reveal(ctx: ModuleCtx, s: QuizSession): Promise<void> {
     }).catch((e) => recordError(ctx.botId, e));
   }
 
-  s.nextTimer = setTimeout(() => { void nextQuestion(ctx, s).catch((e) => recordError(ctx.botId, e)); }, 4000);
+  // Tidak ada auto-advance ke soal berikutnya — pakai /quiz next untuk lanjut.
 }
 
 async function endQuiz(ctx: ModuleCtx, s: QuizSession, reason: string): Promise<void> {
@@ -202,6 +202,7 @@ const quizCmd: ModuleCommand = {
     .setName('quiz').setDescription('Kuis interaktif')
     .addSubcommand((sc) => sc.setName('start').setDescription('Mulai kuis di channel ini'))
     .addSubcommand((sc) => sc.setName('stop').setDescription('Hentikan kuis berjalan'))
+    .addSubcommand((sc) => sc.setName('next').setDescription('Soal berikutnya'))
     .addSubcommand((sc) => sc.setName('leaderboard').setDescription('Top 10 skor kuis sepanjang masa'))
     .toJSON(),
   async execute(ctx: CommandContext, args: Record<string, unknown>) {
@@ -225,6 +226,16 @@ const quizCmd: ModuleCommand = {
       return ctx.reply('🏁 Kuis dihentikan.');
     }
 
+    if (action === 'next') {
+      const s = sessions.get(key);
+      if (!s) return ctx.reply('❌ Tidak ada kuis berjalan.');
+      if (s.starterId !== ctx.user.id && !ctx.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
+        return ctx.reply('❌ Hanya pemandu kuis atau izin Manage Server yang bisa lanjut soal.');
+      }
+      await nextQuestion(modCtx, s);
+      return ctx.reply('⏭️ Soal berikutnya dikirim.');
+    }
+
     if (action === 'leaderboard') {
       const rows = await db.select().from(guildMembers)
         .where(and(
@@ -238,7 +249,7 @@ const quizCmd: ModuleCommand = {
       return ctx.reply({ embeds: [{ title: '🏆 Leaderboard Kuis', description: lines.join('\n'), color: ACCENT }] });
     }
 
-    return ctx.reply('Pakai: `/quiz start`, `/quiz stop`, `/quiz leaderboard`.');
+    return ctx.reply('Pakai: `/quiz start`, `/quiz next`, `/quiz stop`, `/quiz leaderboard`.');
   },
 };
 
