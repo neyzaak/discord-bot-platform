@@ -4,7 +4,7 @@ import {
   type Message, type TextChannel,
 } from 'discord.js';
 import { and, desc, eq, gt, sql } from 'drizzle-orm';
-import { db, guildMembers, recordError } from '@platform/core';
+import { db, guildMembers, logger, recordError } from '@platform/core';
 import type { BotModule, CommandContext, ModuleCommand, ModuleCtx } from './types';
 
 const ACCENT = 0x5865f2;
@@ -132,6 +132,7 @@ async function reveal(ctx: ModuleCtx, s: QuizSession): Promise<void> {
 
   const msg = s.message;
   s.message = null;
+  logger.info({ botId: ctx.botId, index: s.index, adaMsg: !!msg }, 'reveal: mulai');
   if (msg) {
     await msg.edit({
       embeds: [{
@@ -141,7 +142,8 @@ async function reveal(ctx: ModuleCtx, s: QuizSession): Promise<void> {
         footer: { text: `Soal ${s.index + 1}/${s.questions.length}` },
       }],
       components: [lockedRow(q)],
-    }).catch(() => {});
+    }).then(() => logger.info({ botId: ctx.botId }, 'reveal: edit berhasil'))
+      .catch((e) => logger.error({ botId: ctx.botId, err: e instanceof Error ? e.message : String(e) }, 'reveal: edit GAGAL'));
   }
 
   // Tidak ada auto-advance ke soal berikutnya — pakai /quiz next untuk lanjut.
