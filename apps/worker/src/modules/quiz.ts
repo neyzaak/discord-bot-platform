@@ -118,13 +118,6 @@ async function reveal(ctx: ModuleCtx, s: QuizSession): Promise<void> {
       }).catch((e) => recordError(ctx.botId, e));
   }
 
-  // 1) Hapus pesan soal — riwayat kanal ringkas, pesan final yang mewakili.
-  //    s.message = null lebih dulu: klik tombol setelah reveal langsung diabaikan.
-  const msg = s.message;
-  s.message = null;
-  if (msg) await msg.delete().catch(() => {}); // bot boleh hapus pesannya sendiri tanpa Manage Messages
-
-  // 2) Pesan final penentu pemenang: soal + pilihan + hasil + tombol terkunci (ala mockup).
   const lines: string[] = [q.question, ''];
   lines.push(...q.choices.map((c, i) => `**${letter(i)}.** ${c}`));
   lines.push('', '⏰ **Waktu habis!**');
@@ -137,9 +130,10 @@ async function reveal(ctx: ModuleCtx, s: QuizSession): Promise<void> {
   lines.push(`Jawaban yang benar adalah **${letter(q.correctIndex)}. ${q.choices[q.correctIndex]}**.`);
   if (q.explanation) lines.push(`💡 **Penjelasan:** *${q.explanation}*`);
 
-  const ch = await ctx.client.channels.fetch(s.channelId).catch(() => null);
-  if (ch?.isTextBased() && 'send' in ch) {
-    await ch.send({
+  const msg = s.message;
+  s.message = null;
+  if (msg) {
+    await msg.edit({
       embeds: [{
         title: config.title,
         description: lines.join('\n').slice(0, 4000),
@@ -147,9 +141,7 @@ async function reveal(ctx: ModuleCtx, s: QuizSession): Promise<void> {
         footer: { text: `Soal ${s.index + 1}/${s.questions.length}` },
       }],
       components: [lockedRow(q)],
-      // pemenang di-ping; tidak ada ping massal
-      allowedMentions: { parse: [], users: winners.slice(0, 50) },
-    }).catch((e) => recordError(ctx.botId, e));
+    }).catch(() => {});
   }
 
   // Tidak ada auto-advance ke soal berikutnya — pakai /quiz next untuk lanjut.
