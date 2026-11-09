@@ -147,7 +147,11 @@ async function reveal(ctx: ModuleCtx, s: QuizSession): Promise<void> {
       .catch((e) => logger.error({ botId: ctx.botId, err: e instanceof Error ? e.message : String(e) }, 'reveal: edit GAGAL'));
   }
 
-  // Tidak ada auto-advance ke soal berikutnya — pakai /quiz next untuk lanjut.
+  // 1 soal per sesi — setelah reveal, sesi dibersihkan agar !quiz start berikutnya langsung bisa jalan.
+  if (s.timer) clearTimeout(s.timer);
+  if (s.nextTimer) clearTimeout(s.nextTimer);
+  s.stopped = true;
+  sessions.delete(sessionKey(ctx.botId, ctx.guild.id));
 }
 
 async function endQuiz(ctx: ModuleCtx, s: QuizSession, reason: string): Promise<void> {
@@ -178,8 +182,8 @@ async function startQuiz(
   const pack = config.questions ?? [];
   if (pack.length === 0) { await reply('❌ Belum ada soal. Tambahkan soal lewat dashboard (modul Quiz), lalu Save.'); return; }
 
-  const questions = [...pack].sort(() => Math.random() - 0.5)
-    .slice(0, Math.min(config.questionsPerSession ?? 10, pack.length));
+  // 1 soal per sesi — tiap !quiz start menampilkan tepat satu soal acak.
+  const questions = [...pack].sort(() => Math.random() - 0.5).slice(0, 1);
   const session: QuizSession = {
     channelId: channel.id, starterId: starter.id, questions, index: -1,
     scores: new Map(), names: new Map(), answers: new Map(),
@@ -197,7 +201,6 @@ const quizCmd: ModuleCommand = {
     .setName('quiz').setDescription('Kuis interaktif')
     .addSubcommand((sc) => sc.setName('start').setDescription('Mulai kuis di channel ini'))
     .addSubcommand((sc) => sc.setName('stop').setDescription('Hentikan kuis berjalan'))
-    .addSubcommand((sc) => sc.setName('next').setDescription('Soal berikutnya'))
     .addSubcommand((sc) => sc.setName('leaderboard').setDescription('Top 10 skor kuis sepanjang masa'))
     .toJSON(),
   async execute(ctx: CommandContext, args: Record<string, unknown>) {
@@ -221,16 +224,6 @@ const quizCmd: ModuleCommand = {
       return ctx.reply('🏁 Kuis dihentikan.');
     }
 
-    if (action === 'next') {
-      const s = sessions.get(key);
-      if (!s) return ctx.reply('❌ Tidak ada kuis berjalan.');
-      if (s.starterId !== ctx.user.id && !ctx.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-        return ctx.reply('❌ Hanya pemandu kuis atau izin Manage Server yang bisa lanjut soal.');
-      }
-      await nextQuestion(modCtx, s);
-      return ctx.reply('⏭️ Soal berikutnya dikirim.');
-    }
-
     if (action === 'leaderboard') {
       const rows = await db.select().from(guildMembers)
         .where(and(
@@ -244,7 +237,7 @@ const quizCmd: ModuleCommand = {
       return ctx.reply({ embeds: [{ title: '🏆 Leaderboard Kuis', description: lines.join('\n'), color: ACCENT }] });
     }
 
-    return ctx.reply('Pakai: `/quiz start`, `/quiz next`, `/quiz stop`, `/quiz leaderboard`.');
+    return ctx.reply('Pakai: `/quiz start`, `/quiz stop`, `/quiz leaderboard`.');
   },
 };
 
