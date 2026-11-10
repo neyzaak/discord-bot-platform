@@ -108409,7 +108409,7 @@ var ktpSet = {
     const patch = {};
     const changed = [];
     for (const key2 of Object.keys(LABELS)) {
-      const v = String(args[key2] ?? "").trim();
+      const v = String(args[key2.toLowerCase()] ?? "").trim();
       if (!v) continue;
       patch[key2] = v;
       changed.push(LABELS[key2]);

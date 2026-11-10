@@ -283,7 +283,8 @@ const ktpSet: ModuleCommand = {
     const patch: Partial<KtpData> = {};
     const changed: string[] = [];
     for (const key of Object.keys(LABELS) as Array<keyof KtpData>) {
-      const v = String(args[key] ?? '').trim();
+      // Nama opsi slash selalu huruf kecil (tglLahir -> tgllahir).
+      const v = String(args[key.toLowerCase()] ?? '').trim();
       if (!v) continue;
       patch[key] = v;
       changed.push(LABELS[key]);
