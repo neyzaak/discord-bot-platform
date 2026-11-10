@@ -276,7 +276,7 @@ const GENDERS = [
   { name: 'Laki-laki', value: 'Laki-laki' },
   { name: 'Perempuan', value: 'Perempuan' },
 ];
-const AGAMAS = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'].map((a) => ({ name: a, value: a }));
+const AGAMAS = ['Islam', 'Kristen Katolik', 'Kristen Protestan', 'Hindu', 'Buddha', 'Konghucu'].map((a) => ({ name: a, value: a }));
 
 const ALIASES = Object.keys(FIELD_MAP).sort((a, b) => b.length - a.length);
 
@@ -344,7 +344,7 @@ const ktpSet: ModuleCommand = {
       if (parsed.changed.length === 0) {
         return ctx.reply([
           '📝 **Cara isi KTP**',
-          'Slash (bisa sekaligus): `/ktpset nama:Tensun tempat:Lutim tgllahir:18 Agustus 2010 gender:Laki-laki kota:Luwu Timur agama:Kristen pekerjaan:Siswa status:Jomblo` — isi yang perlu saja.',
+          'Slash (bisa sekaligus): `/ktpset nama:Tensun tempat:Lutim tgllahir:18 Agustus 2010 gender:Laki-laki kota:Luwu Timur agama:Kristen Protestan pekerjaan:Siswa status:Jomblo` - isi yang perlu saja.',
           'Prefix: `!ktpset nama Tensun, tempat Lutim, tgllahir 18 Agustus 2010` (pisahkan field dengan koma).',
         ].join('\n'));
       }

@@ -108411,7 +108411,7 @@ var GENDERS = [
   { name: "Laki-laki", value: "Laki-laki" },
   { name: "Perempuan", value: "Perempuan" }
 ];
-var AGAMAS = ["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"].map((a) => ({ name: a, value: a }));
+var AGAMAS = ["Islam", "Kristen Katolik", "Kristen Protestan", "Hindu", "Buddha", "Konghucu"].map((a) => ({ name: a, value: a }));
 var ALIASES = Object.keys(FIELD_MAP).sort((a, b) => b.length - a.length);
 function parseKtpPairs(text2) {
   const patch = {};
@@ -108462,7 +108462,7 @@ var ktpSet = {
       if (parsed.changed.length === 0) {
         return ctx.reply([
           "\u{1F4DD} **Cara isi KTP**",
-          "Slash (bisa sekaligus): `/ktpset nama:Tensun tempat:Lutim tgllahir:18 Agustus 2010 gender:Laki-laki kota:Luwu Timur agama:Kristen pekerjaan:Siswa status:Jomblo` \u2014 isi yang perlu saja.",
+          "Slash (bisa sekaligus): `/ktpset nama:Tensun tempat:Lutim tgllahir:18 Agustus 2010 gender:Laki-laki kota:Luwu Timur agama:Kristen Protestan pekerjaan:Siswa status:Jomblo` - isi yang perlu saja.",
           "Prefix: `!ktpset nama Tensun, tempat Lutim, tgllahir 18 Agustus 2010` (pisahkan field dengan koma)."
         ].join("\n"));
       }
