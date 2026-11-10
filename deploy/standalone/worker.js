@@ -104331,7 +104331,8 @@ var moduleSchemas = {
   leveling: levelingConfigSchema,
   economy: economyConfigSchema,
   webhooks: webhooksConfigSchema,
-  quiz: quizConfigSchema
+  quiz: quizConfigSchema,
+  ktp: external_exports.object({}).passthrough().optional()
 };
 var guildConfigSchema = external_exports.object({
   welcome: welcomeConfigSchema.optional(),
@@ -104343,7 +104344,8 @@ var guildConfigSchema = external_exports.object({
   leveling: levelingConfigSchema.optional(),
   economy: economyConfigSchema.optional(),
   webhooks: webhooksConfigSchema.optional(),
-  quiz: quizConfigSchema.optional()
+  quiz: quizConfigSchema.optional(),
+  ktp: external_exports.object({}).passthrough().optional()
 });
 var botLevelConfigSchema = external_exports.object({
   modules: external_exports.array(external_exports.enum(MODULE_NAMES)).default([])
@@ -108325,7 +108327,7 @@ var ktpView = {
     const targetId = targetMember?.id ?? ctx.user.id;
     const targetUser = targetMember?.user ?? ctx.user;
     const data = await getKtp(ctx.botId, ctx.guild.id, targetId) ?? {};
-    if (createCanvas) {
+    if (canvasMod) {
       try {
         const buffer = await renderKtp(targetUser, ctx.guild.name, data);
         return ctx.reply({ files: [new import_discord3.AttachmentBuilder(buffer, { name: "ktp.png" })] });
@@ -109315,7 +109317,7 @@ var BotRunner = class {
     });
     client.on(import_discord11.Events.Error, (e) => void recordError(bot.id, e));
     client.on(import_discord11.Events.ShardError, (e) => void recordError(bot.id, e));
-    client.on(import_discord11.Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, "gateway terputus \u2014 discord.js reconnect otomatis"));
+    client.on(import_discord11.Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, "gateway terputus \xE2\u20AC\u201D discord.js reconnect otomatis"));
     logger.info({ botId: this.botId }, "runner: memanggil client.login");
     await client.login(token);
     logger.info({ botId: this.botId }, "runner: client.login selesai");
@@ -109351,7 +109353,8 @@ var BotRunner = class {
     const hit = this.cfgCache.get(key2);
     if (hit && hit.exp > Date.now()) return hit.v;
     const [row] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
-    const raw = (row?.data ?? {})[moduleName] ?? {};
+    const data = row?.data ?? {};
+    const raw = data[moduleName] ?? {};
     let v;
     if (moduleName === "quiz" && Array.isArray(raw.questions)) {
       const { questions, ...rest } = raw;
@@ -109377,10 +109380,10 @@ var BotRunner = class {
     const cmd = mod?.commands.find((c) => c.name === interaction.commandName);
     if (!mod || !cmd) return;
     const config2 = await this.guildConfig(bot, mod.name, interaction.guild.id);
-    if (config2.enabled === false) return void interaction.reply({ content: "\u274C Modul ini dinonaktifkan di server ini.", ephemeral: true }).catch(() => {
+    if (config2.enabled === false) return void interaction.reply({ content: "\xE2\x9D\u0152 Modul ini dinonaktifkan di server ini.", ephemeral: true }).catch(() => {
     });
     if (!await this.notRateLimited(bot.id, interaction.guild.id, interaction.user.id, cmd.name)) {
-      return void interaction.reply({ content: "\u23F3 Terlalu cepat \u2014 coba lagi beberapa detik.", ephemeral: true }).catch(() => {
+      return void interaction.reply({ content: "\xE2\x8F\xB3 Terlalu cepat \xE2\u20AC\u201D coba lagi beberapa detik.", ephemeral: true }).catch(() => {
       });
     }
     const args = {};
@@ -109413,7 +109416,7 @@ var BotRunner = class {
       });
     } catch (e) {
       await recordError(bot.id, e);
-      await interaction.reply({ content: "\u274C Terjadi kesalahan saat menjalankan command.", ephemeral: true }).catch(() => {
+      await interaction.reply({ content: "\xE2\x9D\u0152 Terjadi kesalahan saat menjalankan command.", ephemeral: true }).catch(() => {
       });
     }
   }
@@ -109441,7 +109444,7 @@ var BotRunner = class {
       const config3 = await this.guildConfig(bot, customMod.name, message.guild.id);
       if (config3.enabled === false) return;
       if (!await this.notRateLimited(bot.id, message.guild.id, message.author.id, name)) {
-        return void message.reply({ content: "\u23F3 Terlalu cepat \u2014 coba lagi beberapa detik.", allowedMentions: { parse: [] } });
+        return void message.reply({ content: "\xE2\x8F\xB3 Terlalu cepat \xE2\u20AC\u201D coba lagi beberapa detik.", allowedMentions: { parse: [] } });
       }
       const ctx2 = this.prefixContext(bot, message, config3);
       const handled = await customMod.onPrefixCommand(ctx2, name, rest);
@@ -109456,10 +109459,10 @@ var BotRunner = class {
       return;
     }
     if (!await this.notRateLimited(bot.id, message.guild.id, message.author.id, cmd.name)) {
-      return void message.reply({ content: "\u23F3 Terlalu cepat \u2014 coba lagi beberapa detik.", allowedMentions: { parse: [] } });
+      return void message.reply({ content: "\xE2\x8F\xB3 Terlalu cepat \xE2\u20AC\u201D coba lagi beberapa detik.", allowedMentions: { parse: [] } });
     }
     const config2 = await this.guildConfig(bot, mod.name, message.guild.id);
-    if (config2.enabled === false) return void message.reply({ content: "\u274C Modul ini dinonaktifkan di server ini.", allowedMentions: { parse: [] } });
+    if (config2.enabled === false) return void message.reply({ content: "\xE2\x9D\u0152 Modul ini dinonaktifkan di server ini.", allowedMentions: { parse: [] } });
     const args = await parsePrefixArgs(cmd, message, rest);
     const ctx = this.prefixContext(bot, message, config2);
     try {
@@ -109472,7 +109475,7 @@ var BotRunner = class {
       });
     } catch (e) {
       await recordError(bot.id, e);
-      await message.reply({ content: "\u274C Terjadi kesalahan saat menjalankan command.", allowedMentions: { parse: [] } }).catch(() => {
+      await message.reply({ content: "\xE2\x9D\u0152 Terjadi kesalahan saat menjalankan command.", allowedMentions: { parse: [] } }).catch(() => {
       });
     }
   }

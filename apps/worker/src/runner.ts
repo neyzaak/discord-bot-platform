@@ -165,7 +165,8 @@ export class BotRunner {
     if (hit && hit.exp > Date.now()) return hit.v;
     const [row] = await db.select().from(botConfigs)
       .where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
-    const data = (row?.data as Record<string, unknown>) ?? {};\r\n    const raw = (data[moduleName] as Record<string, unknown> ?? {}) as Record<string, unknown>;
+    const data = (row?.data as Record<string, unknown>) ?? {};
+    const raw = (data[moduleName] as Record<string, unknown> ?? {}) as Record<string, unknown>;
     let v: Record<string, unknown>;
     // Quiz menyimpan 5000 soal di data.quiz.questions â€” sudah divalidasi saat seed,
     // jangan re-parse ulang setiap kali config dibaca (berat dan bisa gagal).

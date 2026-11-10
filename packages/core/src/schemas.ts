@@ -216,6 +216,7 @@ export const moduleInvitePermissions: Record<ModuleName, string[]> = {
   economy: ['ViewChannel', 'SendMessages', 'EmbedLinks'],
   webhooks: ['ViewChannel', 'SendMessages', 'EmbedLinks'],
   quiz: ['ViewChannel', 'SendMessages', 'EmbedLinks'],
+  ktp: ['ViewChannel', 'SendMessages', 'EmbedLinks'],
 };
 
 export function invitePermissionsBitfield(modules: readonly string[]): string {
