@@ -1,5 +1,5 @@
 import type {
-  APIEmbed, Client, GatewayIntentBits, Guild, GuildMember, Interaction, ModalBuilder,
+  APIEmbed, AttachmentBuilder, Client, GatewayIntentBits, Guild, GuildMember, Interaction, ModalBuilder,
   Message, PartialGuildMember, PartialMessage, RESTPostAPIApplicationCommandsJSONBody,
   TextBasedChannel, User,
 } from 'discord.js';
@@ -13,7 +13,7 @@ export interface CommandContext {
   user: User;
   channel: TextBasedChannel | null;
   config: Record<string, unknown>;
-  reply: (payload: string | { embeds: APIEmbed[] }) => Promise<unknown>;
+  reply: (payload: string | { embeds?: APIEmbed[]; files?: AttachmentBuilder[] }) => Promise<unknown>;
   /** Hanya tersedia untuk slash command — dipakai mis. modal tiket. */
   showModal?: (modal: ModalBuilder) => Promise<unknown>;
 }

@@ -3,7 +3,7 @@ import { z } from 'zod';
 /** Modul aktif platform (10): F1 welcome+moderation, F2 tickets/logging/utilities/customcmd, F3 leveling/economy/webhooks, prioritas pengguna: quiz. */
 export const MODULE_NAMES = [
   'welcome', 'moderation', 'tickets', 'logging', 'utilities',
-  'customcmd', 'leveling', 'economy', 'webhooks', 'quiz',
+  'customcmd', 'leveling', 'economy', 'webhooks', 'quiz', 'ktp',
 ] as const;
 export type ModuleName = (typeof MODULE_NAMES)[number];
 
@@ -147,6 +147,7 @@ export const moduleSchemas = {
   economy: economyConfigSchema,
   webhooks: webhooksConfigSchema,
   quiz: quizConfigSchema,
+  ktp: z.object({}).passthrough().optional(),
 } satisfies Record<ModuleName, z.ZodTypeAny>;
 
 /** Bentuk `bot_configs.data` untuk satu guild. */
@@ -161,6 +162,7 @@ export const guildConfigSchema = z.object({
   economy: economyConfigSchema.optional(),
   webhooks: webhooksConfigSchema.optional(),
   quiz: quizConfigSchema.optional(),
+  ktp: z.object({}).passthrough().optional(),
 });
 
 /** Bentuk `bot_configs.data` level bot (guild ''). */
@@ -172,6 +174,7 @@ export const TEMPLATES = {
   welcome: { modules: ['welcome'] as ModuleName[] },
   moderation: { modules: ['moderation'] as ModuleName[] },
   starter: { modules: ['welcome', 'moderation'] as ModuleName[] },
+  ktp: { modules: ['ktp'] as ModuleName[] },
 } as const;
 
 export const createBotSchema = z.object({

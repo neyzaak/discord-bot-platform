@@ -40328,32 +40328,32 @@ var require_v10 = __commonJS({
       GatewayCloseCodes2[GatewayCloseCodes2["InvalidIntents"] = 4013] = "InvalidIntents";
       GatewayCloseCodes2[GatewayCloseCodes2["DisallowedIntents"] = 4014] = "DisallowedIntents";
     })(GatewayCloseCodes || (exports2.GatewayCloseCodes = GatewayCloseCodes = {}));
-    var GatewayIntentBits11;
-    (function(GatewayIntentBits12) {
-      GatewayIntentBits12[GatewayIntentBits12["Guilds"] = 1] = "Guilds";
-      GatewayIntentBits12[GatewayIntentBits12["GuildMembers"] = 2] = "GuildMembers";
-      GatewayIntentBits12[GatewayIntentBits12["GuildModeration"] = 4] = "GuildModeration";
-      GatewayIntentBits12[GatewayIntentBits12["GuildBans"] = 4] = "GuildBans";
-      GatewayIntentBits12[GatewayIntentBits12["GuildExpressions"] = 8] = "GuildExpressions";
-      GatewayIntentBits12[GatewayIntentBits12["GuildEmojisAndStickers"] = 8] = "GuildEmojisAndStickers";
-      GatewayIntentBits12[GatewayIntentBits12["GuildIntegrations"] = 16] = "GuildIntegrations";
-      GatewayIntentBits12[GatewayIntentBits12["GuildWebhooks"] = 32] = "GuildWebhooks";
-      GatewayIntentBits12[GatewayIntentBits12["GuildInvites"] = 64] = "GuildInvites";
-      GatewayIntentBits12[GatewayIntentBits12["GuildVoiceStates"] = 128] = "GuildVoiceStates";
-      GatewayIntentBits12[GatewayIntentBits12["GuildPresences"] = 256] = "GuildPresences";
-      GatewayIntentBits12[GatewayIntentBits12["GuildMessages"] = 512] = "GuildMessages";
-      GatewayIntentBits12[GatewayIntentBits12["GuildMessageReactions"] = 1024] = "GuildMessageReactions";
-      GatewayIntentBits12[GatewayIntentBits12["GuildMessageTyping"] = 2048] = "GuildMessageTyping";
-      GatewayIntentBits12[GatewayIntentBits12["DirectMessages"] = 4096] = "DirectMessages";
-      GatewayIntentBits12[GatewayIntentBits12["DirectMessageReactions"] = 8192] = "DirectMessageReactions";
-      GatewayIntentBits12[GatewayIntentBits12["DirectMessageTyping"] = 16384] = "DirectMessageTyping";
-      GatewayIntentBits12[GatewayIntentBits12["MessageContent"] = 32768] = "MessageContent";
-      GatewayIntentBits12[GatewayIntentBits12["GuildScheduledEvents"] = 65536] = "GuildScheduledEvents";
-      GatewayIntentBits12[GatewayIntentBits12["AutoModerationConfiguration"] = 1048576] = "AutoModerationConfiguration";
-      GatewayIntentBits12[GatewayIntentBits12["AutoModerationExecution"] = 2097152] = "AutoModerationExecution";
-      GatewayIntentBits12[GatewayIntentBits12["GuildMessagePolls"] = 16777216] = "GuildMessagePolls";
-      GatewayIntentBits12[GatewayIntentBits12["DirectMessagePolls"] = 33554432] = "DirectMessagePolls";
-    })(GatewayIntentBits11 || (exports2.GatewayIntentBits = GatewayIntentBits11 = {}));
+    var GatewayIntentBits12;
+    (function(GatewayIntentBits13) {
+      GatewayIntentBits13[GatewayIntentBits13["Guilds"] = 1] = "Guilds";
+      GatewayIntentBits13[GatewayIntentBits13["GuildMembers"] = 2] = "GuildMembers";
+      GatewayIntentBits13[GatewayIntentBits13["GuildModeration"] = 4] = "GuildModeration";
+      GatewayIntentBits13[GatewayIntentBits13["GuildBans"] = 4] = "GuildBans";
+      GatewayIntentBits13[GatewayIntentBits13["GuildExpressions"] = 8] = "GuildExpressions";
+      GatewayIntentBits13[GatewayIntentBits13["GuildEmojisAndStickers"] = 8] = "GuildEmojisAndStickers";
+      GatewayIntentBits13[GatewayIntentBits13["GuildIntegrations"] = 16] = "GuildIntegrations";
+      GatewayIntentBits13[GatewayIntentBits13["GuildWebhooks"] = 32] = "GuildWebhooks";
+      GatewayIntentBits13[GatewayIntentBits13["GuildInvites"] = 64] = "GuildInvites";
+      GatewayIntentBits13[GatewayIntentBits13["GuildVoiceStates"] = 128] = "GuildVoiceStates";
+      GatewayIntentBits13[GatewayIntentBits13["GuildPresences"] = 256] = "GuildPresences";
+      GatewayIntentBits13[GatewayIntentBits13["GuildMessages"] = 512] = "GuildMessages";
+      GatewayIntentBits13[GatewayIntentBits13["GuildMessageReactions"] = 1024] = "GuildMessageReactions";
+      GatewayIntentBits13[GatewayIntentBits13["GuildMessageTyping"] = 2048] = "GuildMessageTyping";
+      GatewayIntentBits13[GatewayIntentBits13["DirectMessages"] = 4096] = "DirectMessages";
+      GatewayIntentBits13[GatewayIntentBits13["DirectMessageReactions"] = 8192] = "DirectMessageReactions";
+      GatewayIntentBits13[GatewayIntentBits13["DirectMessageTyping"] = 16384] = "DirectMessageTyping";
+      GatewayIntentBits13[GatewayIntentBits13["MessageContent"] = 32768] = "MessageContent";
+      GatewayIntentBits13[GatewayIntentBits13["GuildScheduledEvents"] = 65536] = "GuildScheduledEvents";
+      GatewayIntentBits13[GatewayIntentBits13["AutoModerationConfiguration"] = 1048576] = "AutoModerationConfiguration";
+      GatewayIntentBits13[GatewayIntentBits13["AutoModerationExecution"] = 2097152] = "AutoModerationExecution";
+      GatewayIntentBits13[GatewayIntentBits13["GuildMessagePolls"] = 16777216] = "GuildMessagePolls";
+      GatewayIntentBits13[GatewayIntentBits13["DirectMessagePolls"] = 33554432] = "DirectMessagePolls";
+    })(GatewayIntentBits12 || (exports2.GatewayIntentBits = GatewayIntentBits12 = {}));
     var GatewayCapabilityBits;
     (function(GatewayCapabilityBits2) {
       GatewayCapabilityBits2[GatewayCapabilityBits2["ChannelObfuscation"] = 32768] = "ChannelObfuscation";
@@ -45062,7 +45062,7 @@ var require_dist4 = __commonJS({
               })(e3)) in t3 ? Object.defineProperty(t3, e3, { value: r2, enumerable: true, configurable: true, writable: true }) : t3[e3] = r2, t3;
             }
             __name(u, "u");
-            var l, f, s, y = r(425), p = y.AggregateError, g = y.AggregateErrorPrototype, v = y.Array, h = y.ArrayBuffer, d = y.ArrayBufferPrototype, b = y.ArrayIsArray, m = y.ArrayPrototype, S = y.ArrayPrototypeFilter, P = y.ArrayPrototypeForEach, x = y.ArrayPrototypeIncludes, w = y.ArrayPrototypeIndexOf, A = y.ArrayPrototypeJoin, O = y.ArrayPrototypeMap, _ = y.ArrayPrototypePop, j = y.ArrayPrototypePush, E = y.ArrayPrototypePushApply, k = y.ArrayPrototypeSlice, I = y.ArrayPrototypeSort, R = y.ArrayPrototypeSplice, L = y.ArrayPrototypeUnshift, T = y.BigIntPrototypeValueOf, B = y.Boolean, z = y.BooleanPrototype, M = y.BooleanPrototypeValueOf, C = y.DataView, D = y.DataViewPrototype, N = y.Date, F = y.DatePrototype, W = y.DatePrototypeGetTime, H = y.DatePrototypeToISOString, U = y.DatePrototypeToString, G = y.Error, V = y.ErrorPrototype, Z = y.ErrorPrototypeToString, $ = y.Function, Y = y.FunctionPrototype, q = y.FunctionPrototypeBind, J = y.FunctionPrototypeCall, K = y.FunctionPrototypeSymbolHasInstance, Q = y.FunctionPrototypeToString, X = y.JSONStringify, tt = y.Map, et = y.MapPrototype, rt = y.MapPrototypeEntries, nt = y.MapPrototypeGetSize, ot = y.MathFloor, at = y.MathMax, it = y.MathMin, ct = y.MathRound, ut = y.MathSqrt, lt2 = y.MathTrunc, ft = y.Number, st = y.NumberIsFinite, yt = y.NumberIsNaN, pt = y.NumberParseFloat, gt2 = y.NumberParseInt, vt = y.NumberPrototype, ht = y.NumberPrototypeToString, dt = y.NumberPrototypeValueOf, bt = y.Object, mt = y.ObjectAssign, St = y.ObjectDefineProperty, Pt = y.ObjectGetOwnPropertyDescriptor, xt = y.ObjectGetOwnPropertyNames, wt = y.ObjectGetOwnPropertySymbols, At = y.ObjectGetPrototypeOf, Ot = y.ObjectIs, _t = y.ObjectKeys, jt = y.ObjectPrototype, Et = y.ObjectPrototypeHasOwnProperty, kt = y.ObjectPrototypePropertyIsEnumerable, It = y.ObjectSeal, Rt = y.ObjectSetPrototypeOf, Lt = y.Promise, Tt = y.PromisePrototype, Bt = y.RangeError, zt = y.RangeErrorPrototype, Mt = y.ReflectApply, Ct = y.ReflectOwnKeys, Dt = y.RegExp, Nt = y.RegExpPrototype, Ft = y.RegExpPrototypeExec, Wt = y.RegExpPrototypeSymbolReplace, Ht = y.RegExpPrototypeSymbolSplit, Ut = y.RegExpPrototypeToString, Gt = y.SafeMap, Vt = y.SafeSet, Zt = y.SafeStringIterator, $t = y.Set, Yt = y.SetPrototype, qt = y.SetPrototypeGetSize, Jt = y.SetPrototypeValues, Kt = y.String, Qt = y.StringPrototype, Xt = y.StringPrototypeCharCodeAt, te = y.StringPrototypeCodePointAt, ee = y.StringPrototypeEndsWith, re = y.StringPrototypeIncludes, ne2 = y.StringPrototypeIndexOf, oe = y.StringPrototypeLastIndexOf, ae = y.StringPrototypeNormalize, ie = y.StringPrototypePadEnd, ce = y.StringPrototypePadStart, ue = y.StringPrototypeRepeat, le = y.StringPrototypeReplace, fe = y.StringPrototypeReplaceAll, se = y.StringPrototypeSlice, ye = y.StringPrototypeSplit, pe = y.StringPrototypeStartsWith, ge = y.StringPrototypeToLowerCase, ve = y.StringPrototypeTrim, he = y.StringPrototypeValueOf, de = y.SymbolIterator, be = y.SymbolPrototypeToString, me = y.SymbolPrototypeValueOf, Se = y.SymbolToPrimitive, Pe = y.SymbolToStringTag, xe = y.TypeError, we = y.TypeErrorPrototype, Ae = y.TypedArray, Oe = y.TypedArrayPrototype, _e = y.TypedArrayPrototypeGetLength, je = y.TypedArrayPrototypeGetSymbolToStringTag, Ee = y.Uint8Array, ke = y.WeakMap, Ie = y.WeakMapPrototype, Re = y.WeakSet, Le = y.WeakSetPrototype, Te = y.globalThis, Be = y.internalBinding, ze = y.uncurryThis, Me = r(153), Ce = Me.constants, De = Ce.ALL_PROPERTIES, Ne = Ce.ONLY_ENUMERABLE, Fe = Ce.kPending, We = Ce.kRejected, He = Me.getOwnNonIndexProperties, Ue = Me.getPromiseDetails, Ge = Me.getProxyDetails, Ve = Me.previewEntries, Ze = Me.getConstructorName, $e = Me.getExternalValue, Ye = Me.Proxy, qe = r(923), Je = qe.customInspectSymbol, Ke = qe.isError, Qe = qe.join, Xe = qe.removeColors, tr = r(924).isStackOverflowError, er = r(617), rr = er.isAsyncFunction, nr = er.isGeneratorFunction, or2 = er.isAnyArrayBuffer, ar = er.isArrayBuffer, ir = er.isArgumentsObject, cr = er.isBoxedPrimitive, ur = er.isDataView, lr = er.isExternal, fr = er.isMap, sr = er.isMapIterator, yr = er.isModuleNamespaceObject, pr = er.isNativeError, gr = er.isPromise, vr = er.isSet, hr = er.isSetIterator, dr = er.isWeakMap, br = er.isWeakSet, mr = er.isRegExp, Sr = er.isDate, Pr = er.isTypedArray, xr = er.isStringObject, wr = er.isNumberObject, Ar = er.isBooleanObject, Or = er.isBigIntObject, _r = r(229), jr = r(705).BuiltinModule, Er = r(116), kr = Er.validateObject, Ir = Er.validateString, Rr = Er.kValidateObjectAllowArray;
+            var l, f, s, y = r(425), p = y.AggregateError, g = y.AggregateErrorPrototype, v = y.Array, h = y.ArrayBuffer, d = y.ArrayBufferPrototype, b = y.ArrayIsArray, m = y.ArrayPrototype, S = y.ArrayPrototypeFilter, P = y.ArrayPrototypeForEach, x = y.ArrayPrototypeIncludes, w = y.ArrayPrototypeIndexOf, A = y.ArrayPrototypeJoin, O = y.ArrayPrototypeMap, _ = y.ArrayPrototypePop, j = y.ArrayPrototypePush, E = y.ArrayPrototypePushApply, k = y.ArrayPrototypeSlice, I = y.ArrayPrototypeSort, R = y.ArrayPrototypeSplice, L = y.ArrayPrototypeUnshift, T = y.BigIntPrototypeValueOf, B = y.Boolean, z = y.BooleanPrototype, M = y.BooleanPrototypeValueOf, C = y.DataView, D = y.DataViewPrototype, N = y.Date, F = y.DatePrototype, W2 = y.DatePrototypeGetTime, H2 = y.DatePrototypeToISOString, U = y.DatePrototypeToString, G = y.Error, V = y.ErrorPrototype, Z = y.ErrorPrototypeToString, $ = y.Function, Y = y.FunctionPrototype, q = y.FunctionPrototypeBind, J = y.FunctionPrototypeCall, K = y.FunctionPrototypeSymbolHasInstance, Q = y.FunctionPrototypeToString, X = y.JSONStringify, tt = y.Map, et = y.MapPrototype, rt = y.MapPrototypeEntries, nt = y.MapPrototypeGetSize, ot = y.MathFloor, at = y.MathMax, it = y.MathMin, ct = y.MathRound, ut = y.MathSqrt, lt2 = y.MathTrunc, ft = y.Number, st = y.NumberIsFinite, yt = y.NumberIsNaN, pt = y.NumberParseFloat, gt2 = y.NumberParseInt, vt = y.NumberPrototype, ht = y.NumberPrototypeToString, dt = y.NumberPrototypeValueOf, bt = y.Object, mt = y.ObjectAssign, St = y.ObjectDefineProperty, Pt = y.ObjectGetOwnPropertyDescriptor, xt = y.ObjectGetOwnPropertyNames, wt = y.ObjectGetOwnPropertySymbols, At = y.ObjectGetPrototypeOf, Ot = y.ObjectIs, _t = y.ObjectKeys, jt = y.ObjectPrototype, Et = y.ObjectPrototypeHasOwnProperty, kt = y.ObjectPrototypePropertyIsEnumerable, It = y.ObjectSeal, Rt = y.ObjectSetPrototypeOf, Lt = y.Promise, Tt = y.PromisePrototype, Bt = y.RangeError, zt = y.RangeErrorPrototype, Mt = y.ReflectApply, Ct = y.ReflectOwnKeys, Dt = y.RegExp, Nt = y.RegExpPrototype, Ft = y.RegExpPrototypeExec, Wt = y.RegExpPrototypeSymbolReplace, Ht = y.RegExpPrototypeSymbolSplit, Ut = y.RegExpPrototypeToString, Gt = y.SafeMap, Vt = y.SafeSet, Zt = y.SafeStringIterator, $t = y.Set, Yt = y.SetPrototype, qt = y.SetPrototypeGetSize, Jt = y.SetPrototypeValues, Kt = y.String, Qt = y.StringPrototype, Xt = y.StringPrototypeCharCodeAt, te = y.StringPrototypeCodePointAt, ee = y.StringPrototypeEndsWith, re = y.StringPrototypeIncludes, ne2 = y.StringPrototypeIndexOf, oe = y.StringPrototypeLastIndexOf, ae = y.StringPrototypeNormalize, ie = y.StringPrototypePadEnd, ce = y.StringPrototypePadStart, ue = y.StringPrototypeRepeat, le = y.StringPrototypeReplace, fe = y.StringPrototypeReplaceAll, se = y.StringPrototypeSlice, ye = y.StringPrototypeSplit, pe = y.StringPrototypeStartsWith, ge = y.StringPrototypeToLowerCase, ve = y.StringPrototypeTrim, he = y.StringPrototypeValueOf, de = y.SymbolIterator, be = y.SymbolPrototypeToString, me = y.SymbolPrototypeValueOf, Se = y.SymbolToPrimitive, Pe = y.SymbolToStringTag, xe = y.TypeError, we = y.TypeErrorPrototype, Ae = y.TypedArray, Oe = y.TypedArrayPrototype, _e = y.TypedArrayPrototypeGetLength, je = y.TypedArrayPrototypeGetSymbolToStringTag, Ee = y.Uint8Array, ke = y.WeakMap, Ie = y.WeakMapPrototype, Re = y.WeakSet, Le = y.WeakSetPrototype, Te = y.globalThis, Be = y.internalBinding, ze = y.uncurryThis, Me = r(153), Ce = Me.constants, De = Ce.ALL_PROPERTIES, Ne = Ce.ONLY_ENUMERABLE, Fe = Ce.kPending, We = Ce.kRejected, He = Me.getOwnNonIndexProperties, Ue = Me.getPromiseDetails, Ge = Me.getProxyDetails, Ve = Me.previewEntries, Ze = Me.getConstructorName, $e = Me.getExternalValue, Ye = Me.Proxy, qe = r(923), Je = qe.customInspectSymbol, Ke = qe.isError, Qe = qe.join, Xe = qe.removeColors, tr = r(924).isStackOverflowError, er = r(617), rr = er.isAsyncFunction, nr = er.isGeneratorFunction, or2 = er.isAnyArrayBuffer, ar = er.isArrayBuffer, ir = er.isArgumentsObject, cr = er.isBoxedPrimitive, ur = er.isDataView, lr = er.isExternal, fr = er.isMap, sr = er.isMapIterator, yr = er.isModuleNamespaceObject, pr = er.isNativeError, gr = er.isPromise, vr = er.isSet, hr = er.isSetIterator, dr = er.isWeakMap, br = er.isWeakSet, mr = er.isRegExp, Sr = er.isDate, Pr = er.isTypedArray, xr = er.isStringObject, wr = er.isNumberObject, Ar = er.isBooleanObject, Or = er.isBigIntObject, _r = r(229), jr = r(705).BuiltinModule, Er = r(116), kr = Er.validateObject, Ir = Er.validateString, Rr = Er.kValidateObjectAllowArray;
             function Lr(t3) {
               return (f = f || r(802)).pathToFileURL(t3).href;
             }
@@ -45351,7 +45351,7 @@ var require_dist4 = __commonJS({
                     var V2 = sn(u3, l3, "RegExp");
                     if ("RegExp " !== V2 && (v3 = "".concat(V2).concat(v3)), 0 === i3.length && void 0 === c2 || n2 > t4.depth && null !== t4.depth) return t4.stylize(v3, "regexp");
                   } else if (Sr(e4)) {
-                    v3 = yt(W(e4)) ? U(e4) : H(e4);
+                    v3 = yt(W2(e4)) ? U(e4) : H2(e4);
                     var Z2 = sn(u3, l3, "Date");
                     if ("Date " !== Z2 && (v3 = "".concat(Z2).concat(v3)), 0 === i3.length && void 0 === c2) return t4.stylize(v3, "date");
                   } else if (Ke(e4)) {
@@ -46588,7 +46588,7 @@ var require_dist4 = __commonJS({
               var e3 = t3.name, r2 = t3.original;
               P[e3] = r2, z(r2, P, e3), z(r2.prototype, P, "".concat(e3, "Prototype"));
             }), P.IteratorPrototype = Reflect.getPrototypeOf(P.ArrayIteratorPrototype);
-            var M = P.ArrayPrototypeForEach, C = P.FinalizationRegistry, D = P.FunctionPrototypeCall, N = P.Map, F = P.ObjectFreeze, W = P.ObjectSetPrototypeOf, H = P.RegExp, U = P.Set, G = P.SymbolIterator, V = P.WeakMap, Z = P.WeakRef, $ = P.WeakSet, Y = /* @__PURE__ */ __name(function(t3, e3) {
+            var M = P.ArrayPrototypeForEach, C = P.FinalizationRegistry, D = P.FunctionPrototypeCall, N = P.Map, F = P.ObjectFreeze, W2 = P.ObjectSetPrototypeOf, H2 = P.RegExp, U = P.Set, G = P.SymbolIterator, V = P.WeakMap, Z = P.WeakRef, $ = P.WeakSet, Y = /* @__PURE__ */ __name(function(t3, e3) {
               var r2 = (function() {
                 return f(/* @__PURE__ */ __name(function e4(r3) {
                   u(this, e4), this._iterator = t3(r3);
@@ -46598,7 +46598,7 @@ var require_dist4 = __commonJS({
                   return this;
                 }, "value") }]);
               })();
-              return W(r2.prototype, null), F(r2.prototype), F(r2), r2;
+              return W2(r2.prototype, null), F(r2.prototype), F(r2), r2;
             }, "Y");
             P.SafeArrayIterator = Y(P.ArrayPrototypeSymbolIterator, P.ArrayIteratorPrototypeNext), P.SafeStringIterator = Y(P.StringPrototypeSymbolIterator, P.StringIteratorPrototypeNext);
             var q = /* @__PURE__ */ __name(function(t3, e3) {
@@ -46623,7 +46623,7 @@ var require_dist4 = __commonJS({
                   }
                 });
               } else q(t3.prototype, e3.prototype);
-              return q(t3, e3), W(e3.prototype, null), F(e3.prototype), F(e3), e3;
+              return q(t3, e3), W2(e3.prototype, null), F(e3.prototype), F(e3), e3;
             }, "J");
             P.makeSafe = J, P.SafeMap = J(N, (function(t3) {
               function e3(t4) {
@@ -46669,8 +46669,8 @@ var require_dist4 = __commonJS({
               if ("config" === t3) return { hasIntl: false };
               throw new Error('unknown module: "'.concat(t3, '"'));
             }, P._stringPrototypeReplaceAll = function(t3, e3, r2) {
-              return "[object regexp]" === Object.prototype.toString.call(e3).toLowerCase() ? t3.replace(e3, r2) : t3.replace(new H(e3, "g"), r2);
-            }, P.StringPrototypeReplaceAll = P.StringPrototypeReplaceAll || P._stringPrototypeReplaceAll, W(P, null), F(P), t2.exports = P;
+              return "[object regexp]" === Object.prototype.toString.call(e3).toLowerCase() ? t3.replace(e3, r2) : t3.replace(new H2(e3, "g"), r2);
+            }, P.StringPrototypeReplaceAll = P.StringPrototypeReplaceAll || P._stringPrototypeReplaceAll, W2(P, null), F(P), t2.exports = P;
           }, 569: (t2, e2, r) => {
             function n(t3) {
               return n = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(t4) {
@@ -46946,7 +46946,7 @@ var require_dist4 = __commonJS({
               }, l(t3, e3);
             }
             __name(l, "l");
-            var f, s, y = r(425), p = y.ArrayIsArray, g = y.ArrayPrototypeIncludes, v = y.ArrayPrototypeIndexOf, h = y.ArrayPrototypeJoin, d = y.ArrayPrototypePush, b = y.ArrayPrototypeSlice, m = y.ArrayPrototypeSplice, S = y.Error, P = y.ErrorCaptureStackTrace, x = y.JSONStringify, w = y.ObjectDefineProperty, A = y.ReflectApply, O = y.RegExpPrototypeExec, _ = y.SafeMap, j = y.SafeWeakMap, E = y.String, k = y.StringPrototypeEndsWith, I = y.StringPrototypeIncludes, R = y.StringPrototypeIndexOf, L = y.StringPrototypeSlice, T = y.StringPrototypeToLowerCase, B = y.Symbol, z = y.TypeError, M = B("kIsNodeError"), C = new _(), D = {}, N = /^[A-Z][a-zA-Z0-9]*$/, F = ["string", "function", "number", "object", "Function", "Object", "boolean", "bigint", "symbol"], W = new j(), H = r(229), U = null;
+            var f, s, y = r(425), p = y.ArrayIsArray, g = y.ArrayPrototypeIncludes, v = y.ArrayPrototypeIndexOf, h = y.ArrayPrototypeJoin, d = y.ArrayPrototypePush, b = y.ArrayPrototypeSlice, m = y.ArrayPrototypeSplice, S = y.Error, P = y.ErrorCaptureStackTrace, x = y.JSONStringify, w = y.ObjectDefineProperty, A = y.ReflectApply, O = y.RegExpPrototypeExec, _ = y.SafeMap, j = y.SafeWeakMap, E = y.String, k = y.StringPrototypeEndsWith, I = y.StringPrototypeIncludes, R = y.StringPrototypeIndexOf, L = y.StringPrototypeSlice, T = y.StringPrototypeToLowerCase, B = y.Symbol, z = y.TypeError, M = B("kIsNodeError"), C = new _(), D = {}, N = /^[A-Z][a-zA-Z0-9]*$/, F = ["string", "function", "number", "object", "Function", "Object", "boolean", "bigint", "symbol"], W2 = new j(), H2 = r(229), U = null;
             function G(t3, e3) {
               var r2 = (function(t4) {
                 function r3() {
@@ -46986,7 +46986,7 @@ var require_dist4 = __commonJS({
             __name(V, "V");
             function Z(t3, e3, r2) {
               var n2 = C.get(t3);
-              if ("function" == typeof n2) return H(n2.length <= e3.length, "Code: ".concat(t3, "; The provided arguments length (").concat(e3.length, ") does not ") + "match the required ones (".concat(n2.length, ").")), A(n2, r2, e3);
+              if ("function" == typeof n2) return H2(n2.length <= e3.length, "Code: ".concat(t3, "; The provided arguments length (").concat(e3.length, ") does not ") + "match the required ones (".concat(n2.length, ").")), A(n2, r2, e3);
             }
             __name(Z, "Z");
             var $ = B("kEnhanceStackBeforeInspector");
@@ -47048,11 +47048,11 @@ var require_dist4 = __commonJS({
                 s = t4.message, f = t4.name;
               }
               return t3 && t3.name === f && t3.message === s;
-            }, "isStackOverflowError"), kEnhanceStackBeforeInspector: $, kIsNodeError: M, overrideStackTrace: W }, V("ERR_INTERNAL_ASSERTION", function(t3) {
+            }, "isStackOverflowError"), kEnhanceStackBeforeInspector: $, kIsNodeError: M, overrideStackTrace: W2 }, V("ERR_INTERNAL_ASSERTION", function(t3) {
               var e3 = "This is caused by either a bug in Node.js or incorrect usage of Node.js internals.\nPlease open an issue with this stack trace at https://github.com/nodejs/node/issues\n";
               return void 0 === t3 ? e3 : "".concat(t3, "\n").concat(e3);
             }, S), V("ERR_INVALID_ARG_TYPE", function(t3, e3, r2) {
-              H("string" == typeof t3, "'name' must be a string"), p(e3) || (e3 = [e3]);
+              H2("string" == typeof t3, "'name' must be a string"), p(e3) || (e3 = [e3]);
               var o2 = "The ";
               if (k(t3, " argument")) o2 += "".concat(t3, " ");
               else {
@@ -47100,7 +47100,7 @@ var require_dist4 = __commonJS({
               try {
                 for (f2.s(); !(i2 = f2.n()).done; ) {
                   var s2 = i2.value;
-                  H("string" == typeof s2, "All expected entries have to be of type string"), g(F, s2) ? d(c2, T(s2)) : null !== O(N, s2) ? d(u2, s2) : (H("object" !== s2, 'The value "object" should be written as "Object"'), d(l2, s2));
+                  H2("string" == typeof s2, "All expected entries have to be of type string"), g(F, s2) ? d(c2, T(s2)) : null !== O(N, s2) ? d(u2, s2) : (H2("object" !== s2, 'The value "object" should be written as "Object"'), d(l2, s2));
                 }
               } catch (t4) {
                 f2.e(t4);
@@ -60911,10 +60911,10 @@ var require_cjs3 = __commonJS({
       return "[object Set]" === m2(e3);
     }
     __name(N, "N");
-    function W(e3) {
+    function W2(e3) {
       return "[object WeakMap]" === m2(e3);
     }
-    __name(W, "W");
+    __name(W2, "W");
     function $(e3) {
       return "[object WeakSet]" === m2(e3);
     }
@@ -60943,10 +60943,10 @@ var require_cjs3 = __commonJS({
       return "undefined" != typeof SharedArrayBuffer && (J.working ? J(e3) : e3 instanceof SharedArrayBuffer);
     }
     __name(_, "_");
-    function H(e3) {
+    function H2(e3) {
       return O(e3, h2);
     }
-    __name(H, "H");
+    __name(H2, "H");
     function Z(e3) {
       return O(e3, j);
     }
@@ -60971,8 +60971,8 @@ var require_cjs3 = __commonJS({
       return "undefined" != typeof Map && (T2.working ? T2(e3) : e3 instanceof Map);
     }, N.working = "undefined" != typeof Set && N(/* @__PURE__ */ new Set()), o$2.isSet = function(e3) {
       return "undefined" != typeof Set && (N.working ? N(e3) : e3 instanceof Set);
-    }, W.working = "undefined" != typeof WeakMap && W(/* @__PURE__ */ new WeakMap()), o$2.isWeakMap = function(e3) {
-      return "undefined" != typeof WeakMap && (W.working ? W(e3) : e3 instanceof WeakMap);
+    }, W2.working = "undefined" != typeof WeakMap && W2(/* @__PURE__ */ new WeakMap()), o$2.isWeakMap = function(e3) {
+      return "undefined" != typeof WeakMap && (W2.working ? W2(e3) : e3 instanceof WeakMap);
     }, $.working = "undefined" != typeof WeakSet && $(/* @__PURE__ */ new WeakSet()), o$2.isWeakSet = function(e3) {
       return $(e3);
     }, C.working = "undefined" != typeof ArrayBuffer && C(new ArrayBuffer()), o$2.isArrayBuffer = V, G.working = "undefined" != typeof ArrayBuffer && "undefined" != typeof DataView && G(new DataView(new ArrayBuffer(1), 0, 1)), o$2.isDataView = R, J.working = "undefined" != typeof SharedArrayBuffer && J(new SharedArrayBuffer()), o$2.isSharedArrayBuffer = _, o$2.isAsyncFunction = function(e3) {
@@ -60985,8 +60985,8 @@ var require_cjs3 = __commonJS({
       return "[object Generator]" === m2(e3);
     }, o$2.isWebAssemblyCompiledModule = function(e3) {
       return "[object WebAssembly.Module]" === m2(e3);
-    }, o$2.isNumberObject = H, o$2.isStringObject = Z, o$2.isBooleanObject = q, o$2.isBigIntObject = K, o$2.isSymbolObject = L, o$2.isBoxedPrimitive = function(e3) {
-      return H(e3) || Z(e3) || q(e3) || K(e3) || L(e3);
+    }, o$2.isNumberObject = H2, o$2.isStringObject = Z, o$2.isBooleanObject = q, o$2.isBigIntObject = K, o$2.isSymbolObject = L, o$2.isBoxedPrimitive = function(e3) {
+      return H2(e3) || Z(e3) || q(e3) || K(e3) || L(e3);
     }, o$2.isAnyArrayBuffer = function(e3) {
       return l$1 && (V(e3) || _(e3));
     }, ["isProxy", "isExternal", "isModuleNamespaceObject"].forEach(function(e3) {
@@ -64214,7 +64214,7 @@ var require_dist9 = __commonJS({
       SlashCommandAssertions: () => Assertions_exports10,
       SlashCommandAttachmentOption: () => SlashCommandAttachmentOption,
       SlashCommandBooleanOption: () => SlashCommandBooleanOption,
-      SlashCommandBuilder: () => SlashCommandBuilder7,
+      SlashCommandBuilder: () => SlashCommandBuilder8,
       SlashCommandChannelOption: () => SlashCommandChannelOption,
       SlashCommandIntegerOption: () => SlashCommandIntegerOption,
       SlashCommandMentionableOption: () => SlashCommandMentionableOption,
@@ -68520,7 +68520,7 @@ var require_dist9 = __commonJS({
         return this;
       }
     };
-    var SlashCommandBuilder7 = class {
+    var SlashCommandBuilder8 = class {
       /**
        * The name of this command.
        */
@@ -68573,10 +68573,10 @@ var require_dist9 = __commonJS({
        */
       nsfw = void 0;
     };
-    __name(SlashCommandBuilder7, "SlashCommandBuilder");
-    SlashCommandBuilder7 = __decorateClass([
+    __name(SlashCommandBuilder8, "SlashCommandBuilder");
+    SlashCommandBuilder8 = __decorateClass([
       (0, import_ts_mixer6.mix)(SharedSlashCommandOptions, SharedNameAndDescription, SharedSlashCommandSubcommands, SharedSlashCommand)
-    ], SlashCommandBuilder7);
+    ], SlashCommandBuilder8);
     var Assertions_exports11 = {};
     __export2(Assertions_exports11, {
       contextsPredicate: () => contextsPredicate2,
@@ -86952,7 +86952,7 @@ var require_WebSocketShard = __commonJS({
     var EventEmitter = __require("node:events");
     var process2 = __require("node:process");
     var { setTimeout: setTimeout2, clearTimeout: clearTimeout2 } = __require("node:timers");
-    var { GatewayIntentBits: GatewayIntentBits11 } = require_v106();
+    var { GatewayIntentBits: GatewayIntentBits12 } = require_v106();
     var Status2 = require_Status();
     var WebSocketShardEvents = require_WebSocketShardEvents();
     var deprecationEmittedForImportant = false;
@@ -87039,7 +87039,7 @@ var require_WebSocketShard = __commonJS({
           this.emit(WebSocketShardEvents.AllReady);
           return;
         }
-        const hasGuildsIntent = this.manager.client.options.intents.has(GatewayIntentBits11.Guilds);
+        const hasGuildsIntent = this.manager.client.options.intents.has(GatewayIntentBits12.Guilds);
         const { waitGuildTimeout } = this.manager.client.options;
         this.readyTimeout = setTimeout2(
           () => {
@@ -94646,7 +94646,7 @@ var require_Widget = __commonJS({
 var require_IntentsBitField = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/util/IntentsBitField.js"(exports2, module2) {
     "use strict";
-    var { GatewayIntentBits: GatewayIntentBits11 } = require_v106();
+    var { GatewayIntentBits: GatewayIntentBits12 } = require_v106();
     var BitField = require_BitField();
     var IntentsBitField2 = class extends BitField {
       /**
@@ -94654,7 +94654,7 @@ var require_IntentsBitField = __commonJS({
        * @type {GatewayIntentBits}
        * @memberof IntentsBitField
        */
-      static Flags = GatewayIntentBits11;
+      static Flags = GatewayIntentBits12;
     };
     module2.exports = IntentsBitField2;
   }
@@ -96399,7 +96399,7 @@ var require_AttachmentBuilder = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/structures/AttachmentBuilder.js"(exports2, module2) {
     "use strict";
     var { basename, flatten } = require_Util();
-    var AttachmentBuilder2 = class _AttachmentBuilder {
+    var AttachmentBuilder3 = class _AttachmentBuilder {
       /**
        * @param {BufferResolvable|Stream} attachment The file
        * @param {AttachmentData} [data] Extra data
@@ -96510,7 +96510,7 @@ var require_AttachmentBuilder = __commonJS({
         });
       }
     };
-    module2.exports = AttachmentBuilder2;
+    module2.exports = AttachmentBuilder3;
   }
 });
 
@@ -104187,7 +104187,8 @@ var MODULE_NAMES = [
   "leveling",
   "economy",
   "webhooks",
-  "quiz"
+  "quiz",
+  "ktp"
 ];
 var snowflakeOrEmpty = external_exports.string().regex(/^(\d{5,25})?$/, "harus ID Discord (angka) atau kosong");
 var welcomeConfigSchema = external_exports.object({
@@ -107975,7 +107976,7 @@ async function recordError(botId, err) {
 }
 
 // apps/worker/src/runner.ts
-var import_discord10 = __toESM(require_src2(), 1);
+var import_discord11 = __toESM(require_src2(), 1);
 
 // apps/worker/src/modules/customcmd.ts
 var import_discord = __toESM(require_src2(), 1);
@@ -108139,8 +108140,224 @@ var economyModule = {
   commands: [balance, daily, work, transfer, shop, buy]
 };
 
-// apps/worker/src/modules/leveling.ts
+// apps/worker/src/modules/ktp.ts
 var import_discord3 = __toESM(require_src2(), 1);
+var canvasMod = null;
+try {
+  canvasMod = __require("@napi-rs/canvas");
+} catch (e) {
+  logger.warn({ err: e }, "canvas tidak tersedia \u2014 /ktp fallback embed");
+}
+var createCanvas = canvasMod?.createCanvas ?? ((w, h) => {
+  throw new Error("canvas not available");
+});
+var loadImage = canvasMod?.loadImage ?? (async (url) => {
+  throw new Error("canvas not available");
+});
+var W = 940;
+var H = 540;
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+function clampText(ctx, text2, maxW) {
+  if (ctx.measureText(text2).width <= maxW) return text2;
+  let cut = text2;
+  while (cut.length > 0 && ctx.measureText(cut + "\u2026").width > maxW) cut = cut.slice(0, -1);
+  return cut + "\u2026";
+}
+async function getKtp(botId, guildId, userId) {
+  const [row] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
+  const ktp = (row?.data ?? {})?.ktp ?? {};
+  return ktp[userId];
+}
+async function setKtp(botId, guildId, userId, patch) {
+  const [row] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
+  const existing = row?.data ?? {};
+  const ktp = existing.ktp ?? {};
+  ktp[userId] = { ...ktp[userId] ?? {}, ...patch };
+  const data = { ...existing, ktp };
+  if (row) {
+    await db.update(botConfigs).set({ data, updatedAt: /* @__PURE__ */ new Date() }).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
+  } else {
+    await db.insert(botConfigs).values({ botId, discordGuildId: guildId, data });
+  }
+}
+async function renderKtp(user, guildName, data) {
+  const canvas = createCanvas(W, H);
+  const ctx = canvas.getContext("2d");
+  const grad = ctx.createLinearGradient(0, 0, W, H);
+  grad.addColorStop(0, "#1e3a8a");
+  grad.addColorStop(1, "#3b82f6");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = "rgba(255,255,255,0.06)";
+  for (const [x, y, r] of [[-60, -60, 120], [W + 60, H + 60, 160], [W - 40, -40, 90]]) {
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = "#ffffff";
+  roundRect(ctx, 30, 30, W - 60, 110, 20);
+  ctx.fill();
+  ctx.fillStyle = "#1e3a8a";
+  ctx.font = "bold 40px sans-serif";
+  ctx.fillText("KARTU TANDA PENDUDUK", 60, 84);
+  ctx.font = "18px sans-serif";
+  ctx.fillStyle = "#60a5fa";
+  ctx.fillText(guildName, 60, 110);
+  ctx.fillStyle = "#ffffff";
+  roundRect(ctx, 30, 160, W - 60, 260, 16);
+  ctx.fill();
+  ctx.fillStyle = "#e2e8f0";
+  roundRect(ctx, W - 300, 190, 220, 200, 16);
+  ctx.fill();
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "14px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("FOTO PROFIL", W - 190, 214);
+  ctx.textAlign = "left";
+  let avatarDrawn = false;
+  try {
+    const img = await loadImage(user.displayAvatarURL({ extension: "png", size: 512 }));
+    const cx = W - 190, cy = 310, r = 70;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(img, cx - r, cy - r, r * 2, r * 2);
+    ctx.restore();
+    avatarDrawn = true;
+  } catch (e) {
+    logger.warn({ err: e }, "avatar load gagal");
+  }
+  if (!avatarDrawn) {
+    const cx = W - 190, cy = 310, r = 70;
+    ctx.fillStyle = "#cbd5e1";
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = "#1e3a8a";
+  ctx.font = "bold 24px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(clampText(ctx, data.nama ?? user.username, 180), W - 190, 412);
+  ctx.fillStyle = "#64748b";
+  ctx.font = "14px sans-serif";
+  ctx.fillText(`Warga ${guildName}`, W - 190, 436);
+  ctx.textAlign = "left";
+  const fields = [
+    ["Nama", data.nama ?? user.username],
+    ["ID Akun", user.id],
+    ["Tempat/Tgl Lahir", `${data.tempat ?? "-"}, ${data.tglLahir ?? "-"}`],
+    ["Jenis Kelamin", data.gender ?? "-"],
+    ["Kota/Kab", data.kota ?? "-"],
+    ["Agama", data.agama ?? "-"],
+    ["Pekerjaan", data.pekerjaan ?? "-"],
+    ["Status", data.status ?? "-"]
+  ];
+  let fy = 210;
+  for (const [label, val] of fields) {
+    ctx.fillStyle = "#475569";
+    ctx.font = "22px sans-serif";
+    ctx.fillText(label, 60, fy);
+    ctx.fillStyle = "#1e293b";
+    ctx.font = "24px sans-serif";
+    ctx.fillText(`: ${clampText(ctx, val, 460)}`, 190, fy);
+    fy += 40;
+  }
+  ctx.fillStyle = "#1e3a8a";
+  roundRect(ctx, 30, 450, W - 60, 50, 12);
+  ctx.fill();
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "16px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(`KARTU KOMUNITAS RESMI \u2022 ${guildName}`, W / 2, 480);
+  ctx.textAlign = "left";
+  return canvas.toBuffer("image/png");
+}
+var ktpSet = {
+  name: "ktpset",
+  description: "Set data KTP kamu (nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status)",
+  args: [
+    { name: "field", type: "string" },
+    { name: "value", type: "string", rest: true }
+  ],
+  buildSlash: () => new import_discord3.SlashCommandBuilder().setName("ktpset").setDescription("Isi data KTP kamu").addStringOption((o) => o.setName("field").setDescription("Field: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status").setRequired(true)).addStringOption((o) => o.setName("value").setDescription("Nilai field").setRequired(true)).toJSON(),
+  async execute(ctx, args) {
+    if (!ctx.guild || !ctx.user) return ctx.reply("\u274C Hanya di server.");
+    const field = String(args.field ?? "").toLowerCase();
+    const map = {
+      nama: "nama",
+      tempat: "tempat",
+      tgllahir: "tglLahir",
+      gender: "gender",
+      kota: "kota",
+      agama: "agama",
+      pekerjaan: "pekerjaan",
+      status: "status"
+    };
+    const key2 = map[field];
+    if (!key2) return ctx.reply("\u274C Field tidak dikenal. Pilih: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status.");
+    const value = String(args.value ?? "").trim();
+    if (!value) return ctx.reply("\u274C Nilai tidak boleh kosong.");
+    await setKtp(ctx.botId, ctx.guild.id, ctx.user.id, { [key2]: value });
+    return ctx.reply("\u2705 Data KTP diperbarui.");
+  }
+};
+var ktpView = {
+  name: "ktp",
+  description: "Lihat KTP kamu atau user lain",
+  args: [{ name: "user", type: "user" }],
+  buildSlash: () => new import_discord3.SlashCommandBuilder().setName("ktp").setDescription("Lihat KTP").addUserOption((o) => o.setName("user").setDescription("User (kosong = dirimu)")).toJSON(),
+  async execute(ctx, args) {
+    if (!ctx.guild || !ctx.user) return ctx.reply("\u274C Hanya di server.");
+    const targetMember = args.user;
+    const targetId = targetMember?.id ?? ctx.user.id;
+    const targetUser = targetMember?.user ?? ctx.user;
+    const data = await getKtp(ctx.botId, ctx.guild.id, targetId) ?? {};
+    if (createCanvas) {
+      try {
+        const buffer = await renderKtp(targetUser, ctx.guild.name, data);
+        return ctx.reply({ files: [new import_discord3.AttachmentBuilder(buffer, { name: "ktp.png" })] });
+      } catch (e) {
+        await recordError(ctx.botId, e);
+      }
+    }
+    const embed = {
+      title: "\u{1FAAA} Kartu Tanda Penduduk",
+      description: [
+        `**Nama:** ${data.nama ?? targetUser.username}`,
+        `**ID Akun:** ${targetId}`,
+        `**Tempat/Tgl Lahir:** ${data.tempat ?? "-"}, ${data.tglLahir ?? "-"}`,
+        `**Jenis Kelamin:** ${data.gender ?? "-"}`,
+        `**Kota/Kab:** ${data.kota ?? "-"}`,
+        `**Agama:** ${data.agama ?? "-"}`,
+        `**Pekerjaan:** ${data.pekerjaan ?? "-"}`,
+        `**Status:** ${data.status ?? "-"}`
+      ].join("\n"),
+      color: 1981066
+    };
+    return ctx.reply({ embeds: [embed] });
+  }
+};
+var ktpModule = {
+  name: "ktp",
+  intents: [import_discord3.GatewayIntentBits.Guilds],
+  commands: [ktpView, ktpSet]
+};
+
+// apps/worker/src/modules/leveling.ts
+var import_discord4 = __toESM(require_src2(), 1);
 var ACCENT2 = 5763719;
 var xpForLevel = (level) => 100 * level * level;
 var levelForXp = (xp) => Math.floor(Math.sqrt(xp / 100));
@@ -108202,7 +108419,7 @@ var rank = {
   name: "rank",
   description: "Lihat rank XP kamu / user lain",
   args: [{ name: "user", type: "user" }],
-  buildSlash: () => new import_discord3.SlashCommandBuilder().setName("rank").setDescription("Lihat rank XP").addUserOption((o) => o.setName("user").setDescription("User (kosong = dirimu)")).toJSON(),
+  buildSlash: () => new import_discord4.SlashCommandBuilder().setName("rank").setDescription("Lihat rank XP").addUserOption((o) => o.setName("user").setDescription("User (kosong = dirimu)")).toJSON(),
   async execute(ctx, args) {
     if (!ctx.guild) return ctx.reply("\u274C Hanya di server.");
     const target = args.user?.user ?? ctx.user;
@@ -108213,7 +108430,7 @@ var leaderboard = {
   name: "leaderboard",
   description: "Top 10 XP server",
   args: [],
-  buildSlash: () => new import_discord3.SlashCommandBuilder().setName("leaderboard").setDescription("Top 10 XP server").toJSON(),
+  buildSlash: () => new import_discord4.SlashCommandBuilder().setName("leaderboard").setDescription("Top 10 XP server").toJSON(),
   async execute(ctx) {
     if (!ctx.guild) return ctx.reply("\u274C Hanya di server.");
     const rows = await db.select().from(guildMembers).where(and(eq(guildMembers.botId, ctx.botId), eq(guildMembers.discordGuildId, ctx.guild.id))).orderBy(desc(guildMembers.xp)).limit(10);
@@ -108224,7 +108441,7 @@ var leaderboard = {
 };
 var levelingModule = {
   name: "leveling",
-  intents: [import_discord3.GatewayIntentBits.Guilds, import_discord3.GatewayIntentBits.GuildMessages],
+  intents: [import_discord4.GatewayIntentBits.Guilds, import_discord4.GatewayIntentBits.GuildMessages],
   commands: [rank, leaderboard],
   async onMessage(ctx, message) {
     await addXp(ctx, message);
@@ -108232,7 +108449,7 @@ var levelingModule = {
 };
 
 // apps/worker/src/modules/logging.ts
-var import_discord4 = __toESM(require_src2(), 1);
+var import_discord5 = __toESM(require_src2(), 1);
 var COLORS = { delete: 15548997, edit: 16705372, join: 5763719, leave: 15548997, roles: 5793266 };
 async function sendLog(ctx, embed) {
   const id = ctx.config.channelId;
@@ -108244,7 +108461,7 @@ async function sendLog(ctx, embed) {
 var fmt2 = (s) => s ? s.replace(/```/g, "```\u200B").slice(0, 900) || "(kosong)" : "(kosong)";
 var loggingModule = {
   name: "logging",
-  intents: [import_discord4.GatewayIntentBits.Guilds, import_discord4.GatewayIntentBits.GuildMessages, import_discord4.GatewayIntentBits.GuildMembers],
+  intents: [import_discord5.GatewayIntentBits.Guilds, import_discord5.GatewayIntentBits.GuildMessages, import_discord5.GatewayIntentBits.GuildMembers],
   commands: [],
   async onMessageDelete(ctx, message) {
     if (!ctx.config.logMessageDelete) return;
@@ -108310,7 +108527,7 @@ Total anggota: ${member.guild.memberCount}`
 };
 
 // apps/worker/src/modules/moderation.ts
-var import_discord5 = __toESM(require_src2(), 1);
+var import_discord6 = __toESM(require_src2(), 1);
 function hasGate(member, config2, perm) {
   if (!member) return false;
   const modRole = config2.moderatorRoleId;
@@ -108338,11 +108555,11 @@ var reasonArg = { name: "reason", type: "string" };
 var kick = {
   name: "kick",
   description: "Kick member dari server",
-  requiredPermission: import_discord5.PermissionFlagsBits.KickMembers,
+  requiredPermission: import_discord6.PermissionFlagsBits.KickMembers,
   args: [userArg, { ...reasonArg, rest: true }],
-  buildSlash: () => new import_discord5.SlashCommandBuilder().setName("kick").setDescription("Kick member dari server").addUserOption((o) => o.setName("user").setDescription("Member yang di-kick").setRequired(true)).addStringOption((o) => o.setName("reason").setDescription("Alasan")).toJSON(),
+  buildSlash: () => new import_discord6.SlashCommandBuilder().setName("kick").setDescription("Kick member dari server").addUserOption((o) => o.setName("user").setDescription("Member yang di-kick").setRequired(true)).addStringOption((o) => o.setName("reason").setDescription("Alasan")).toJSON(),
   async execute(ctx, args) {
-    const denied = guard(ctx, import_discord5.PermissionFlagsBits.KickMembers);
+    const denied = guard(ctx, import_discord6.PermissionFlagsBits.KickMembers);
     if (denied) return ctx.reply(denied);
     const target = args.user;
     if (!target) return ctx.reply("\u274C Member tidak ditemukan.");
@@ -108359,11 +108576,11 @@ Alasan: ${reason}` : ""}`);
 var ban = {
   name: "ban",
   description: "Ban member dari server",
-  requiredPermission: import_discord5.PermissionFlagsBits.BanMembers,
+  requiredPermission: import_discord6.PermissionFlagsBits.BanMembers,
   args: [userArg, { ...reasonArg, rest: true }],
-  buildSlash: () => new import_discord5.SlashCommandBuilder().setName("ban").setDescription("Ban member dari server").addUserOption((o) => o.setName("user").setDescription("Member yang di-ban").setRequired(true)).addStringOption((o) => o.setName("reason").setDescription("Alasan")).toJSON(),
+  buildSlash: () => new import_discord6.SlashCommandBuilder().setName("ban").setDescription("Ban member dari server").addUserOption((o) => o.setName("user").setDescription("Member yang di-ban").setRequired(true)).addStringOption((o) => o.setName("reason").setDescription("Alasan")).toJSON(),
   async execute(ctx, args) {
-    const denied = guard(ctx, import_discord5.PermissionFlagsBits.BanMembers);
+    const denied = guard(ctx, import_discord6.PermissionFlagsBits.BanMembers);
     if (denied) return ctx.reply(denied);
     const target = args.user;
     if (!target) return ctx.reply("\u274C Member tidak ditemukan.");
@@ -108380,11 +108597,11 @@ Alasan: ${reason}` : ""}`);
 var timeout = {
   name: "timeout",
   description: "Beri timeout pada member (detik)",
-  requiredPermission: import_discord5.PermissionFlagsBits.ModerateMembers,
+  requiredPermission: import_discord6.PermissionFlagsBits.ModerateMembers,
   args: [userArg, { name: "duration", type: "int" }, { ...reasonArg, rest: true }],
-  buildSlash: () => new import_discord5.SlashCommandBuilder().setName("timeout").setDescription("Beri timeout pada member").addUserOption((o) => o.setName("user").setDescription("Member yang di-timeout").setRequired(true)).addIntegerOption((o) => o.setName("duration").setDescription("Durasi dalam detik (maks 28 hari)").setMinValue(10).setMaxValue(2419200).setRequired(true)).addStringOption((o) => o.setName("reason").setDescription("Alasan")).toJSON(),
+  buildSlash: () => new import_discord6.SlashCommandBuilder().setName("timeout").setDescription("Beri timeout pada member").addUserOption((o) => o.setName("user").setDescription("Member yang di-timeout").setRequired(true)).addIntegerOption((o) => o.setName("duration").setDescription("Durasi dalam detik (maks 28 hari)").setMinValue(10).setMaxValue(2419200).setRequired(true)).addStringOption((o) => o.setName("reason").setDescription("Alasan")).toJSON(),
   async execute(ctx, args) {
-    const denied = guard(ctx, import_discord5.PermissionFlagsBits.ModerateMembers);
+    const denied = guard(ctx, import_discord6.PermissionFlagsBits.ModerateMembers);
     if (denied) return ctx.reply(denied);
     const target = args.user;
     if (!target) return ctx.reply("\u274C Member tidak ditemukan.");
@@ -108403,11 +108620,11 @@ Alasan: ${reason}` : ""}`);
 var clear = {
   name: "clear",
   description: "Hapus pesan massal di channel (maks 100)",
-  requiredPermission: import_discord5.PermissionFlagsBits.ManageMessages,
+  requiredPermission: import_discord6.PermissionFlagsBits.ManageMessages,
   args: [{ name: "amount", type: "int" }],
-  buildSlash: () => new import_discord5.SlashCommandBuilder().setName("clear").setDescription("Hapus pesan massal di channel").addIntegerOption((o) => o.setName("amount").setDescription("Jumlah pesan (1\u2013100)").setMinValue(1).setMaxValue(100).setRequired(true)).toJSON(),
+  buildSlash: () => new import_discord6.SlashCommandBuilder().setName("clear").setDescription("Hapus pesan massal di channel").addIntegerOption((o) => o.setName("amount").setDescription("Jumlah pesan (1\u2013100)").setMinValue(1).setMaxValue(100).setRequired(true)).toJSON(),
   async execute(ctx, args) {
-    const denied = guard(ctx, import_discord5.PermissionFlagsBits.ManageMessages);
+    const denied = guard(ctx, import_discord6.PermissionFlagsBits.ManageMessages);
     if (denied) return ctx.reply(denied);
     const ch = ctx.channel;
     if (typeof ch?.bulkDelete !== "function") return ctx.reply("\u274C Command ini hanya bisa dipakai di channel teks server.");
@@ -108420,12 +108637,12 @@ var clear = {
 };
 var moderationModule = {
   name: "moderation",
-  intents: [import_discord5.GatewayIntentBits.Guilds, import_discord5.GatewayIntentBits.GuildMessages, import_discord5.GatewayIntentBits.MessageContent],
+  intents: [import_discord6.GatewayIntentBits.Guilds, import_discord6.GatewayIntentBits.GuildMessages, import_discord6.GatewayIntentBits.MessageContent],
   commands: [kick, ban, timeout, clear]
 };
 
 // apps/worker/src/modules/quiz.ts
-var import_discord6 = __toESM(require_src2(), 1);
+var import_discord7 = __toESM(require_src2(), 1);
 var ACCENT3 = 5793266;
 var GREEN = 5763719;
 var RED = 15548997;
@@ -108439,13 +108656,13 @@ function topScores(s, n) {
   return [...s.scores.entries()].sort((a, b) => b[1] - a[1]).slice(0, n).map(([id, p], i) => `**${i + 1}.** ${s.names.get(id) ?? `<@${id}>`} \u2014 ${p} poin`).join("\n");
 }
 function questionRow(s, q) {
-  return new import_discord6.ActionRowBuilder().addComponents(
-    q.choices.map((_, i) => new import_discord6.ButtonBuilder().setCustomId(`quiz:${s.index}:${i}`).setLabel(letter(i)).setStyle(import_discord6.ButtonStyle.Primary))
+  return new import_discord7.ActionRowBuilder().addComponents(
+    q.choices.map((_, i) => new import_discord7.ButtonBuilder().setCustomId(`quiz:${s.index}:${i}`).setLabel(letter(i)).setStyle(import_discord7.ButtonStyle.Primary))
   );
 }
 function lockedRow(q) {
-  return new import_discord6.ActionRowBuilder().addComponents(
-    q.choices.map((_, i) => new import_discord6.ButtonBuilder().setLabel(letter(i)).setStyle(i === q.correctIndex ? import_discord6.ButtonStyle.Success : import_discord6.ButtonStyle.Secondary).setDisabled(true))
+  return new import_discord7.ActionRowBuilder().addComponents(
+    q.choices.map((_, i) => new import_discord7.ButtonBuilder().setCustomId(`quiz:locked:${i}`).setLabel(letter(i)).setStyle(i === q.correctIndex ? import_discord7.ButtonStyle.Success : import_discord7.ButtonStyle.Danger).setDisabled(true))
   );
 }
 async function nextQuestion(ctx, s) {
@@ -108470,7 +108687,7 @@ async function nextQuestion(ctx, s) {
   };
   const ch = await ctx.client.channels.fetch(s.channelId).catch(() => null);
   if (!ch?.isTextBased() || !("send" in ch)) return endQuiz(ctx, s, "kanal tidak tersedia");
-  const msg = await ch.send({ embeds: [embed], components: [questionRow(s, q)] }).catch((e) => {
+  const msg = await ch.send({ content: "<@&1555168151656996904>", embeds: [embed], components: [questionRow(s, q)] }).catch((e) => {
     recordError(ctx.botId, e);
     return null;
   });
@@ -108493,10 +108710,6 @@ async function reveal(ctx, s) {
       set: { quizScore: sql`${guildMembers.quizScore} + ${points}` }
     }).catch((e) => recordError(ctx.botId, e));
   }
-  const msg = s.message;
-  s.message = null;
-  if (msg) await msg.delete().catch(() => {
-  });
   const lines = [q.question, ""];
   lines.push(...q.choices.map((c, i) => `**${letter(i)}.** ${c}`));
   lines.push("", "\u23F0 **Waktu habis!**");
@@ -108508,23 +108721,24 @@ async function reveal(ctx, s) {
   }
   lines.push(`Jawaban yang benar adalah **${letter(q.correctIndex)}. ${q.choices[q.correctIndex]}**.`);
   if (q.explanation) lines.push(`\u{1F4A1} **Penjelasan:** *${q.explanation}*`);
-  const ch = await ctx.client.channels.fetch(s.channelId).catch(() => null);
-  if (ch?.isTextBased() && "send" in ch) {
-    await ch.send({
+  const msg = s.message;
+  s.message = null;
+  logger.info({ botId: ctx.botId, index: s.index, adaMsg: !!msg }, "reveal: mulai");
+  if (msg) {
+    await msg.edit({
       embeds: [{
         title: config2.title,
         description: lines.join("\n").slice(0, 4e3),
         color: winners.length > 0 ? GREEN : RED,
         footer: { text: `Soal ${s.index + 1}/${s.questions.length}` }
       }],
-      components: [lockedRow(q)],
-      // pemenang di-ping; tidak ada ping massal
-      allowedMentions: { parse: [], users: winners.slice(0, 50) }
-    }).catch((e) => recordError(ctx.botId, e));
+      components: [lockedRow(q)]
+    }).then(() => logger.info({ botId: ctx.botId }, "reveal: edit berhasil")).catch((e) => logger.error({ botId: ctx.botId, err: e instanceof Error ? e.message : String(e) }, "reveal: edit GAGAL"));
   }
-  s.nextTimer = setTimeout(() => {
-    void nextQuestion(ctx, s).catch((e) => recordError(ctx.botId, e));
-  }, 4e3);
+  if (s.timer) clearTimeout(s.timer);
+  if (s.nextTimer) clearTimeout(s.nextTimer);
+  s.stopped = true;
+  sessions.delete(sessionKey(ctx.botId, ctx.guild.id));
 }
 async function endQuiz(ctx, s, reason) {
   if (s.timer) clearTimeout(s.timer);
@@ -108554,7 +108768,7 @@ async function startQuiz(ctx, channel, starter, reply) {
     await reply("\u274C Belum ada soal. Tambahkan soal lewat dashboard (modul Quiz), lalu Save.");
     return;
   }
-  const questions = [...pack].sort(() => Math.random() - 0.5).slice(0, Math.min(config2.questionsPerSession ?? 10, pack.length));
+  const questions = [...pack].sort(() => Math.random() - 0.5).slice(0, 1);
   const session = {
     channelId: channel.id,
     starterId: starter.id,
@@ -108569,14 +108783,13 @@ async function startQuiz(ctx, channel, starter, reply) {
     stopped: false
   };
   sessions.set(key2, session);
-  await reply(`\u{1F9E0} **${config2.title}** dimulai di <#${channel.id}> \u2014 **${questions.length} soal**, ${fmtDuration(config2.timePerQuestionSec ?? 240)}/soal. Klik tombol untuk menjawab!`);
   await nextQuestion(ctx, session);
 }
 var quizCmd = {
   name: "quiz",
   description: "Kuis interaktif: start, stop, leaderboard",
   args: [{ name: "action", type: "string" }, { name: "rest", type: "string", rest: true }],
-  buildSlash: () => new import_discord6.SlashCommandBuilder().setName("quiz").setDescription("Kuis interaktif").addSubcommand((sc) => sc.setName("start").setDescription("Mulai kuis di channel ini")).addSubcommand((sc) => sc.setName("stop").setDescription("Hentikan kuis berjalan")).addSubcommand((sc) => sc.setName("leaderboard").setDescription("Top 10 skor kuis sepanjang masa")).toJSON(),
+  buildSlash: () => new import_discord7.SlashCommandBuilder().setName("quiz").setDescription("Kuis interaktif").addSubcommand((sc) => sc.setName("start").setDescription("Mulai kuis di channel ini")).addSubcommand((sc) => sc.setName("stop").setDescription("Hentikan kuis berjalan")).addSubcommand((sc) => sc.setName("leaderboard").setDescription("Top 10 skor kuis sepanjang masa")).toJSON(),
   async execute(ctx, args) {
     if (!ctx.guild || !ctx.member) return ctx.reply("\u274C Command ini hanya untuk server.");
     const action = String(args.action ?? "start").toLowerCase();
@@ -108589,7 +108802,7 @@ var quizCmd = {
     if (action === "stop") {
       const s = sessions.get(key2);
       if (!s) return ctx.reply("\u274C Tidak ada kuis berjalan.");
-      if (s.starterId !== ctx.user.id && !ctx.member.permissions.has(import_discord6.PermissionFlagsBits.ManageGuild)) {
+      if (s.starterId !== ctx.user.id && !ctx.member.permissions.has(import_discord7.PermissionFlagsBits.ManageGuild)) {
         return ctx.reply("\u274C Hanya pemandu kuis atau izin Manage Server yang bisa menghentikan.");
       }
       await endQuiz(modCtx, s, `dihentikan oleh ${ctx.user.tag}`);
@@ -108610,7 +108823,7 @@ var quizCmd = {
 };
 var quizModule = {
   name: "quiz",
-  intents: [import_discord6.GatewayIntentBits.Guilds, import_discord6.GatewayIntentBits.GuildMessages],
+  intents: [import_discord7.GatewayIntentBits.Guilds, import_discord7.GatewayIntentBits.GuildMessages],
   commands: [quizCmd],
   async onInteraction(ctx, interaction) {
     if (!interaction.isButton() || !interaction.channelId) return;
@@ -108635,12 +108848,12 @@ var quizModule = {
 };
 
 // apps/worker/src/modules/tickets.ts
-var import_discord7 = __toESM(require_src2(), 1);
+var import_discord8 = __toESM(require_src2(), 1);
 var cfg4 = (c) => c;
 var isGuildText = (ch) => Boolean(ch) && typeof ch === "object" && "permissionOverwrites" in ch;
 function isStaff(member, config2) {
   if (!member) return false;
-  if (member.permissions.has(import_discord7.PermissionFlagsBits.ManageGuild)) return true;
+  if (member.permissions.has(import_discord8.PermissionFlagsBits.ManageGuild)) return true;
   return Boolean(config2.staffRoleId && member.roles.cache.has(config2.staffRoleId));
 }
 async function openCount(botId, guildId, userId) {
@@ -108661,8 +108874,8 @@ async function findOpenByChannel(botId, guildId, channelId) {
   ));
   return row ?? null;
 }
-var closeRow = () => new import_discord7.ActionRowBuilder().addComponents(
-  new import_discord7.ButtonBuilder().setCustomId("ticket:close").setLabel("Tutup Tiket").setStyle(import_discord7.ButtonStyle.Danger).setEmoji("\u{1F512}")
+var closeRow = () => new import_discord8.ActionRowBuilder().addComponents(
+  new import_discord8.ButtonBuilder().setCustomId("ticket:close").setLabel("Tutup Tiket").setStyle(import_discord8.ButtonStyle.Danger).setEmoji("\u{1F512}")
 );
 async function createTicket(ctx, member, subject, reply) {
   const config2 = cfg4(ctx.config);
@@ -108672,16 +108885,16 @@ async function createTicket(ctx, member, subject, reply) {
   }
   const me = ctx.guild.members.me;
   if (!me) return void reply("\u274C Bot belum siap, coba lagi sebentar.");
-  const allow = [import_discord7.PermissionFlagsBits.ViewChannel, import_discord7.PermissionFlagsBits.SendMessages, import_discord7.PermissionFlagsBits.AttachFiles];
+  const allow = [import_discord8.PermissionFlagsBits.ViewChannel, import_discord8.PermissionFlagsBits.SendMessages, import_discord8.PermissionFlagsBits.AttachFiles];
   const channel = await ctx.guild.channels.create({
     name: `ticket-${member.user.username}`.toLowerCase().slice(0, 100),
-    type: import_discord7.ChannelType.GuildText,
+    type: import_discord8.ChannelType.GuildText,
     parent: config2.categoryId || null,
     permissionOverwrites: [
-      { id: ctx.guild.roles.everyone.id, deny: [import_discord7.PermissionFlagsBits.ViewChannel] },
+      { id: ctx.guild.roles.everyone.id, deny: [import_discord8.PermissionFlagsBits.ViewChannel] },
       { id: member.id, allow },
       ...config2.staffRoleId ? [{ id: config2.staffRoleId, allow }] : [],
-      { id: me.id, allow: [import_discord7.PermissionFlagsBits.ViewChannel, import_discord7.PermissionFlagsBits.SendMessages, import_discord7.PermissionFlagsBits.ManageChannels, import_discord7.PermissionFlagsBits.ReadMessageHistory] }
+      { id: me.id, allow: [import_discord8.PermissionFlagsBits.ViewChannel, import_discord8.PermissionFlagsBits.SendMessages, import_discord8.PermissionFlagsBits.ManageChannels, import_discord8.PermissionFlagsBits.ReadMessageHistory] }
     ]
   }).catch((e) => {
     recordError(ctx.botId, e);
@@ -108717,7 +108930,7 @@ async function closeTicket(ctx, channel, closedByTag, reply) {
     }
     const tch = await ctx.client.channels.fetch(config2.transcriptChannelId).catch(() => null);
     if (tch?.isTextBased() && "send" in tch) {
-      const file = new import_discord7.AttachmentBuilder(Buffer.from(lines.reverse().join("\n"), "utf8"), { name: `transkrip-${channel.name}.txt` });
+      const file = new import_discord8.AttachmentBuilder(Buffer.from(lines.reverse().join("\n"), "utf8"), { name: `transkrip-${channel.name}.txt` });
       await tch.send({ content: `\u{1F4C4} Transkrip tiket ${channel.name} (ditutup oleh ${closedByTag})`, files: [file] }).catch(() => {
       });
     }
@@ -108737,7 +108950,7 @@ var ticketCmd = {
     { name: "user", type: "user" },
     { name: "subject", type: "string", rest: true }
   ],
-  buildSlash: () => new import_discord7.SlashCommandBuilder().setName("ticket").setDescription("Kelola tiket support").addSubcommand((s) => s.setName("open").setDescription("Buka tiket baru").addStringOption((o) => o.setName("subject").setDescription("Subjek (kosong = isi lewat form)").setMaxLength(200))).addSubcommand((s) => s.setName("close").setDescription("Tutup tiket (di dalam kanal tiket)")).addSubcommand((s) => s.setName("add").setDescription("Tambahkan user ke tiket (staf)").addUserOption((o) => o.setName("user").setDescription("User yang ditambahkan").setRequired(true))).toJSON(),
+  buildSlash: () => new import_discord8.SlashCommandBuilder().setName("ticket").setDescription("Kelola tiket support").addSubcommand((s) => s.setName("open").setDescription("Buka tiket baru").addStringOption((o) => o.setName("subject").setDescription("Subjek (kosong = isi lewat form)").setMaxLength(200))).addSubcommand((s) => s.setName("close").setDescription("Tutup tiket (di dalam kanal tiket)")).addSubcommand((s) => s.setName("add").setDescription("Tambahkan user ke tiket (staf)").addUserOption((o) => o.setName("user").setDescription("User yang ditambahkan").setRequired(true))).toJSON(),
   async execute(ctx, args) {
     if (!ctx.guild || !ctx.member) return ctx.reply("\u274C Command ini hanya untuk server.");
     const config2 = cfg4(ctx.config);
@@ -108746,8 +108959,8 @@ var ticketCmd = {
       const subject = String(args.subject ?? "").trim();
       if (!subject) {
         if (!ctx.showModal) return ctx.reply("\u274C Tulis subjek: `!ticket open <subjek>`.");
-        const modal = new import_discord7.ModalBuilder().setCustomId("ticket:modal").setTitle("Tiket Baru").addComponents(new import_discord7.ActionRowBuilder().addComponents(
-          new import_discord7.TextInputBuilder().setCustomId("subject").setLabel("Subjek tiket").setStyle(import_discord7.TextInputStyle.Short).setRequired(true).setMaxLength(200)
+        const modal = new import_discord8.ModalBuilder().setCustomId("ticket:modal").setTitle("Tiket Baru").addComponents(new import_discord8.ActionRowBuilder().addComponents(
+          new import_discord8.TextInputBuilder().setCustomId("subject").setLabel("Subjek tiket").setStyle(import_discord8.TextInputStyle.Short).setRequired(true).setMaxLength(200)
         ));
         return void await ctx.showModal(modal);
       }
@@ -108787,7 +109000,7 @@ var ticketCmd = {
 };
 var ticketsModule = {
   name: "tickets",
-  intents: [import_discord7.GatewayIntentBits.Guilds, import_discord7.GatewayIntentBits.GuildMessages],
+  intents: [import_discord8.GatewayIntentBits.Guilds, import_discord8.GatewayIntentBits.GuildMessages],
   commands: [ticketCmd],
   async onInteraction(ctx, interaction) {
     if (interaction.isButton() && interaction.customId === "ticket:close") {
@@ -108823,14 +109036,14 @@ var ticketsModule = {
 };
 
 // apps/worker/src/modules/utilities.ts
-var import_discord8 = __toESM(require_src2(), 1);
+var import_discord9 = __toESM(require_src2(), 1);
 var ACCENT4 = 5793266;
 var optUser = (cmd) => cmd.addUserOption((o) => o.setName("user").setDescription("User (kosong = dirimu)"));
 var ping = {
   name: "ping",
   description: "Cek latensi bot",
   args: [],
-  buildSlash: () => new import_discord8.SlashCommandBuilder().setName("ping").setDescription("Cek latensi bot").toJSON(),
+  buildSlash: () => new import_discord9.SlashCommandBuilder().setName("ping").setDescription("Cek latensi bot").toJSON(),
   async execute(ctx) {
     await ctx.reply(`\u{1F3D3} Pong! Latensi gateway: \`${Math.max(0, ctx.client.ws.ping)}\` ms`);
   }
@@ -108839,7 +109052,7 @@ var avatar = {
   name: "avatar",
   description: "Tampilkan avatar user",
   args: [{ name: "user", type: "user" }],
-  buildSlash: () => optUser(new import_discord8.SlashCommandBuilder().setName("avatar").setDescription("Tampilkan avatar user")).toJSON(),
+  buildSlash: () => optUser(new import_discord9.SlashCommandBuilder().setName("avatar").setDescription("Tampilkan avatar user")).toJSON(),
   async execute(ctx, args) {
     const user = args.user?.user ?? ctx.user;
     await ctx.reply({
@@ -108855,7 +109068,7 @@ var userinfo = {
   name: "userinfo",
   description: "Info user",
   args: [{ name: "user", type: "user" }],
-  buildSlash: () => optUser(new import_discord8.SlashCommandBuilder().setName("userinfo").setDescription("Info user")).toJSON(),
+  buildSlash: () => optUser(new import_discord9.SlashCommandBuilder().setName("userinfo").setDescription("Info user")).toJSON(),
   async execute(ctx, args) {
     const member = args.user ?? ctx.member;
     const user = member?.user ?? ctx.user;
@@ -108881,7 +109094,7 @@ var serverinfo = {
   name: "serverinfo",
   description: "Info server",
   args: [],
-  buildSlash: () => new import_discord8.SlashCommandBuilder().setName("serverinfo").setDescription("Info server").toJSON(),
+  buildSlash: () => new import_discord9.SlashCommandBuilder().setName("serverinfo").setDescription("Info server").toJSON(),
   async execute(ctx) {
     if (!ctx.guild) return ctx.reply("\u274C Hanya di server.");
     const g = ctx.guild;
@@ -108907,7 +109120,7 @@ var calc = {
   name: "calc",
   description: "Kalkulator: + - * / ( ) %",
   args: [{ name: "expression", type: "string", rest: true }],
-  buildSlash: () => new import_discord8.SlashCommandBuilder().setName("calc").setDescription("Kalkulator").addStringOption((o) => o.setName("expression").setDescription("Contoh: (2+3)*4").setRequired(true).setMaxLength(100)).toJSON(),
+  buildSlash: () => new import_discord9.SlashCommandBuilder().setName("calc").setDescription("Kalkulator").addStringOption((o) => o.setName("expression").setDescription("Contoh: (2+3)*4").setRequired(true).setMaxLength(100)).toJSON(),
   async execute(ctx, args) {
     const expr = String(args.expression ?? "").trim().slice(0, 100);
     if (!expr) return ctx.reply("Contoh: `!calc (2+3)*4`");
@@ -108925,7 +109138,7 @@ var weather = {
   name: "weather",
   description: "Cuaca kota (sumber: wttr.in)",
   args: [{ name: "city", type: "string", rest: true }],
-  buildSlash: () => new import_discord8.SlashCommandBuilder().setName("weather").setDescription("Cuaca kota").addStringOption((o) => o.setName("city").setDescription("Nama kota, contoh: Jakarta").setRequired(true).setMaxLength(64)).toJSON(),
+  buildSlash: () => new import_discord9.SlashCommandBuilder().setName("weather").setDescription("Cuaca kota").addStringOption((o) => o.setName("city").setDescription("Nama kota, contoh: Jakarta").setRequired(true).setMaxLength(64)).toJSON(),
   async execute(ctx, args) {
     const city = sanitizeText(String(args.city ?? "").trim().slice(0, 64));
     if (!city || !/^[\p{L}\p{N}\s.,-]+$/u.test(city)) return ctx.reply("\u274C Sebutkan nama kota, contoh: `!weather Jakarta`");
@@ -108955,15 +109168,15 @@ var weather = {
 };
 var utilitiesModule = {
   name: "utilities",
-  intents: [import_discord8.GatewayIntentBits.Guilds, import_discord8.GatewayIntentBits.GuildMessages],
+  intents: [import_discord9.GatewayIntentBits.Guilds, import_discord9.GatewayIntentBits.GuildMessages],
   commands: [ping, avatar, userinfo, serverinfo, calc, weather]
 };
 
 // apps/worker/src/modules/welcome.ts
-var import_discord9 = __toESM(require_src2(), 1);
+var import_discord10 = __toESM(require_src2(), 1);
 var welcomeModule = {
   name: "welcome",
-  intents: [import_discord9.GatewayIntentBits.Guilds, import_discord9.GatewayIntentBits.GuildMembers],
+  intents: [import_discord10.GatewayIntentBits.Guilds, import_discord10.GatewayIntentBits.GuildMembers],
   commands: [],
   async onMemberAdd({ client, botId, guild, config: config2 }, member) {
     if (config2.enabled === false) return;
@@ -109000,15 +109213,16 @@ var MODULES = [
   customcmdModule,
   levelingModule,
   economyModule,
-  quizModule
+  quizModule,
+  ktpModule
 ];
 
 // apps/worker/src/runner.ts
 var ALL_INTENTS = [
-  import_discord10.GatewayIntentBits.Guilds,
-  import_discord10.GatewayIntentBits.GuildMessages,
-  import_discord10.GatewayIntentBits.MessageContent,
-  import_discord10.GatewayIntentBits.GuildMembers
+  import_discord11.GatewayIntentBits.Guilds,
+  import_discord11.GatewayIntentBits.GuildMessages,
+  import_discord11.GatewayIntentBits.MessageContent,
+  import_discord11.GatewayIntentBits.GuildMembers
 ];
 async function upsertGuild(botId, g) {
   await db.insert(botGuilds).values({ botId, discordGuildId: g.id, name: g.name }).onConflictDoUpdate({ target: [botGuilds.botId, botGuilds.discordGuildId], set: { name: g.name } }).catch((e) => logger.error({ err: e, botId }, "upsert guild gagal"));
@@ -109051,58 +109265,60 @@ var BotRunner = class {
     const enabled = botLevelConfigSchema.parse(cfgRow?.data ?? {}).modules;
     this.mods = MODULES.filter((m) => enabled.includes(m.name));
     const mods = this.mods;
-    const client = new import_discord10.Client({ intents: ALL_INTENTS });
+    const client = new import_discord11.Client({ intents: ALL_INTENTS });
     this.client = client;
-    client.once(import_discord10.Events.ClientReady, async (c) => {
+    client.once(import_discord11.Events.ClientReady, async (c) => {
       logger.info({ botId: bot.id, bot: c.user?.tag, guilds: c.guilds.cache.size, modules: mods.map((m) => m.name) }, "bot online");
       for (const g of c.guilds.cache.values()) await upsertGuild(bot.id, g);
       try {
         const body = mods.flatMap((m) => m.commands.map((cmd) => cmd.buildSlash()));
-        await c.rest.put(import_discord10.Routes.applicationCommands(bot.applicationId), { body });
+        await c.rest.put(import_discord11.Routes.applicationCommands(bot.applicationId), { body });
       } catch (e) {
         await recordError(bot.id, e);
       }
     });
-    client.on(import_discord10.Events.GuildCreate, (g) => void upsertGuild(bot.id, g));
-    client.on(import_discord10.Events.GuildDelete, (g) => {
+    client.on(import_discord11.Events.GuildCreate, (g) => void upsertGuild(bot.id, g));
+    client.on(import_discord11.Events.GuildDelete, (g) => {
       void db.delete(botGuilds).where(and(eq(botGuilds.botId, bot.id), eq(botGuilds.discordGuildId, g.id))).catch((e) => logger.error({ err: e }, "hapus guild gagal"));
     });
-    client.on(import_discord10.Events.InteractionCreate, (i) => {
+    client.on(import_discord11.Events.InteractionCreate, (i) => {
       if (i.isChatInputCommand()) void this.handleSlash(bot, i).catch((e) => recordError(bot.id, e));
       else void this.handleComponent(bot, i).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord10.Events.MessageCreate, (m) => {
+    client.on(import_discord11.Events.MessageCreate, (m) => {
       void this.handleMessage(bot, m).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord10.Events.GuildMemberAdd, (member) => {
+    client.on(import_discord11.Events.GuildMemberAdd, (member) => {
       void this.forModules(bot, member.guild?.id, async (mod, config2) => {
         await mod.onMemberAdd?.({ client: member.client, botId: bot.id, guild: member.guild, config: config2 }, member);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord10.Events.GuildMemberRemove, (member) => {
+    client.on(import_discord11.Events.GuildMemberRemove, (member) => {
       void this.forModules(bot, member.guild?.id, async (mod, config2) => {
         await mod.onMemberRemove?.({ client: member.client, botId: bot.id, guild: member.guild, config: config2 }, member);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord10.Events.GuildMemberUpdate, (oldMember, newMember) => {
+    client.on(import_discord11.Events.GuildMemberUpdate, (oldMember, newMember) => {
       void this.forModules(bot, newMember.guild?.id, async (mod, config2) => {
         await mod.onMemberUpdate?.({ client: newMember.client, botId: bot.id, guild: newMember.guild, config: config2 }, oldMember, newMember);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord10.Events.MessageDelete, (m) => {
+    client.on(import_discord11.Events.MessageDelete, (m) => {
       void this.forModules(bot, m.guild?.id, async (mod, config2) => {
         await mod.onMessageDelete?.({ client: m.client, botId: bot.id, guild: m.guild, config: config2 }, m);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord10.Events.MessageUpdate, (oldM, newM) => {
+    client.on(import_discord11.Events.MessageUpdate, (oldM, newM) => {
       void this.forModules(bot, newM.guild?.id, async (mod, config2) => {
         await mod.onMessageUpdate?.({ client: newM.client, botId: bot.id, guild: newM.guild, config: config2 }, oldM, newM);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord10.Events.Error, (e) => void recordError(bot.id, e));
-    client.on(import_discord10.Events.ShardError, (e) => void recordError(bot.id, e));
-    client.on(import_discord10.Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, "gateway terputus \u2014 discord.js reconnect otomatis"));
+    client.on(import_discord11.Events.Error, (e) => void recordError(bot.id, e));
+    client.on(import_discord11.Events.ShardError, (e) => void recordError(bot.id, e));
+    client.on(import_discord11.Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, "gateway terputus \u2014 discord.js reconnect otomatis"));
+    logger.info({ botId: this.botId }, "runner: memanggil client.login");
     await client.login(token);
+    logger.info({ botId: this.botId }, "runner: client.login selesai");
     this.startHeartbeat();
   }
   async stop() {
@@ -109135,7 +109351,15 @@ var BotRunner = class {
     const hit = this.cfgCache.get(key2);
     if (hit && hit.exp > Date.now()) return hit.v;
     const [row] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
-    const v = moduleSchemas[moduleName].parse((row?.data ?? {})[moduleName] ?? {});
+    const raw = (row?.data ?? {})[moduleName] ?? {};
+    let v;
+    if (moduleName === "quiz" && Array.isArray(raw.questions)) {
+      const { questions, ...rest } = raw;
+      v = moduleSchemas[moduleName].parse(rest);
+      v.questions = questions;
+    } else {
+      v = moduleSchemas[moduleName].parse(raw);
+    }
     this.cfgCache.set(key2, { v, exp: Date.now() + 6e4 });
     return v;
   }
@@ -109262,7 +109486,7 @@ var BotRunner = class {
       channel: message.channel,
       config: config2,
       reply: (payload) => message.reply({
-        ...typeof payload === "string" ? { content: payload } : { embeds: payload.embeds },
+        ...typeof payload === "string" ? { content: payload } : payload,
         allowedMentions: { parse: [] }
       })
     };
@@ -109282,7 +109506,9 @@ async function startBot(botId) {
   const runner = new BotRunner(botId);
   runners.set(botId, runner);
   try {
+    logger.info({ botId }, "startBot: panggil runner.start");
     await runner.start();
+    logger.info({ botId }, "startBot: runner.start selesai");
     attempts.delete(botId);
     logger.info({ botId }, "runner aktif");
   } catch (e) {
@@ -109315,9 +109541,11 @@ async function reloadBot(botId) {
   await startBot(botId);
 }
 async function main() {
+  logger.info("main: mulai ambil bot dari DB");
   const rows = await db.select({ id: bots.id }).from(bots).where(eq(bots.status, "running"));
   logger.info(`memuat ${rows.length} bot...`);
   for (const r of rows) await startBot(r.id);
+  logger.info("main: buat redis subscribe");
   const sub = createRedis();
   await sub.subscribe(BOTS_CHANNEL);
   sub.on("message", (channel, message) => {

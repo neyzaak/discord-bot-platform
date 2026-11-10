@@ -14,14 +14,11 @@ async function startBot(botId: number): Promise<void> {
   const runner = new BotRunner(botId);
   runners.set(botId, runner);
   try {
-    await runner.start();
-    attempts.delete(botId);
     logger.info({ botId }, 'startBot: panggil runner.start');
-    try {
-      await runner.start();
-      logger.info({ botId }, 'startBot: runner.start selesai');
-      attempts.delete(botId);
-      logger.info({ botId }, 'runner aktif');
+    await runner.start();
+    logger.info({ botId }, 'startBot: runner.start selesai');
+    attempts.delete(botId);
+    logger.info({ botId }, 'runner aktif');
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     await recordError(botId, e);
