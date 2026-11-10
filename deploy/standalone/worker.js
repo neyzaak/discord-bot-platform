@@ -108356,6 +108356,31 @@ async function renderKtp(user, guildName, data) {
   spacedCentered(ctx, `KARTU KOMUNITAS RESMI \u2022 ${guildName.toUpperCase()}`, W / 2, CY + CH - 20, 4);
   return canvas.toBuffer("image/png");
 }
+async function sendKtp(ctx, guildName, targetUser, targetId, data) {
+  if (canvasMod) {
+    try {
+      const buffer = await renderKtp(targetUser, guildName, data);
+      return ctx.reply({ files: [new import_discord3.AttachmentBuilder(buffer, { name: "ktp.png" })] });
+    } catch (e) {
+      await recordError(ctx.botId, e);
+    }
+  }
+  const embed = {
+    title: "\u{1FAAA} Kartu Tanda Penduduk",
+    description: [
+      `**Nama:** ${data.nama ?? targetUser.username}`,
+      `**ID Akun:** ${targetId}`,
+      `**Tempat/Tgl Lahir:** ${data.tempat ?? "-"}, ${data.tglLahir ?? "-"}`,
+      `**Jenis Kelamin:** ${data.gender ?? "-"}`,
+      `**Kota/Kab:** ${data.kota ?? "-"}`,
+      `**Agama:** ${data.agama ?? "-"}`,
+      `**Pekerjaan:** ${data.pekerjaan ?? "-"}`,
+      `**Status:** ${data.status ?? "-"}`
+    ].join("\n"),
+    color: 1981066
+  };
+  return ctx.reply({ embeds: [embed] });
+}
 var FIELD_MAP = {
   nama: "nama",
   tempat: "tempat",
@@ -108444,7 +108469,8 @@ var ktpSet = {
       changed.push(...parsed.changed);
     }
     await setKtp(ctx.botId, ctx.guild.id, ctx.user.id, patch);
-    return ctx.reply(`\u2705 Data KTP diperbarui: **${changed.join(", ")}**. Lihat dengan \`/ktp\` atau \`!ktp\`.`);
+    const data = await getKtp(ctx.botId, ctx.guild.id, ctx.user.id) ?? {};
+    return sendKtp(ctx, ctx.guild.name, ctx.user, ctx.user.id, data);
   }
 };
 var ktpView = {
@@ -108459,29 +108485,7 @@ var ktpView = {
     const targetId = targetMember?.id ?? ctx.user.id;
     const targetUser = targetMember?.user ?? ctx.user;
     const data = await getKtp(ctx.botId, ctx.guild.id, targetId) ?? {};
-    if (canvasMod) {
-      try {
-        const buffer = await renderKtp(targetUser, ctx.guild.name, data);
-        return ctx.reply({ files: [new import_discord3.AttachmentBuilder(buffer, { name: "ktp.png" })] });
-      } catch (e) {
-        await recordError(ctx.botId, e);
-      }
-    }
-    const embed = {
-      title: "\u{1FAAA} Kartu Tanda Penduduk",
-      description: [
-        `**Nama:** ${data.nama ?? targetUser.username}`,
-        `**ID Akun:** ${targetId}`,
-        `**Tempat/Tgl Lahir:** ${data.tempat ?? "-"}, ${data.tglLahir ?? "-"}`,
-        `**Jenis Kelamin:** ${data.gender ?? "-"}`,
-        `**Kota/Kab:** ${data.kota ?? "-"}`,
-        `**Agama:** ${data.agama ?? "-"}`,
-        `**Pekerjaan:** ${data.pekerjaan ?? "-"}`,
-        `**Status:** ${data.status ?? "-"}`
-      ].join("\n"),
-      color: 1981066
-    };
-    return ctx.reply({ embeds: [embed] });
+    return sendKtp(ctx, ctx.guild.name, targetUser, targetId, data);
   }
 };
 var ktpModule = {

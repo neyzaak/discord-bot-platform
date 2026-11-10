@@ -4,7 +4,7 @@
 } from 'discord.js';
 import { and, eq } from 'drizzle-orm';
 import { botConfigs, db, logger, recordError } from '@platform/core';
-import type { BotModule, ModuleCommand, ModuleCtx } from './types';
+import type { BotModule, CommandContext, ModuleCommand } from './types';
 
 let canvasMod: { createCanvas: (w: number, h: number) => any; loadImage: (url: string) => Promise<any> } | null = null;
 try {
@@ -223,6 +223,33 @@ async function renderKtp(user: any, guildName: string, data: KtpData): Promise<B
   return canvas.toBuffer('image/png');
 }
 
+async function sendKtp(ctx: CommandContext, guildName: string, targetUser: CommandContext['user'], targetId: string, data: KtpData): Promise<unknown> {
+  if (canvasMod) {
+    try {
+      const buffer = await renderKtp(targetUser, guildName, data);
+      return ctx.reply({ files: [new AttachmentBuilder(buffer, { name: 'ktp.png' })] });
+    } catch (e) {
+      await recordError(ctx.botId, e);
+    }
+  }
+
+  const embed: APIEmbed = {
+    title: '🪪 Kartu Tanda Penduduk',
+    description: [
+      `**Nama:** ${data.nama ?? targetUser.username}`,
+      `**ID Akun:** ${targetId}`,
+      `**Tempat/Tgl Lahir:** ${data.tempat ?? '-'}, ${data.tglLahir ?? '-'}`,
+      `**Jenis Kelamin:** ${data.gender ?? '-'}`,
+      `**Kota/Kab:** ${data.kota ?? '-'}`,
+      `**Agama:** ${data.agama ?? '-'}`,
+      `**Pekerjaan:** ${data.pekerjaan ?? '-'}`,
+      `**Status:** ${data.status ?? '-'}`,
+    ].join('\n'),
+    color: 0x1e3a8a,
+  };
+  return ctx.reply({ embeds: [embed] });
+}
+
 const FIELD_MAP: Record<string, keyof KtpData> = {
   nama: 'nama',
   tempat: 'tempat',
@@ -325,7 +352,8 @@ const ktpSet: ModuleCommand = {
     }
 
     await setKtp(ctx.botId, ctx.guild.id, ctx.user.id, patch);
-    return ctx.reply(`✅ Data KTP diperbarui: **${changed.join(', ')}**. Lihat dengan \`/ktp\` atau \`!ktp\`.`);
+    const data = await getKtp(ctx.botId, ctx.guild.id, ctx.user.id) ?? {};
+    return sendKtp(ctx, ctx.guild.name, ctx.user, ctx.user.id, data);
   },
 };
 
@@ -342,31 +370,7 @@ const ktpView: ModuleCommand = {
     const targetId = targetMember?.id ?? ctx.user.id;
     const targetUser = targetMember?.user ?? ctx.user;
     const data = await getKtp(ctx.botId, ctx.guild.id, targetId) ?? {};
-
-    if (canvasMod) {
-      try {
-        const buffer = await renderKtp(targetUser, ctx.guild.name, data);
-        return ctx.reply({ files: [new AttachmentBuilder(buffer, { name: 'ktp.png' })] });
-      } catch (e) {
-        await recordError(ctx.botId, e);
-      }
-    }
-
-    const embed: APIEmbed = {
-      title: '🪪 Kartu Tanda Penduduk',
-      description: [
-        `**Nama:** ${data.nama ?? targetUser.username}`,
-        `**ID Akun:** ${targetId}`,
-        `**Tempat/Tgl Lahir:** ${data.tempat ?? '-'}, ${data.tglLahir ?? '-'}`,
-        `**Jenis Kelamin:** ${data.gender ?? '-'}`,
-        `**Kota/Kab:** ${data.kota ?? '-'}`,
-        `**Agama:** ${data.agama ?? '-'}`,
-        `**Pekerjaan:** ${data.pekerjaan ?? '-'}`,
-        `**Status:** ${data.status ?? '-'}`,
-      ].join('\n'),
-      color: 0x1e3a8a,
-    };
-    return ctx.reply({ embeds: [embed] });
+    return sendKtp(ctx, ctx.guild.name, targetUser, targetId, data);
   },
 };
 
