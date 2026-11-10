@@ -131,7 +131,7 @@ export class BotRunner {
 
     client.on(Events.Error, (e) => void recordError(bot.id, e));
     client.on(Events.ShardError, (e) => void recordError(bot.id, e));
-    client.on(Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, 'gateway terputus â€” discord.js reconnect otomatis'));
+    client.on(Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, 'gateway terputus — discord.js reconnect otomatis'));
 
     logger.info({ botId: this.botId }, 'runner: memanggil client.login');
     await client.login(token);
@@ -177,7 +177,7 @@ export class BotRunner {
     const data = (row?.data as Record<string, unknown>) ?? {};
     const raw = (data[moduleName] as Record<string, unknown> ?? {}) as Record<string, unknown>;
     let v: Record<string, unknown>;
-    // Quiz menyimpan 5000 soal di data.quiz.questions â€” sudah divalidasi saat seed,
+    // Quiz menyimpan 5000 soal di data.quiz.questions — sudah divalidasi saat seed,
     // jangan re-parse ulang setiap kali config dibaca (berat dan bisa gagal).
     if (moduleName === 'quiz' && Array.isArray(raw.questions)) {
       const { questions, ...rest } = raw;
@@ -206,10 +206,10 @@ export class BotRunner {
     if (!mod || !cmd) return;
 
     const config = await this.guildConfig(bot, mod.name, interaction.guild.id);
-    if (config.enabled === false) return void interaction.reply({ content: 'âŒ Modul ini dinonaktifkan di server ini.', ephemeral: true }).catch(() => {});
+    if (config.enabled === false) return void interaction.reply({ content: '❌ Modul ini dinonaktifkan di server ini.', ephemeral: true }).catch(() => {});
 
     if (!(await this.notRateLimited(bot.id, interaction.guild.id, interaction.user.id, cmd.name))) {
-      return void interaction.reply({ content: 'â³ Terlalu cepat â€” coba lagi beberapa detik.', ephemeral: true }).catch(() => {});
+      return void interaction.reply({ content: '⏳ Terlalu cepat — coba lagi beberapa detik.', ephemeral: true }).catch(() => {});
     }
 
     const args: Record<string, unknown> = {};
@@ -230,6 +230,7 @@ export class BotRunner {
       showModal: (modal: ModalBuilder) => interaction.showModal(modal),
       reply: (payload: ReplyPayload) => {
         const base = { allowedMentions: { parse: [] as never[] } };
+        const vis = cmd.publicReply ? {} : { ephemeral: true as const };
         if (interaction.deferred) {
           const opts = typeof payload === 'string'
             ? { content: payload, ...base }
@@ -237,21 +238,24 @@ export class BotRunner {
           return interaction.editReply(opts);
         }
         const opts = typeof payload === 'string'
-          ? { content: payload, ephemeral: true, ...base }
-          : { embeds: payload.embeds, files: payload.files, ephemeral: true, ...base };
+          ? { content: payload, ...base, ...vis }
+          : { embeds: payload.embeds, files: payload.files, ...base, ...vis };
         return interaction.replied ? interaction.followUp(opts) : interaction.reply(opts);
       },
     };
 
     try {
-      if (cmd.defer) await interaction.deferReply({ ephemeral: true });
+      if (cmd.defer) await interaction.deferReply({ ephemeral: !cmd.publicReply });
       await cmd.execute(ctx, args);
       await db.insert(commandLogs).values({
         botId: bot.id, discordGuildId: interaction.guild.id, discordUserId: interaction.user.id, commandName: cmd.name,
       });
     } catch (e) {
       await recordError(bot.id, e);
-      await interaction.reply({ content: 'âŒ Terjadi kesalahan saat menjalankan command.', ephemeral: true }).catch(() => {});
+      const msg = { content: '❌ Terjadi kesalahan saat menjalankan command.' };
+      await (interaction.deferred || interaction.replied
+        ? interaction.editReply(msg)
+        : interaction.reply({ ...msg, ephemeral: true })).catch(() => {});
     }
   }
 
@@ -283,7 +287,7 @@ export class BotRunner {
       const config = await this.guildConfig(bot, customMod.name, message.guild.id);
       if (config.enabled === false) return;
       if (!(await this.notRateLimited(bot.id, message.guild.id, message.author.id, name))) {
-        return void message.reply({ content: 'â³ Terlalu cepat â€” coba lagi beberapa detik.', allowedMentions: { parse: [] } });
+        return void message.reply({ content: '⏳ Terlalu cepat — coba lagi beberapa detik.', allowedMentions: { parse: [] } });
       }
       const ctx = this.prefixContext(bot, message, config);
       const handled = await customMod.onPrefixCommand!(ctx, name, rest);
@@ -296,11 +300,11 @@ export class BotRunner {
     }
 
     if (!(await this.notRateLimited(bot.id, message.guild.id, message.author.id, cmd.name))) {
-      return void message.reply({ content: 'â³ Terlalu cepat â€” coba lagi beberapa detik.', allowedMentions: { parse: [] } });
+      return void message.reply({ content: '⏳ Terlalu cepat — coba lagi beberapa detik.', allowedMentions: { parse: [] } });
     }
 
     const config = await this.guildConfig(bot, mod.name, message.guild.id);
-    if (config.enabled === false) return void message.reply({ content: 'âŒ Modul ini dinonaktifkan di server ini.', allowedMentions: { parse: [] } });
+    if (config.enabled === false) return void message.reply({ content: '❌ Modul ini dinonaktifkan di server ini.', allowedMentions: { parse: [] } });
 
     const args = await parsePrefixArgs(cmd, message, rest);
     const ctx = this.prefixContext(bot, message, config);
@@ -312,7 +316,7 @@ export class BotRunner {
       });
     } catch (e) {
       await recordError(bot.id, e);
-      await message.reply({ content: 'âŒ Terjadi kesalahan saat menjalankan command.', allowedMentions: { parse: [] } }).catch(() => {});
+      await message.reply({ content: '❌ Terjadi kesalahan saat menjalankan command.', allowedMentions: { parse: [] } }).catch(() => {});
     }
   }
 

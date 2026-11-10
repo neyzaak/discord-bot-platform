@@ -301,6 +301,7 @@ function parseKtpPairs(text: string): { patch: Partial<KtpData>; changed: string
 const ktpSet: ModuleCommand = {
   name: 'ktpset', description: 'Isi data KTP kamu (bisa beberapa field sekaligus)',
   defer: true,
+  publicReply: true,
   args: [
     { name: 'field', type: 'string' },
     { name: 'value', type: 'string', rest: true },
@@ -360,6 +361,7 @@ const ktpSet: ModuleCommand = {
 const ktpView: ModuleCommand = {
   name: 'ktp', description: 'Lihat KTP kamu atau user lain',
   defer: true,
+  publicReply: true,
   args: [{ name: 'user', type: 'user' }],
   buildSlash: () => new SlashCommandBuilder()
     .setName('ktp').setDescription('Lihat KTP')

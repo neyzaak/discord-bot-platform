@@ -26,6 +26,8 @@ export interface ModuleCommand {
   requiredPermission?: bigint;
   /** Defer balasan slash command (untuk proses lambat > 3 detik, mis. render gambar). */
   defer?: boolean;
+  /** Balasan slash command terlihat semua orang (default ephemeral). */
+  publicReply?: boolean;
   args: Array<{ name: string; type: 'user' | 'int' | 'string'; rest?: boolean }>;
   buildSlash: () => RESTPostAPIApplicationCommandsJSONBody;
   execute: (ctx: CommandContext, args: Record<string, unknown>) => Promise<unknown>;

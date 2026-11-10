@@ -108433,6 +108433,7 @@ var ktpSet = {
   name: "ktpset",
   description: "Isi data KTP kamu (bisa beberapa field sekaligus)",
   defer: true,
+  publicReply: true,
   args: [
     { name: "field", type: "string" },
     { name: "value", type: "string", rest: true },
@@ -108477,6 +108478,7 @@ var ktpView = {
   name: "ktp",
   description: "Lihat KTP kamu atau user lain",
   defer: true,
+  publicReply: true,
   args: [{ name: "user", type: "user" }],
   buildSlash: () => new import_discord3.SlashCommandBuilder().setName("ktp").setDescription("Lihat KTP").addUserOption((o) => o.setName("user").setDescription("User (kosong = dirimu)")).toJSON(),
   async execute(ctx, args) {
@@ -109460,7 +109462,7 @@ var BotRunner = class {
     });
     client.on(import_discord11.Events.Error, (e) => void recordError(bot.id, e));
     client.on(import_discord11.Events.ShardError, (e) => void recordError(bot.id, e));
-    client.on(import_discord11.Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, "gateway terputus \xE2\u20AC\u201D discord.js reconnect otomatis"));
+    client.on(import_discord11.Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, "gateway terputus \u2014 discord.js reconnect otomatis"));
     logger.info({ botId: this.botId }, "runner: memanggil client.login");
     await client.login(token);
     logger.info({ botId: this.botId }, "runner: client.login selesai");
@@ -109523,10 +109525,10 @@ var BotRunner = class {
     const cmd = mod?.commands.find((c) => c.name === interaction.commandName);
     if (!mod || !cmd) return;
     const config2 = await this.guildConfig(bot, mod.name, interaction.guild.id);
-    if (config2.enabled === false) return void interaction.reply({ content: "\xE2\x9D\u0152 Modul ini dinonaktifkan di server ini.", ephemeral: true }).catch(() => {
+    if (config2.enabled === false) return void interaction.reply({ content: "\u274C Modul ini dinonaktifkan di server ini.", ephemeral: true }).catch(() => {
     });
     if (!await this.notRateLimited(bot.id, interaction.guild.id, interaction.user.id, cmd.name)) {
-      return void interaction.reply({ content: "\xE2\x8F\xB3 Terlalu cepat \xE2\u20AC\u201D coba lagi beberapa detik.", ephemeral: true }).catch(() => {
+      return void interaction.reply({ content: "\u23F3 Terlalu cepat \u2014 coba lagi beberapa detik.", ephemeral: true }).catch(() => {
       });
     }
     const args = {};
@@ -109546,16 +109548,17 @@ var BotRunner = class {
       showModal: (modal) => interaction.showModal(modal),
       reply: (payload) => {
         const base = { allowedMentions: { parse: [] } };
+        const vis = cmd.publicReply ? {} : { ephemeral: true };
         if (interaction.deferred) {
           const opts2 = typeof payload === "string" ? { content: payload, ...base } : { embeds: payload.embeds, files: payload.files, ...base };
           return interaction.editReply(opts2);
         }
-        const opts = typeof payload === "string" ? { content: payload, ephemeral: true, ...base } : { embeds: payload.embeds, files: payload.files, ephemeral: true, ...base };
+        const opts = typeof payload === "string" ? { content: payload, ...base, ...vis } : { embeds: payload.embeds, files: payload.files, ...base, ...vis };
         return interaction.replied ? interaction.followUp(opts) : interaction.reply(opts);
       }
     };
     try {
-      if (cmd.defer) await interaction.deferReply({ ephemeral: true });
+      if (cmd.defer) await interaction.deferReply({ ephemeral: !cmd.publicReply });
       await cmd.execute(ctx, args);
       await db.insert(commandLogs).values({
         botId: bot.id,
@@ -109565,7 +109568,8 @@ var BotRunner = class {
       });
     } catch (e) {
       await recordError(bot.id, e);
-      await interaction.reply({ content: "\xE2\x9D\u0152 Terjadi kesalahan saat menjalankan command.", ephemeral: true }).catch(() => {
+      const msg = { content: "\u274C Terjadi kesalahan saat menjalankan command." };
+      await (interaction.deferred || interaction.replied ? interaction.editReply(msg) : interaction.reply({ ...msg, ephemeral: true })).catch(() => {
       });
     }
   }
@@ -109593,7 +109597,7 @@ var BotRunner = class {
       const config3 = await this.guildConfig(bot, customMod.name, message.guild.id);
       if (config3.enabled === false) return;
       if (!await this.notRateLimited(bot.id, message.guild.id, message.author.id, name)) {
-        return void message.reply({ content: "\xE2\x8F\xB3 Terlalu cepat \xE2\u20AC\u201D coba lagi beberapa detik.", allowedMentions: { parse: [] } });
+        return void message.reply({ content: "\u23F3 Terlalu cepat \u2014 coba lagi beberapa detik.", allowedMentions: { parse: [] } });
       }
       const ctx2 = this.prefixContext(bot, message, config3);
       const handled = await customMod.onPrefixCommand(ctx2, name, rest);
@@ -109608,10 +109612,10 @@ var BotRunner = class {
       return;
     }
     if (!await this.notRateLimited(bot.id, message.guild.id, message.author.id, cmd.name)) {
-      return void message.reply({ content: "\xE2\x8F\xB3 Terlalu cepat \xE2\u20AC\u201D coba lagi beberapa detik.", allowedMentions: { parse: [] } });
+      return void message.reply({ content: "\u23F3 Terlalu cepat \u2014 coba lagi beberapa detik.", allowedMentions: { parse: [] } });
     }
     const config2 = await this.guildConfig(bot, mod.name, message.guild.id);
-    if (config2.enabled === false) return void message.reply({ content: "\xE2\x9D\u0152 Modul ini dinonaktifkan di server ini.", allowedMentions: { parse: [] } });
+    if (config2.enabled === false) return void message.reply({ content: "\u274C Modul ini dinonaktifkan di server ini.", allowedMentions: { parse: [] } });
     const args = await parsePrefixArgs(cmd, message, rest);
     const ctx = this.prefixContext(bot, message, config2);
     try {
@@ -109624,7 +109628,7 @@ var BotRunner = class {
       });
     } catch (e) {
       await recordError(bot.id, e);
-      await message.reply({ content: "\xE2\x9D\u0152 Terjadi kesalahan saat menjalankan command.", allowedMentions: { parse: [] } }).catch(() => {
+      await message.reply({ content: "\u274C Terjadi kesalahan saat menjalankan command.", allowedMentions: { parse: [] } }).catch(() => {
       });
     }
   }
