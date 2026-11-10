@@ -108148,7 +108148,7 @@ var canvasMod = null;
 try {
   canvasMod = __require("@napi-rs/canvas");
 } catch (e) {
-  logger.warn({ err: e }, "canvas tidak tersedia \xE2\u20AC\u201D /ktp fallback embed");
+  logger.warn({ err: e }, "canvas tidak tersedia \u2014 /ktp fallback embed");
 }
 var createCanvas = canvasMod?.createCanvas ?? ((w, h) => {
   throw new Error("canvas not available");
@@ -108174,8 +108174,8 @@ function roundRect(ctx, x, y, w, h, r) {
 function clampText(ctx, text2, maxW) {
   if (ctx.measureText(text2).width <= maxW) return text2;
   let cut = text2;
-  while (cut.length > 0 && ctx.measureText(cut + "\xE2\u20AC\xA6").width > maxW) cut = cut.slice(0, -1);
-  return cut + "\xE2\u20AC\xA6";
+  while (cut.length > 0 && ctx.measureText(cut + "\u2026").width > maxW) cut = cut.slice(0, -1);
+  return cut + "\u2026";
 }
 function star(ctx, cx, cy, r) {
   ctx.beginPath();
@@ -108353,36 +108353,82 @@ async function renderKtp(user, guildName, data) {
   ctx.textAlign = "left";
   ctx.fillStyle = "#3d63ad";
   ctx.font = "bold 19px sans-serif";
-  spacedCentered(ctx, `KARTU KOMUNITAS RESMI \xE2\u20AC\xA2 ${guildName.toUpperCase()}`, W / 2, CY + CH - 20, 4);
+  spacedCentered(ctx, `KARTU KOMUNITAS RESMI \u2022 ${guildName.toUpperCase()}`, W / 2, CY + CH - 20, 4);
   return canvas.toBuffer("image/png");
 }
+var FIELD_MAP = {
+  nama: "nama",
+  tempat: "tempat",
+  tgllahir: "tglLahir",
+  "tgl lahir": "tglLahir",
+  gender: "gender",
+  "jenis kelamin": "gender",
+  kelamin: "gender",
+  kota: "kota",
+  "kota/kab": "kota",
+  kab: "kota",
+  agama: "agama",
+  pekerjaan: "pekerjaan",
+  kerja: "pekerjaan",
+  status: "status"
+};
+var LABELS = {
+  nama: "Nama",
+  tempat: "Tempat",
+  tglLahir: "Tgl Lahir",
+  gender: "Jenis Kelamin",
+  kota: "Kota/Kab",
+  agama: "Agama",
+  pekerjaan: "Pekerjaan",
+  status: "Status"
+};
+var GENDERS = [
+  { name: "Laki-laki", value: "Laki-laki" },
+  { name: "Perempuan", value: "Perempuan" }
+];
+var AGAMAS = ["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"].map((a) => ({ name: a, value: a }));
 var ktpSet = {
   name: "ktpset",
-  description: "Set data KTP kamu (nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status)",
+  description: "Isi data KTP kamu (bisa beberapa field sekaligus)",
   args: [
     { name: "field", type: "string" },
-    { name: "value", type: "string", rest: true }
+    { name: "value", type: "string", rest: true },
+    { name: "nama", type: "string" },
+    { name: "tempat", type: "string" },
+    { name: "tgllahir", type: "string" },
+    { name: "gender", type: "string" },
+    { name: "kota", type: "string" },
+    { name: "agama", type: "string" },
+    { name: "pekerjaan", type: "string" },
+    { name: "status", type: "string" }
   ],
-  buildSlash: () => new import_discord3.SlashCommandBuilder().setName("ktpset").setDescription("Isi data KTP kamu").addStringOption((o) => o.setName("field").setDescription("Field: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status").setRequired(true)).addStringOption((o) => o.setName("value").setDescription("Nilai field").setRequired(true)).toJSON(),
+  buildSlash: () => new import_discord3.SlashCommandBuilder().setName("ktpset").setDescription("Isi data KTP kamu (bisa beberapa field sekaligus)").addStringOption((o) => o.setName("nama").setDescription("Nama lengkap")).addStringOption((o) => o.setName("tempat").setDescription("Tempat lahir")).addStringOption((o) => o.setName("tgllahir").setDescription("Tanggal lahir, cth: 18 Agustus 2010")).addStringOption((o) => o.setName("gender").setDescription("Jenis kelamin").addChoices(...GENDERS)).addStringOption((o) => o.setName("kota").setDescription("Kota/Kabupaten")).addStringOption((o) => o.setName("agama").setDescription("Agama").addChoices(...AGAMAS)).addStringOption((o) => o.setName("pekerjaan").setDescription("Pekerjaan")).addStringOption((o) => o.setName("status").setDescription("Status, cth: Jomblo")).toJSON(),
   async execute(ctx, args) {
-    if (!ctx.guild || !ctx.user) return ctx.reply("\xE2\x9D\u0152 Hanya di server.");
-    const field = String(args.field ?? "").toLowerCase();
-    const map = {
-      nama: "nama",
-      tempat: "tempat",
-      tgllahir: "tglLahir",
-      gender: "gender",
-      kota: "kota",
-      agama: "agama",
-      pekerjaan: "pekerjaan",
-      status: "status"
-    };
-    const key2 = map[field];
-    if (!key2) return ctx.reply("\xE2\x9D\u0152 Field tidak dikenal. Pilih: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status.");
-    const value = String(args.value ?? "").trim();
-    if (!value) return ctx.reply("\xE2\x9D\u0152 Nilai tidak boleh kosong.");
-    await setKtp(ctx.botId, ctx.guild.id, ctx.user.id, { [key2]: value });
-    return ctx.reply("\xE2\u0153\u2026 Data KTP diperbarui.");
+    if (!ctx.guild || !ctx.user) return ctx.reply("\u274C Hanya di server.");
+    const patch = {};
+    const changed = [];
+    for (const key2 of Object.keys(LABELS)) {
+      const v = String(args[key2] ?? "").trim();
+      if (!v) continue;
+      patch[key2] = v;
+      changed.push(LABELS[key2]);
+    }
+    if (changed.length === 0) {
+      const field = String(args.field ?? "").toLowerCase().trim();
+      const key2 = FIELD_MAP[field];
+      const value = String(args.value ?? "").trim();
+      if (!key2 || !value) {
+        return ctx.reply([
+          "\u{1F4DD} **Cara isi KTP**",
+          "Slash (bisa sekaligus): `/ktpset nama:Tensun tempat:Lutim tgllahir:18 Agustus 2010 gender:Laki-laki kota:Luwu Timur agama:Kristen pekerjaan:Siswa status:Jomblo` \u2014 isi yang perlu saja.",
+          "Prefix: `!ktpset nama Tensun` (field: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status)."
+        ].join("\n"));
+      }
+      patch[key2] = value;
+      changed.push(LABELS[key2]);
+    }
+    await setKtp(ctx.botId, ctx.guild.id, ctx.user.id, patch);
+    return ctx.reply(`\u2705 Data KTP diperbarui: **${changed.join(", ")}**. Lihat dengan \`/ktp\` atau \`!ktp\`.`);
   }
 };
 var ktpView = {
@@ -108391,7 +108437,7 @@ var ktpView = {
   args: [{ name: "user", type: "user" }],
   buildSlash: () => new import_discord3.SlashCommandBuilder().setName("ktp").setDescription("Lihat KTP").addUserOption((o) => o.setName("user").setDescription("User (kosong = dirimu)")).toJSON(),
   async execute(ctx, args) {
-    if (!ctx.guild || !ctx.user) return ctx.reply("\xE2\x9D\u0152 Hanya di server.");
+    if (!ctx.guild || !ctx.user) return ctx.reply("\u274C Hanya di server.");
     const targetMember = args.user;
     const targetId = targetMember?.id ?? ctx.user.id;
     const targetUser = targetMember?.user ?? ctx.user;
@@ -108405,7 +108451,7 @@ var ktpView = {
       }
     }
     const embed = {
-      title: "\xF0\u0178\xAA\xAA Kartu Tanda Penduduk",
+      title: "\u{1FAAA} Kartu Tanda Penduduk",
       description: [
         `**Nama:** ${data.nama ?? targetUser.username}`,
         `**ID Akun:** ${targetId}`,
@@ -109471,7 +109517,7 @@ var BotRunner = class {
       config: config2,
       showModal: (modal) => interaction.showModal(modal),
       reply: (payload) => {
-        const opts = typeof payload === "string" ? { content: payload, ephemeral: true, allowedMentions: { parse: [] } } : { embeds: payload.embeds, ephemeral: true, allowedMentions: { parse: [] } };
+        const opts = typeof payload === "string" ? { content: payload, ephemeral: true, allowedMentions: { parse: [] } } : { embeds: payload.embeds, files: payload.files, ephemeral: true, allowedMentions: { parse: [] } };
         return interaction.replied ? interaction.followUp(opts) : interaction.reply(opts);
       }
     };

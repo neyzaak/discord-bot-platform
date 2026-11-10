@@ -222,7 +222,7 @@ export class BotRunner {
       reply: (payload: ReplyPayload) => {
         const opts = typeof payload === 'string'
           ? { content: payload, ephemeral: true, allowedMentions: { parse: [] as never[] } }
-          : { embeds: payload.embeds, ephemeral: true, allowedMentions: { parse: [] as never[] } };
+          : { embeds: payload.embeds, files: payload.files, ephemeral: true, allowedMentions: { parse: [] as never[] } };
         return interaction.replied ? interaction.followUp(opts) : interaction.reply(opts);
       },
     };

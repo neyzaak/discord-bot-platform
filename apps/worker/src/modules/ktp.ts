@@ -11,7 +11,7 @@ try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   canvasMod = require('@napi-rs/canvas');
 } catch (e) {
-  logger.warn({ err: e }, 'canvas tidak tersedia â€” /ktp fallback embed');
+  logger.warn({ err: e }, 'canvas tidak tersedia — /ktp fallback embed');
 }
 const createCanvas = canvasMod?.createCanvas ?? ((w: number, h: number) => { throw new Error('canvas not available'); });
 const loadImage = canvasMod?.loadImage ?? (async (url: string) => { throw new Error('canvas not available'); });
@@ -40,8 +40,8 @@ function roundRect(ctx: any, x: number, y: number, w: number, h: number, r: numb
 function clampText(ctx: any, text: string, maxW: number): string {
   if (ctx.measureText(text).width <= maxW) return text;
   let cut = text;
-  while (cut.length > 0 && ctx.measureText(cut + 'â€¦').width > maxW) cut = cut.slice(0, -1);
-  return cut + 'â€¦';
+  while (cut.length > 0 && ctx.measureText(cut + '…').width > maxW) cut = cut.slice(0, -1);
+  return cut + '…';
 }
 
 function star(ctx: any, cx: number, cy: number, r: number): void {
@@ -218,34 +218,94 @@ async function renderKtp(user: any, guildName: string, data: KtpData): Promise<B
   // Footer
   ctx.fillStyle = '#3d63ad';
   ctx.font = 'bold 19px sans-serif';
-  spacedCentered(ctx, `KARTU KOMUNITAS RESMI â€¢ ${guildName.toUpperCase()}`, W / 2, CY + CH - 20, 4);
+  spacedCentered(ctx, `KARTU KOMUNITAS RESMI • ${guildName.toUpperCase()}`, W / 2, CY + CH - 20, 4);
 
   return canvas.toBuffer('image/png');
 }
 
+const FIELD_MAP: Record<string, keyof KtpData> = {
+  nama: 'nama',
+  tempat: 'tempat',
+  tgllahir: 'tglLahir',
+  'tgl lahir': 'tglLahir',
+  gender: 'gender',
+  'jenis kelamin': 'gender',
+  kelamin: 'gender',
+  kota: 'kota',
+  'kota/kab': 'kota',
+  kab: 'kota',
+  agama: 'agama',
+  pekerjaan: 'pekerjaan',
+  kerja: 'pekerjaan',
+  status: 'status',
+};
+
+const LABELS: Record<keyof KtpData, string> = {
+  nama: 'Nama', tempat: 'Tempat', tglLahir: 'Tgl Lahir', gender: 'Jenis Kelamin',
+  kota: 'Kota/Kab', agama: 'Agama', pekerjaan: 'Pekerjaan', status: 'Status',
+};
+
+const GENDERS = [
+  { name: 'Laki-laki', value: 'Laki-laki' },
+  { name: 'Perempuan', value: 'Perempuan' },
+];
+const AGAMAS = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'].map((a) => ({ name: a, value: a }));
+
 const ktpSet: ModuleCommand = {
-  name: 'ktpset', description: 'Set data KTP kamu (nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status)',
+  name: 'ktpset', description: 'Isi data KTP kamu (bisa beberapa field sekaligus)',
   args: [
     { name: 'field', type: 'string' },
     { name: 'value', type: 'string', rest: true },
+    { name: 'nama', type: 'string' },
+    { name: 'tempat', type: 'string' },
+    { name: 'tgllahir', type: 'string' },
+    { name: 'gender', type: 'string' },
+    { name: 'kota', type: 'string' },
+    { name: 'agama', type: 'string' },
+    { name: 'pekerjaan', type: 'string' },
+    { name: 'status', type: 'string' },
   ],
   buildSlash: () => new SlashCommandBuilder()
-    .setName('ktpset').setDescription('Isi data KTP kamu')
-    .addStringOption((o) => o.setName('field').setDescription('Field: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status').setRequired(true))
-    .addStringOption((o) => o.setName('value').setDescription('Nilai field').setRequired(true)).toJSON(),
+    .setName('ktpset').setDescription('Isi data KTP kamu (bisa beberapa field sekaligus)')
+    .addStringOption((o) => o.setName('nama').setDescription('Nama lengkap'))
+    .addStringOption((o) => o.setName('tempat').setDescription('Tempat lahir'))
+    .addStringOption((o) => o.setName('tgllahir').setDescription('Tanggal lahir, cth: 18 Agustus 2010'))
+    .addStringOption((o) => o.setName('gender').setDescription('Jenis kelamin').addChoices(...GENDERS))
+    .addStringOption((o) => o.setName('kota').setDescription('Kota/Kabupaten'))
+    .addStringOption((o) => o.setName('agama').setDescription('Agama').addChoices(...AGAMAS))
+    .addStringOption((o) => o.setName('pekerjaan').setDescription('Pekerjaan'))
+    .addStringOption((o) => o.setName('status').setDescription('Status, cth: Jomblo'))
+    .toJSON(),
   async execute(ctx, args) {
-    if (!ctx.guild || !ctx.user) return ctx.reply('âŒ Hanya di server.');
-    const field = String(args.field ?? '').toLowerCase();
-    const map: Record<string, keyof KtpData> = {
-      nama: 'nama', tempat: 'tempat', tgllahir: 'tglLahir', gender: 'gender',
-      kota: 'kota', agama: 'agama', pekerjaan: 'pekerjaan', status: 'status',
-    };
-    const key = map[field];
-    if (!key) return ctx.reply('âŒ Field tidak dikenal. Pilih: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status.');
-    const value = String(args.value ?? '').trim();
-    if (!value) return ctx.reply('âŒ Nilai tidak boleh kosong.');
-    await setKtp(ctx.botId, ctx.guild.id, ctx.user.id, { [key]: value });
-    return ctx.reply('âœ… Data KTP diperbarui.');
+    if (!ctx.guild || !ctx.user) return ctx.reply('❌ Hanya di server.');
+
+    const patch: Partial<KtpData> = {};
+    const changed: string[] = [];
+    for (const key of Object.keys(LABELS) as Array<keyof KtpData>) {
+      const v = String(args[key] ?? '').trim();
+      if (!v) continue;
+      patch[key] = v;
+      changed.push(LABELS[key]);
+    }
+
+    // Prefix: !ktpset <field> <value>
+    if (changed.length === 0) {
+      const field = String(args.field ?? '').toLowerCase().trim();
+      const key = FIELD_MAP[field];
+      const value = String(args.value ?? '').trim();
+      if (!key || !value) {
+        return ctx.reply([
+          '📝 **Cara isi KTP**',
+          'Slash (bisa sekaligus): `/ktpset nama:Tensun tempat:Lutim tgllahir:18 Agustus 2010 gender:Laki-laki kota:Luwu Timur agama:Kristen pekerjaan:Siswa status:Jomblo` — isi yang perlu saja.',
+          'Prefix: `!ktpset nama Tensun` (field: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status).',
+        ].join('\n'));
+      }
+      patch[key] = value;
+      changed.push(LABELS[key]);
+    }
+
+    await setKtp(ctx.botId, ctx.guild.id, ctx.user.id, patch);
+    return ctx.reply(`✅ Data KTP diperbarui: **${changed.join(', ')}**. Lihat dengan \`/ktp\` atau \`!ktp\`.`);
   },
 };
 
@@ -256,7 +316,7 @@ const ktpView: ModuleCommand = {
     .setName('ktp').setDescription('Lihat KTP')
     .addUserOption((o) => o.setName('user').setDescription('User (kosong = dirimu)')).toJSON(),
   async execute(ctx, args) {
-    if (!ctx.guild || !ctx.user) return ctx.reply('âŒ Hanya di server.');
+    if (!ctx.guild || !ctx.user) return ctx.reply('❌ Hanya di server.');
     const targetMember = args.user as GuildMember | null;
     const targetId = targetMember?.id ?? ctx.user.id;
     const targetUser = targetMember?.user ?? ctx.user;
@@ -272,7 +332,7 @@ const ktpView: ModuleCommand = {
     }
 
     const embed: APIEmbed = {
-      title: 'ðŸªª Kartu Tanda Penduduk',
+      title: '🪪 Kartu Tanda Penduduk',
       description: [
         `**Nama:** ${data.nama ?? targetUser.username}`,
         `**ID Akun:** ${targetId}`,
@@ -294,4 +354,3 @@ export const ktpModule: BotModule = {
   intents: [GatewayIntentBits.Guilds],
   commands: [ktpView, ktpSet],
 };
-
