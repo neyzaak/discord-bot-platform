@@ -108390,6 +108390,7 @@ var AGAMAS = ["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"].map(
 var ktpSet = {
   name: "ktpset",
   description: "Isi data KTP kamu (bisa beberapa field sekaligus)",
+  defer: true,
   args: [
     { name: "field", type: "string" },
     { name: "value", type: "string", rest: true },
@@ -108434,6 +108435,7 @@ var ktpSet = {
 var ktpView = {
   name: "ktp",
   description: "Lihat KTP kamu atau user lain",
+  defer: true,
   args: [{ name: "user", type: "user" }],
   buildSlash: () => new import_discord3.SlashCommandBuilder().setName("ktp").setDescription("Lihat KTP").addUserOption((o) => o.setName("user").setDescription("User (kosong = dirimu)")).toJSON(),
   async execute(ctx, args) {
@@ -109524,11 +109526,17 @@ var BotRunner = class {
       config: config2,
       showModal: (modal) => interaction.showModal(modal),
       reply: (payload) => {
-        const opts = typeof payload === "string" ? { content: payload, ephemeral: true, allowedMentions: { parse: [] } } : { embeds: payload.embeds, files: payload.files, ephemeral: true, allowedMentions: { parse: [] } };
+        const base = { allowedMentions: { parse: [] } };
+        if (interaction.deferred) {
+          const opts2 = typeof payload === "string" ? { content: payload, ...base } : { embeds: payload.embeds, files: payload.files, ...base };
+          return interaction.editReply(opts2);
+        }
+        const opts = typeof payload === "string" ? { content: payload, ephemeral: true, ...base } : { embeds: payload.embeds, files: payload.files, ephemeral: true, ...base };
         return interaction.replied ? interaction.followUp(opts) : interaction.reply(opts);
       }
     };
     try {
+      if (cmd.defer) await interaction.deferReply({ ephemeral: true });
       await cmd.execute(ctx, args);
       await db.insert(commandLogs).values({
         botId: bot.id,

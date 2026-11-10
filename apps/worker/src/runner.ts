@@ -229,14 +229,22 @@ export class BotRunner {
       config,
       showModal: (modal: ModalBuilder) => interaction.showModal(modal),
       reply: (payload: ReplyPayload) => {
+        const base = { allowedMentions: { parse: [] as never[] } };
+        if (interaction.deferred) {
+          const opts = typeof payload === 'string'
+            ? { content: payload, ...base }
+            : { embeds: payload.embeds, files: payload.files, ...base };
+          return interaction.editReply(opts);
+        }
         const opts = typeof payload === 'string'
-          ? { content: payload, ephemeral: true, allowedMentions: { parse: [] as never[] } }
-          : { embeds: payload.embeds, files: payload.files, ephemeral: true, allowedMentions: { parse: [] as never[] } };
+          ? { content: payload, ephemeral: true, ...base }
+          : { embeds: payload.embeds, files: payload.files, ephemeral: true, ...base };
         return interaction.replied ? interaction.followUp(opts) : interaction.reply(opts);
       },
     };
 
     try {
+      if (cmd.defer) await interaction.deferReply({ ephemeral: true });
       await cmd.execute(ctx, args);
       await db.insert(commandLogs).values({
         botId: bot.id, discordGuildId: interaction.guild.id, discordUserId: interaction.user.id, commandName: cmd.name,
