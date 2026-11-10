@@ -71,15 +71,24 @@ export class BotRunner {
     client.once(Events.ClientReady, async (c) => {
       logger.info({ botId: bot.id, bot: c.user?.tag, guilds: c.guilds.cache.size, modules: mods.map((m) => m.name) }, 'bot online');
       for (const g of c.guilds.cache.values()) await upsertGuild(bot.id, g);
+      const body: RESTPostAPIApplicationCommandsJSONBody[] = mods.flatMap((m) => m.commands.map((cmd) => cmd.buildSlash()));
       try {
-        const body: RESTPostAPIApplicationCommandsJSONBody[] = mods.flatMap((m) => m.commands.map((cmd) => cmd.buildSlash()));
-        await c.rest.put(Routes.applicationCommands(bot.applicationId), { body });
+        // Command per-guild: update langsung saat restart, tanpa cache global Discord.
+        await c.rest.put(Routes.applicationCommands(bot.applicationId), { body: [] });
+        for (const g of c.guilds.cache.values()) {
+          await c.rest.put(Routes.applicationGuildCommands(bot.applicationId, g.id), { body });
+        }
       } catch (e) {
         await recordError(bot.id, e);
       }
     });
 
-    client.on(Events.GuildCreate, (g) => void upsertGuild(bot.id, g));
+    client.on(Events.GuildCreate, (g) => {
+      void upsertGuild(bot.id, g);
+      const body: RESTPostAPIApplicationCommandsJSONBody[] = mods.flatMap((m) => m.commands.map((cmd) => cmd.buildSlash()));
+      void client.rest.put(Routes.applicationGuildCommands(bot.applicationId, g.id), { body })
+        .catch((e) => recordError(bot.id, e));
+    });
     client.on(Events.GuildDelete, (g) => {
       void db.delete(botGuilds)
         .where(and(eq(botGuilds.botId, bot.id), eq(botGuilds.discordGuildId, g.id)))
