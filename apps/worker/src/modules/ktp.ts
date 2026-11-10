@@ -1,4 +1,4 @@
-import {
+﻿import {
   AttachmentBuilder, GatewayIntentBits, SlashCommandBuilder,
   type APIEmbed, type GuildMember,
 } from 'discord.js';
@@ -11,7 +11,7 @@ try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   canvasMod = require('@napi-rs/canvas');
 } catch (e) {
-  logger.warn({ err: e }, 'canvas tidak tersedia — /ktp fallback embed');
+  logger.warn({ err: e }, 'canvas tidak tersedia â€” /ktp fallback embed');
 }
 const createCanvas = canvasMod?.createCanvas ?? ((w: number, h: number) => { throw new Error('canvas not available'); });
 const loadImage = canvasMod?.loadImage ?? (async (url: string) => { throw new Error('canvas not available'); });
@@ -40,8 +40,8 @@ function roundRect(ctx: any, x: number, y: number, w: number, h: number, r: numb
 function clampText(ctx: any, text: string, maxW: number): string {
   if (ctx.measureText(text).width <= maxW) return text;
   let cut = text;
-  while (cut.length > 0 && ctx.measureText(cut + '…').width > maxW) cut = cut.slice(0, -1);
-  return cut + '…';
+  while (cut.length > 0 && ctx.measureText(cut + 'â€¦').width > maxW) cut = cut.slice(0, -1);
+  return cut + 'â€¦';
 }
 
 function star(ctx: any, cx: number, cy: number, r: number): void {
@@ -117,7 +117,7 @@ async function renderKtp(user: any, guildName: string, data: KtpData): Promise<B
 
   // Kartu
   const CX = 60, CY = 40, CW = W - 120, CH = H - 80, CR = 22;
-  ctx.fillStyle = '#f7f6f1';
+  ctx.fillStyle = '#f0f7ff';
   roundRect(ctx, CX, CY, CW, CH, CR);
   ctx.fill();
 
@@ -125,9 +125,11 @@ async function renderKtp(user: any, guildName: string, data: KtpData): Promise<B
   ctx.save();
   roundRect(ctx, CX, CY, CW, CH, CR);
   ctx.clip();
-  ctx.fillStyle = '#1e3f8f';
+  ctx.fillStyle = '#12409a';
   ctx.fillRect(CX, CY, CW, 132);
-  ctx.fillStyle = '#e9eef7';
+  ctx.fillStyle = '#5aa0ff';
+  ctx.fillRect(CX, CY + 132, CW, 9);
+  ctx.fillStyle = '#dbe9fb';
   ctx.fillRect(CX, CY + CH - 58, CW, 58);
   ctx.restore();
 
@@ -177,7 +179,7 @@ async function renderKtp(user: any, guildName: string, data: KtpData): Promise<B
   const px = 966, py = 198, pw = 232, ph = 288;
   ctx.fillStyle = '#eef2f9';
   roundRect(ctx, px, py, pw, ph, 14); ctx.fill();
-  ctx.strokeStyle = '#1e3f8f';
+  ctx.strokeStyle = '#12409a';
   ctx.lineWidth = 3;
   roundRect(ctx, px, py, pw, ph, 14); ctx.stroke();
 
@@ -205,7 +207,7 @@ async function renderKtp(user: any, guildName: string, data: KtpData): Promise<B
     ctx.beginPath(); ctx.ellipse(cx, cy + 92, 74, 58, 0, Math.PI, 0); ctx.fill();
   }
 
-  ctx.fillStyle = '#1e3f8f';
+  ctx.fillStyle = '#12409a';
   ctx.font = 'bold 27px sans-serif';
   ctx.fillText(clampText(ctx, (data.nama ?? user.username).toUpperCase(), pw + 60), cx, py + ph + 38);
   ctx.fillStyle = '#5b7fc7';
@@ -216,7 +218,7 @@ async function renderKtp(user: any, guildName: string, data: KtpData): Promise<B
   // Footer
   ctx.fillStyle = '#3d63ad';
   ctx.font = 'bold 19px sans-serif';
-  spacedCentered(ctx, `KARTU KOMUNITAS RESMI • ${guildName.toUpperCase()}`, W / 2, CY + CH - 20, 4);
+  spacedCentered(ctx, `KARTU KOMUNITAS RESMI â€¢ ${guildName.toUpperCase()}`, W / 2, CY + CH - 20, 4);
 
   return canvas.toBuffer('image/png');
 }
@@ -232,18 +234,18 @@ const ktpSet: ModuleCommand = {
     .addStringOption((o) => o.setName('field').setDescription('Field: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status').setRequired(true))
     .addStringOption((o) => o.setName('value').setDescription('Nilai field').setRequired(true)).toJSON(),
   async execute(ctx, args) {
-    if (!ctx.guild || !ctx.user) return ctx.reply('❌ Hanya di server.');
+    if (!ctx.guild || !ctx.user) return ctx.reply('âŒ Hanya di server.');
     const field = String(args.field ?? '').toLowerCase();
     const map: Record<string, keyof KtpData> = {
       nama: 'nama', tempat: 'tempat', tgllahir: 'tglLahir', gender: 'gender',
       kota: 'kota', agama: 'agama', pekerjaan: 'pekerjaan', status: 'status',
     };
     const key = map[field];
-    if (!key) return ctx.reply('❌ Field tidak dikenal. Pilih: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status.');
+    if (!key) return ctx.reply('âŒ Field tidak dikenal. Pilih: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status.');
     const value = String(args.value ?? '').trim();
-    if (!value) return ctx.reply('❌ Nilai tidak boleh kosong.');
+    if (!value) return ctx.reply('âŒ Nilai tidak boleh kosong.');
     await setKtp(ctx.botId, ctx.guild.id, ctx.user.id, { [key]: value });
-    return ctx.reply('✅ Data KTP diperbarui.');
+    return ctx.reply('âœ… Data KTP diperbarui.');
   },
 };
 
@@ -254,7 +256,7 @@ const ktpView: ModuleCommand = {
     .setName('ktp').setDescription('Lihat KTP')
     .addUserOption((o) => o.setName('user').setDescription('User (kosong = dirimu)')).toJSON(),
   async execute(ctx, args) {
-    if (!ctx.guild || !ctx.user) return ctx.reply('❌ Hanya di server.');
+    if (!ctx.guild || !ctx.user) return ctx.reply('âŒ Hanya di server.');
     const targetMember = args.user as GuildMember | null;
     const targetId = targetMember?.id ?? ctx.user.id;
     const targetUser = targetMember?.user ?? ctx.user;
@@ -270,7 +272,7 @@ const ktpView: ModuleCommand = {
     }
 
     const embed: APIEmbed = {
-      title: '🪪 Kartu Tanda Penduduk',
+      title: 'ðŸªª Kartu Tanda Penduduk',
       description: [
         `**Nama:** ${data.nama ?? targetUser.username}`,
         `**ID Akun:** ${targetId}`,
@@ -292,3 +294,4 @@ export const ktpModule: BotModule = {
   intents: [GatewayIntentBits.Guilds],
   commands: [ktpView, ktpSet],
 };
+

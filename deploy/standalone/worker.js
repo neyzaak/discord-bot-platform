@@ -108148,7 +108148,7 @@ var canvasMod = null;
 try {
   canvasMod = __require("@napi-rs/canvas");
 } catch (e) {
-  logger.warn({ err: e }, "canvas tidak tersedia \u2014 /ktp fallback embed");
+  logger.warn({ err: e }, "canvas tidak tersedia \xE2\u20AC\u201D /ktp fallback embed");
 }
 var createCanvas = canvasMod?.createCanvas ?? ((w, h) => {
   throw new Error("canvas not available");
@@ -108174,8 +108174,8 @@ function roundRect(ctx, x, y, w, h, r) {
 function clampText(ctx, text2, maxW) {
   if (ctx.measureText(text2).width <= maxW) return text2;
   let cut = text2;
-  while (cut.length > 0 && ctx.measureText(cut + "\u2026").width > maxW) cut = cut.slice(0, -1);
-  return cut + "\u2026";
+  while (cut.length > 0 && ctx.measureText(cut + "\xE2\u20AC\xA6").width > maxW) cut = cut.slice(0, -1);
+  return cut + "\xE2\u20AC\xA6";
 }
 function star(ctx, cx, cy, r) {
   ctx.beginPath();
@@ -108254,15 +108254,17 @@ async function renderKtp(user, guildName, data) {
   ctx.fillStyle = "#ffffff";
   for (const [x, y2, r] of [[355, 66, 14], [40, 275, 9], [1240, 300, 8], [1252, 648, 8], [42, 630, 7], [880, 700, 8]]) star(ctx, x, y2, r);
   const CX = 60, CY = 40, CW = W - 120, CH = H - 80, CR = 22;
-  ctx.fillStyle = "#f7f6f1";
+  ctx.fillStyle = "#f0f7ff";
   roundRect(ctx, CX, CY, CW, CH, CR);
   ctx.fill();
   ctx.save();
   roundRect(ctx, CX, CY, CW, CH, CR);
   ctx.clip();
-  ctx.fillStyle = "#1e3f8f";
+  ctx.fillStyle = "#12409a";
   ctx.fillRect(CX, CY, CW, 132);
-  ctx.fillStyle = "#e9eef7";
+  ctx.fillStyle = "#5aa0ff";
+  ctx.fillRect(CX, CY + 132, CW, 9);
+  ctx.fillStyle = "#dbe9fb";
   ctx.fillRect(CX, CY + CH - 58, CW, 58);
   ctx.restore();
   ctx.strokeStyle = "#ffffff";
@@ -108310,7 +108312,7 @@ async function renderKtp(user, guildName, data) {
   ctx.fillStyle = "#eef2f9";
   roundRect(ctx, px, py, pw, ph, 14);
   ctx.fill();
-  ctx.strokeStyle = "#1e3f8f";
+  ctx.strokeStyle = "#12409a";
   ctx.lineWidth = 3;
   roundRect(ctx, px, py, pw, ph, 14);
   ctx.stroke();
@@ -108342,7 +108344,7 @@ async function renderKtp(user, guildName, data) {
     ctx.ellipse(cx, cy + 92, 74, 58, 0, Math.PI, 0);
     ctx.fill();
   }
-  ctx.fillStyle = "#1e3f8f";
+  ctx.fillStyle = "#12409a";
   ctx.font = "bold 27px sans-serif";
   ctx.fillText(clampText(ctx, (data.nama ?? user.username).toUpperCase(), pw + 60), cx, py + ph + 38);
   ctx.fillStyle = "#5b7fc7";
@@ -108351,7 +108353,7 @@ async function renderKtp(user, guildName, data) {
   ctx.textAlign = "left";
   ctx.fillStyle = "#3d63ad";
   ctx.font = "bold 19px sans-serif";
-  spacedCentered(ctx, `KARTU KOMUNITAS RESMI \u2022 ${guildName.toUpperCase()}`, W / 2, CY + CH - 20, 4);
+  spacedCentered(ctx, `KARTU KOMUNITAS RESMI \xE2\u20AC\xA2 ${guildName.toUpperCase()}`, W / 2, CY + CH - 20, 4);
   return canvas.toBuffer("image/png");
 }
 var ktpSet = {
@@ -108363,7 +108365,7 @@ var ktpSet = {
   ],
   buildSlash: () => new import_discord3.SlashCommandBuilder().setName("ktpset").setDescription("Isi data KTP kamu").addStringOption((o) => o.setName("field").setDescription("Field: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status").setRequired(true)).addStringOption((o) => o.setName("value").setDescription("Nilai field").setRequired(true)).toJSON(),
   async execute(ctx, args) {
-    if (!ctx.guild || !ctx.user) return ctx.reply("\u274C Hanya di server.");
+    if (!ctx.guild || !ctx.user) return ctx.reply("\xE2\x9D\u0152 Hanya di server.");
     const field = String(args.field ?? "").toLowerCase();
     const map = {
       nama: "nama",
@@ -108376,11 +108378,11 @@ var ktpSet = {
       status: "status"
     };
     const key2 = map[field];
-    if (!key2) return ctx.reply("\u274C Field tidak dikenal. Pilih: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status.");
+    if (!key2) return ctx.reply("\xE2\x9D\u0152 Field tidak dikenal. Pilih: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status.");
     const value = String(args.value ?? "").trim();
-    if (!value) return ctx.reply("\u274C Nilai tidak boleh kosong.");
+    if (!value) return ctx.reply("\xE2\x9D\u0152 Nilai tidak boleh kosong.");
     await setKtp(ctx.botId, ctx.guild.id, ctx.user.id, { [key2]: value });
-    return ctx.reply("\u2705 Data KTP diperbarui.");
+    return ctx.reply("\xE2\u0153\u2026 Data KTP diperbarui.");
   }
 };
 var ktpView = {
@@ -108389,7 +108391,7 @@ var ktpView = {
   args: [{ name: "user", type: "user" }],
   buildSlash: () => new import_discord3.SlashCommandBuilder().setName("ktp").setDescription("Lihat KTP").addUserOption((o) => o.setName("user").setDescription("User (kosong = dirimu)")).toJSON(),
   async execute(ctx, args) {
-    if (!ctx.guild || !ctx.user) return ctx.reply("\u274C Hanya di server.");
+    if (!ctx.guild || !ctx.user) return ctx.reply("\xE2\x9D\u0152 Hanya di server.");
     const targetMember = args.user;
     const targetId = targetMember?.id ?? ctx.user.id;
     const targetUser = targetMember?.user ?? ctx.user;
@@ -108403,7 +108405,7 @@ var ktpView = {
       }
     }
     const embed = {
-      title: "\u{1FAAA} Kartu Tanda Penduduk",
+      title: "\xF0\u0178\xAA\xAA Kartu Tanda Penduduk",
       description: [
         `**Nama:** ${data.nama ?? targetUser.username}`,
         `**ID Akun:** ${targetId}`,
