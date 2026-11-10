@@ -108268,17 +108268,17 @@ async function renderKtp(user, guildName, data) {
   ctx.strokeStyle = "#ffffff";
   ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.arc(108, 106, 41, 0, Math.PI * 2);
+  ctx.arc(130, 106, 43, 0, Math.PI * 2);
   ctx.stroke();
   ctx.fillStyle = "#ffffff";
-  star(ctx, 108, 106, 26);
+  star(ctx, 130, 106, 27);
   ctx.textAlign = "left";
   ctx.fillStyle = "#ffffff";
   ctx.font = "bold 46px sans-serif";
-  ctx.fillText("KARTU TANDA PENDUDUK", 178, 102);
+  ctx.fillText("KARTU TANDA PENDUDUK", 212, 102);
   ctx.fillStyle = "#9dc0f0";
   ctx.font = "bold 20px sans-serif";
-  spacedText(ctx, guildName.toUpperCase(), 180, 140, 5);
+  spacedText(ctx, guildName.toUpperCase(), 214, 140, 5);
   const rows = [
     ["Nama", data.nama ?? user.username],
     ["ID Akun", user.id],
