@@ -251,6 +251,26 @@ const GENDERS = [
 ];
 const AGAMAS = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'].map((a) => ({ name: a, value: a }));
 
+const ALIASES = Object.keys(FIELD_MAP).sort((a, b) => b.length - a.length);
+
+/** Prefix: "nama Tensun, tempat Lutim, tgllahir 18 Agustus 2010" -> patch. */
+function parseKtpPairs(text: string): { patch: Partial<KtpData>; changed: string[] } {
+  const patch: Partial<KtpData> = {};
+  const changed: string[] = [];
+  for (const seg of text.split(/[,;\n]+/)) {
+    const part = seg.trim();
+    if (!part) continue;
+    const lower = part.toLowerCase();
+    const alias = ALIASES.find((a) => lower.startsWith(a) && /^[\s:]$/.test(part.charAt(a.length)));
+    if (!alias) continue;
+    const value = part.slice(alias.length).replace(/^\s*:?\s*/, '').trim();
+    if (!value) continue;
+    patch[FIELD_MAP[alias]] = value;
+    changed.push(LABELS[FIELD_MAP[alias]]);
+  }
+  return { patch, changed };
+}
+
 const ktpSet: ModuleCommand = {
   name: 'ktpset', description: 'Isi data KTP kamu (bisa beberapa field sekaligus)',
   defer: true,
@@ -290,20 +310,18 @@ const ktpSet: ModuleCommand = {
       changed.push(LABELS[key]);
     }
 
-    // Prefix: !ktpset <field> <value>
+    // Prefix: !ktpset nama Tensun, tempat Lutim, tgllahir 18 Agustus 2010
     if (changed.length === 0) {
-      const field = String(args.field ?? '').toLowerCase().trim();
-      const key = FIELD_MAP[field];
-      const value = String(args.value ?? '').trim();
-      if (!key || !value) {
+      const parsed = parseKtpPairs(`${String(args.field ?? '')} ${String(args.value ?? '')}`.trim());
+      if (parsed.changed.length === 0) {
         return ctx.reply([
           '📝 **Cara isi KTP**',
           'Slash (bisa sekaligus): `/ktpset nama:Tensun tempat:Lutim tgllahir:18 Agustus 2010 gender:Laki-laki kota:Luwu Timur agama:Kristen pekerjaan:Siswa status:Jomblo` — isi yang perlu saja.',
-          'Prefix: `!ktpset nama Tensun` (field: nama, tempat, tgllahir, gender, kota, agama, pekerjaan, status).',
+          'Prefix: `!ktpset nama Tensun, tempat Lutim, tgllahir 18 Agustus 2010` (pisahkan field dengan koma).',
         ].join('\n'));
       }
-      patch[key] = value;
-      changed.push(LABELS[key]);
+      Object.assign(patch, parsed.patch);
+      changed.push(...parsed.changed);
     }
 
     await setKtp(ctx.botId, ctx.guild.id, ctx.user.id, patch);
