@@ -2,7 +2,7 @@
   AttachmentBuilder, GatewayIntentBits, SlashCommandBuilder,
   type APIEmbed, type GuildMember,
 } from 'discord.js';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { botConfigs, db, logger, recordError } from '@platform/core';
 import type { BotModule, CommandContext, ModuleCommand } from './types';
 
@@ -71,24 +71,33 @@ function spacedCentered(ctx: any, text: string, centerX: number, y: number, spac
 }
 
 async function getKtp(botId: number, guildId: string, userId: string): Promise<KtpData | undefined> {
-  const [row] = await db.select().from(botConfigs)
+  // Ambil hanya data KTP, bukan seluruh config (bank soal quiz bisa 1+ MB).
+  const [row] = await db.select({
+    ktp: sql<Record<string, KtpData>>`${botConfigs.data}->'ktp'`.as('ktp'),
+  }).from(botConfigs)
     .where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
-  const ktp = ((row?.data as Record<string, unknown> ?? {})?.ktp as Record<string, unknown> ?? {});
-  return ktp[userId] as KtpData | undefined;
+  return row?.ktp?.[userId];
 }
 
 async function setKtp(botId: number, guildId: string, userId: string, patch: Partial<KtpData>): Promise<void> {
-  const [row] = await db.select().from(botConfigs)
-    .where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
-  const existing = (row?.data as Record<string, unknown> ?? {}) as Record<string, unknown>;
-  const ktp = (existing.ktp as Record<string, unknown> ?? {}) as Record<string, KtpData>;
-  ktp[userId] = { ...(ktp[userId] ?? {}), ...patch };
-  const data = { ...existing, ktp };
-  if (row) {
-    await db.update(botConfigs).set({ data, updatedAt: new Date() })
-      .where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
-  } else {
-    await db.insert(botConfigs).values({ botId, discordGuildId: guildId, data });
+  // Update satu entri KTP lewat jsonb — tanpa menarik/menimpa seluruh config.
+  const patchJson = JSON.stringify(patch);
+  const updated = await db.update(botConfigs)
+    .set({
+      data: sql`${botConfigs.data} || jsonb_build_object(
+        'ktp',
+        coalesce(${botConfigs.data}->'ktp', '{}'::jsonb) ||
+        jsonb_build_object(
+          ${userId}::text,
+          coalesce(${botConfigs.data}->'ktp'->${userId}::text, '{}'::jsonb) || ${patchJson}::jsonb
+        )
+      )`,
+      updatedAt: new Date(),
+    })
+    .where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)))
+    .returning({ id: botConfigs.id });
+  if (updated.length === 0) {
+    await db.insert(botConfigs).values({ botId, discordGuildId: guildId, data: { ktp: { [userId]: patch } } });
   }
 }
 

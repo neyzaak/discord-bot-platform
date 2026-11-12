@@ -1,5 +1,5 @@
 import { Client, Events, GatewayIntentBits, Routes, type ChatInputCommandInteraction, type Guild, type GuildMember, type Interaction, type Message, type ModalBuilder, type RESTPostAPIApplicationCommandsJSONBody } from 'discord.js';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import {
   BOT_STATUS_KEY, botConfigs, botGuilds, bots, botLevelConfigSchema, commandLogs,
   db, decryptToken, logger, moduleSchemas, recordError, redis, type ModuleName,
@@ -172,20 +172,15 @@ export class BotRunner {
     const key = `${bot.id}:${guildId}:${moduleName}`;
     const hit = this.cfgCache.get(key);
     if (hit && hit.exp > Date.now()) return hit.v;
-    const [row] = await db.select().from(botConfigs)
+    // Jangan ikut tarik data.quiz.questions (1,2 MB) tiap 60 dtk — itu yang bikin egress Supabase jebol.
+    // Soal diambil satu per satu saat /quiz start (lihat modules/quiz.ts).
+    const [row] = await db.select({
+      data: sql<Record<string, unknown>>`${botConfigs.data} #- '{quiz,questions}'`.as('data'),
+    }).from(botConfigs)
       .where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
-    const data = (row?.data as Record<string, unknown>) ?? {};
+    const data = row?.data ?? {};
     const raw = (data[moduleName] as Record<string, unknown> ?? {}) as Record<string, unknown>;
-    let v: Record<string, unknown>;
-    // Quiz menyimpan 5000 soal di data.quiz.questions — sudah divalidasi saat seed,
-    // jangan re-parse ulang setiap kali config dibaca (berat dan bisa gagal).
-    if (moduleName === 'quiz' && Array.isArray(raw.questions)) {
-      const { questions, ...rest } = raw;
-      v = moduleSchemas[moduleName].parse(rest) as Record<string, unknown>;
-      v.questions = questions;
-    } else {
-      v = moduleSchemas[moduleName].parse(raw) as Record<string, unknown>;
-    }
+    const v = moduleSchemas[moduleName].parse(raw) as Record<string, unknown>;
     this.cfgCache.set(key, { v, exp: Date.now() + 60_000 });
     return v;
   }

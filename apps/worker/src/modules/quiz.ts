@@ -4,7 +4,7 @@ import {
   type Message, type TextChannel,
 } from 'discord.js';
 import { and, desc, eq, gt, sql } from 'drizzle-orm';
-import { db, guildMembers, logger, recordError } from '@platform/core';
+import { db, botConfigs, guildMembers, logger, recordError } from '@platform/core';
 import type { BotModule, CommandContext, ModuleCommand, ModuleCtx } from './types';
 
 const ACCENT = 0x5865f2;
@@ -19,9 +19,20 @@ interface QuizQuestion { question: string; choices: string[]; correctIndex: numb
 interface QuizCfg {
   enabled: boolean; title: string; pointsName: string;
   timePerQuestionSec: number; pointsPerQuestion: number;
-  questionsPerSession: number; questions: QuizQuestion[];
+  questionsPerSession: number;
 }
 const cfg = (c: Record<string, unknown>): QuizCfg => c as unknown as QuizCfg;
+
+/** Ambil satu soal acak langsung di Postgres — jangan tarik seluruh bank soal ke bot. */
+async function randomQuestion(botId: number, guildId: string): Promise<QuizQuestion | null> {
+  const [row] = await db.select({
+    q: sql<QuizQuestion | null>`(${botConfigs.data}->'quiz'->'questions')->(floor(random() * jsonb_array_length(${botConfigs.data}->'quiz'->'questions'))::int)`.as('q'),
+  }).from(botConfigs)
+    .where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
+  const q = row?.q;
+  if (!q || typeof q.question !== 'string' || !Array.isArray(q.choices) || q.choices.length < 2) return null;
+  return q;
+}
 
 interface QuizSession {
   channelId: string;
@@ -175,15 +186,13 @@ async function startQuiz(
   ctx: ModuleCtx, channel: TextChannel, starter: GuildMember,
   reply: (s: string) => Promise<unknown>,
 ): Promise<void> {
-  const config = cfg(ctx.config);
   const key = sessionKey(ctx.botId, ctx.guild.id);
   if (sessions.has(key)) { await reply('❌ Masih ada kuis berjalan di server ini. `/quiz stop` dulu.'); return; }
 
-  const pack = config.questions ?? [];
-  if (pack.length === 0) { await reply('❌ Belum ada soal. Tambahkan soal lewat dashboard (modul Quiz), lalu Save.'); return; }
-
-  // 1 soal per sesi — tiap !quiz start menampilkan tepat satu soal acak.
-  const questions = [...pack].sort(() => Math.random() - 0.5).slice(0, 1);
+  // 1 soal per sesi — ambil satu soal acak dari DB, bukan seluruh bank.
+  const q = await randomQuestion(ctx.botId, ctx.guild.id);
+  if (!q) { await reply('❌ Belum ada soal. Tambahkan soal lewat dashboard (modul Quiz), lalu Save.'); return; }
+  const questions = [q];
   const session: QuizSession = {
     channelId: channel.id, starterId: starter.id, questions, index: -1,
     scores: new Map(), names: new Map(), answers: new Map(),

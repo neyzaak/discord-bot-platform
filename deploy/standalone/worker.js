@@ -108201,20 +108201,26 @@ function spacedCentered(ctx, text2, centerX, y, spacing) {
   spacedText(ctx, text2, centerX - total / 2, y, spacing);
 }
 async function getKtp(botId, guildId, userId) {
-  const [row] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
-  const ktp = (row?.data ?? {})?.ktp ?? {};
-  return ktp[userId];
+  const [row] = await db.select({
+    ktp: sql`${botConfigs.data}->'ktp'`.as("ktp")
+  }).from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
+  return row?.ktp?.[userId];
 }
 async function setKtp(botId, guildId, userId, patch) {
-  const [row] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
-  const existing = row?.data ?? {};
-  const ktp = existing.ktp ?? {};
-  ktp[userId] = { ...ktp[userId] ?? {}, ...patch };
-  const data = { ...existing, ktp };
-  if (row) {
-    await db.update(botConfigs).set({ data, updatedAt: /* @__PURE__ */ new Date() }).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
-  } else {
-    await db.insert(botConfigs).values({ botId, discordGuildId: guildId, data });
+  const patchJson = JSON.stringify(patch);
+  const updated = await db.update(botConfigs).set({
+    data: sql`${botConfigs.data} || jsonb_build_object(
+        'ktp',
+        coalesce(${botConfigs.data}->'ktp', '{}'::jsonb) ||
+        jsonb_build_object(
+          ${userId}::text,
+          coalesce(${botConfigs.data}->'ktp'->${userId}::text, '{}'::jsonb) || ${patchJson}::jsonb
+        )
+      )`,
+    updatedAt: /* @__PURE__ */ new Date()
+  }).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId))).returning({ id: botConfigs.id });
+  if (updated.length === 0) {
+    await db.insert(botConfigs).values({ botId, discordGuildId: guildId, data: { ktp: { [userId]: patch } } });
   }
 }
 async function renderKtp(user, guildName, data) {
@@ -108790,6 +108796,14 @@ var letter = (i) => String.fromCharCode(65 + i);
 var fmtNum = (n) => n.toLocaleString("id-ID");
 var fmtDuration = (sec) => sec % 60 === 0 ? `${sec / 60} menit` : `${sec} detik`;
 var cfg3 = (c) => c;
+async function randomQuestion(botId, guildId) {
+  const [row] = await db.select({
+    q: sql`(${botConfigs.data}->'quiz'->'questions')->(floor(random() * jsonb_array_length(${botConfigs.data}->'quiz'->'questions'))::int)`.as("q")
+  }).from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
+  const q = row?.q;
+  if (!q || typeof q.question !== "string" || !Array.isArray(q.choices) || q.choices.length < 2) return null;
+  return q;
+}
 var sessions = /* @__PURE__ */ new Map();
 var sessionKey = (botId, guildId) => `${botId}:${guildId}`;
 function topScores(s, n) {
@@ -108897,18 +108911,17 @@ async function endQuiz(ctx, s, reason) {
   });
 }
 async function startQuiz(ctx, channel, starter, reply) {
-  const config2 = cfg3(ctx.config);
   const key2 = sessionKey(ctx.botId, ctx.guild.id);
   if (sessions.has(key2)) {
     await reply("\u274C Masih ada kuis berjalan di server ini. `/quiz stop` dulu.");
     return;
   }
-  const pack = config2.questions ?? [];
-  if (pack.length === 0) {
+  const q = await randomQuestion(ctx.botId, ctx.guild.id);
+  if (!q) {
     await reply("\u274C Belum ada soal. Tambahkan soal lewat dashboard (modul Quiz), lalu Save.");
     return;
   }
-  const questions = [...pack].sort(() => Math.random() - 0.5).slice(0, 1);
+  const questions = [q];
   const session = {
     channelId: channel.id,
     starterId: starter.id,
@@ -109497,17 +109510,12 @@ var BotRunner = class {
     const key2 = `${bot.id}:${guildId}:${moduleName}`;
     const hit = this.cfgCache.get(key2);
     if (hit && hit.exp > Date.now()) return hit.v;
-    const [row] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
+    const [row] = await db.select({
+      data: sql`${botConfigs.data} #- '{quiz,questions}'`.as("data")
+    }).from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
     const data = row?.data ?? {};
     const raw = data[moduleName] ?? {};
-    let v;
-    if (moduleName === "quiz" && Array.isArray(raw.questions)) {
-      const { questions, ...rest } = raw;
-      v = moduleSchemas[moduleName].parse(rest);
-      v.questions = questions;
-    } else {
-      v = moduleSchemas[moduleName].parse(raw);
-    }
+    const v = moduleSchemas[moduleName].parse(raw);
     this.cfgCache.set(key2, { v, exp: Date.now() + 6e4 });
     return v;
   }
