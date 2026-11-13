@@ -10,7 +10,6 @@ Monorepo pnpm:
 | `apps/api` | REST API Express (auth, bot, webhook, integrasi) |
 | `apps/worker` | Runner discord.js v14 — menyalakan bot sesuai konfigurasi di database |
 | `packages/core` | Drizzle schema, Zod config, enkripsi token, Redis, logger (dipakai bersama) |
-| `deploy/standalone` | Bundle satu file `worker.js` untuk hosting gratis (tanpa dashboard) |
 
 ## Modul
 
@@ -93,30 +92,6 @@ docker compose -f docker-compose.prod.yml run --rm worker pnpm --filter @platfor
 ```
 
 Buka `http://localhost:3000`, login dengan Discord, buat bot, tempel token, aktifkan modul. Worker akan menyalakan bot secara otomatis.
-
-## Deploy tanpa dashboard (hosting gratis)
-
-Cocok untuk bot-hosting.net / panel Node.js gratis:
-
-1. Build bundle:
-
-   ```bash
-   npx esbuild apps/worker/src/index.ts \
-     --bundle --platform=node --format=esm --target=node18 \
-     --external:@napi-rs/canvas --external:pg-native \
-     --banner:js="import{createRequire}from'node:module';const require=createRequire(import.meta.url);" \
-     --outfile=deploy/standalone/worker.js
-   ```
-
-2. Upload isi `deploy/standalone/` (`worker.js` + `package.json`) ke panel.
-3. Set environment variable: `DATABASE_URL`, `REDIS_URL`, `TOKEN_ENCRYPTION_KEY`.
-4. Start command: `node worker.js`.
-
-Catatan hosting gratis:
-
-- Supabase free pause setelah ±7 hari tanpa aktivitas — worker yang jalan terus mencegahnya.
-- Gunakan connection pooler Supabase dan `?sslmode=no-verify` bila sertifikat bermasalah.
-- Panel gratis seperti bot-hosting.net perlu diperpanjang manual tiap ±4 hari.
 
 ## Environment variable
 
