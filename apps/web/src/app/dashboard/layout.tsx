@@ -21,9 +21,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, []);
   useEffect(() => { setOpen(false); }, [pathname]);
 
-  // Konteks bot dari path: /dashboard/bots/:id/…
+  // Konteks bot dari path: /dashboard/bots/:id/… (id harus angka — /bots/new bukan konteks bot)
   const seg = pathname?.split('/') ?? [];
-  const botId = seg[2] === 'bots' && seg[3] ? seg[3] : null;
+  const botId = seg[2] === 'bots' && seg[3] && /^\d+$/.test(seg[3]) ? seg[3] : null;
 
   const mainNav: Array<{ href: string; icon: IconName; label: string }> = [
     { href: '/dashboard', icon: 'dashboard', label: t('bots.title') },
