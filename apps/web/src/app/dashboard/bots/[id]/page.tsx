@@ -15,6 +15,7 @@ interface BotDetail {
   id: number; name: string; prefix: string; status: 'running' | 'paused';
   runtimeStatus: 'online' | 'offline'; tokenMasked: string; applicationId: string;
   modules: string[]; inviteUrl: string; guilds: Guild[]; managers?: string[];
+  avatarUrl?: string | null;
 }
 
 const MODULES: Array<{ key: string; icon: IconName }> = [
@@ -29,8 +30,8 @@ const MODULES: Array<{ key: string; icon: IconName }> = [
   { key: 'webhooks', icon: 'webhook' },
   { key: 'quiz', icon: 'quiz' },
 ];
-const cardCls = 'rounded-2xl border border-slate-800 bg-slate-900/60 p-5';
-const btnGhost = 'flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-1.5 text-sm transition hover:border-slate-500 disabled:opacity-50';
+const cardCls = 'rounded-2xl border border-slate-800/80 bg-slate-900/50 p-5';
+const btnGhost = 'flex items-center gap-2 rounded-lg bg-white/5 px-3 py-1.5 text-sm text-slate-200 transition hover:bg-white/10 disabled:opacity-50';
 
 export default function BotDetailPage() {
   const { t } = useI18n();
@@ -147,10 +148,15 @@ export default function BotDetailPage() {
   return (
     <main className="space-y-6">
       {/* Hero bot */}
-      <section className="flex flex-wrap items-center gap-4 rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-900/40 p-5">
-        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-xl font-bold text-white">
-          {bot.name[0]?.toUpperCase()}
-        </span>
+      <section className="flex flex-wrap items-center gap-4 rounded-2xl border border-slate-800/80 bg-slate-900/50 p-5">
+        {bot.avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={bot.avatarUrl} alt="" className="h-14 w-14 shrink-0 rounded-2xl object-cover" />
+        ) : (
+          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-xl font-bold text-white">
+            {bot.name[0]?.toUpperCase()}
+          </span>
+        )}
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-xl font-bold tracking-tight">{bot.name}</h1>
           <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
@@ -168,7 +174,7 @@ export default function BotDetailPage() {
             {bot.status === 'paused' ? t('detail.resume') : t('detail.pause')}
           </button>
           <button onClick={remove}
-            className="flex items-center gap-2 rounded-lg border border-rose-900 px-3 py-1.5 text-sm text-rose-400 transition hover:border-rose-500">
+            className="flex items-center gap-2 rounded-lg bg-rose-500/10 px-3 py-1.5 text-sm text-rose-300 transition hover:bg-rose-500/20">
             <Icon name="trash" className="h-3.5 w-3.5" /> {t('common.delete')}
           </button>
         </div>
