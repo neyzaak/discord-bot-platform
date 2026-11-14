@@ -59189,6 +59189,7 @@ hooksRouter.post("/:token", asyncHandler(async (req, res) => {
 requireEnv("DISCORD_CLIENT_ID", "DISCORD_CLIENT_SECRET", "DISCORD_REDIRECT_URI", "SESSION_SECRET");
 var app = (0, import_express5.default)();
 app.set("trust proxy", 1);
+app.set("etag", false);
 app.use(import_express5.default.json({ limit: "12mb" }));
 app.use((0, import_cookie_parser.default)());
 app.use(rateLimit({ windowSec: 60, max: 240, key: (req) => req.ip ?? "unknown" }));

@@ -13,6 +13,8 @@ requireEnv('DISCORD_CLIENT_ID', 'DISCORD_CLIENT_SECRET', 'DISCORD_REDIRECT_URI',
 
 export const app = express();
 app.set('trust proxy', 1);
+// ponytail: ETag bikin fetch /auth/me dapat 304 dan helper api() web menganggapnya error — matikan.
+app.set('etag', false);
 app.use(express.json({ limit: '12mb' })); // bank soal besar via import/config
 app.use(cookieParser());
 app.use(rateLimit({ windowSec: 60, max: 240, key: (req) => req.ip ?? 'unknown' }));
