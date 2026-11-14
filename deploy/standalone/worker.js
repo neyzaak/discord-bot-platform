@@ -109511,10 +109511,9 @@ var BotRunner = class {
     const hit = this.cfgCache.get(key2);
     if (hit && hit.exp > Date.now()) return hit.v;
     const [row] = await db.select({
-      data: sql`${botConfigs.data} #- '{quiz,questions}'`.as("data")
+      cfg: sql`(${botConfigs.data} -> ${moduleName}) #- '{questions}'`.as("cfg")
     }).from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
-    const data = row?.data ?? {};
-    const raw = data[moduleName] ?? {};
+    const raw = row?.cfg ?? {};
     const v = moduleSchemas[moduleName].parse(raw);
     this.cfgCache.set(key2, { v, exp: Date.now() + 6e4 });
     return v;

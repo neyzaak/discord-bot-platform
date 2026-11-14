@@ -172,14 +172,13 @@ export class BotRunner {
     const key = `${bot.id}:${guildId}:${moduleName}`;
     const hit = this.cfgCache.get(key);
     if (hit && hit.exp > Date.now()) return hit.v;
-    // Jangan ikut tarik data.quiz.questions (1,2 MB) tiap 60 dtk — itu yang bikin egress Supabase jebol.
-    // Soal diambil satu per satu saat /quiz start (lihat modules/quiz.ts).
+    // Ambil HANYA config modul yang dipakai — bukan seluruh JSONB. Bank soal (1,2 MB) dan
+    // data modul lain tidak ikut terkirim tiap 60 dtk. Soal diambil satu per satu saat /quiz start.
     const [row] = await db.select({
-      data: sql<Record<string, unknown>>`${botConfigs.data} #- '{quiz,questions}'`.as('data'),
+      cfg: sql<Record<string, unknown> | null>`(${botConfigs.data} -> ${moduleName}) #- '{questions}'`.as('cfg'),
     }).from(botConfigs)
       .where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
-    const data = row?.data ?? {};
-    const raw = (data[moduleName] as Record<string, unknown> ?? {}) as Record<string, unknown>;
+    const raw = (row?.cfg ?? {}) as Record<string, unknown>;
     const v = moduleSchemas[moduleName].parse(raw) as Record<string, unknown>;
     this.cfgCache.set(key, { v, exp: Date.now() + 60_000 });
     return v;
