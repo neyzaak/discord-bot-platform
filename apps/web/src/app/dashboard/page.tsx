@@ -9,7 +9,7 @@ import { useI18n } from '../../lib/i18n';
 
 interface BotListItem {
   id: number; name: string; prefix: string; status: string;
-  runtimeStatus: 'online' | 'offline'; tokenMasked: string;
+  runtimeStatus: 'online' | 'offline'; tokenLast4: string;
 }
 
 export default function BotsPage() {
@@ -64,7 +64,7 @@ export default function BotsPage() {
             <div className="min-w-0 flex-1">
               <p className="truncate font-semibold">{b.name}</p>
               <p className="mt-0.5 truncate text-xs text-slate-500">
-                {t('bots.tokenLabel')}: {b.tokenMasked} • prefix <code className="text-slate-400">{b.prefix}</code>
+                {t('bots.tokenLabel')}: ••••{b.tokenLast4} • prefix <code className="text-slate-400">{b.prefix}</code>
               </p>
             </div>
             <StatusBadge runtimeStatus={b.runtimeStatus} status={b.status} />
