@@ -7,6 +7,7 @@ type Dict = Record<string, string>;
 const id: Dict = {
   'app.title': 'Platform Bot Discord',
   'nav.logout': 'Keluar',
+  'nav.overview': 'Ringkasan',
   'common.loading': 'Memuat…',
   'common.saving': 'Menyimpan…',
   'common.saved': 'Tersimpan ✓',
@@ -148,6 +149,7 @@ const id: Dict = {
 const en: Dict = {
   'app.title': 'Discord Bot Platform',
   'nav.logout': 'Log out',
+  'nav.overview': 'Overview',
   'common.loading': 'Loading…',
   'common.saving': 'Saving…',
   'common.saved': 'Saved ✓',

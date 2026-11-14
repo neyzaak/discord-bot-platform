@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { api, ApiError } from '../../../../lib/api';
 import { StatusBadge } from '../../../../components/status-badge';
 import { GuildConfigPanel, type GuildConfigData, type Opt } from '../../../../components/guild-config';
+import { Icon, type IconName } from '../../../../components/icons';
+import { Toggle } from '../../../../components/toggle';
 import { useI18n } from '../../../../lib/i18n';
 
 interface Guild { id: number; discordGuildId: string; name: string }
@@ -15,8 +17,20 @@ interface BotDetail {
   modules: string[]; inviteUrl: string; guilds: Guild[];
 }
 
-const MODULE_KEYS = ['welcome', 'moderation', 'tickets', 'logging', 'utilities', 'customcmd', 'leveling', 'economy', 'webhooks', 'quiz'] as const;
-const cardCls = 'rounded-2xl border border-slate-800 bg-slate-900 p-5';
+const MODULES: Array<{ key: string; icon: IconName }> = [
+  { key: 'welcome', icon: 'mail' },
+  { key: 'moderation', icon: 'shield' },
+  { key: 'tickets', icon: 'ticket' },
+  { key: 'logging', icon: 'scroll' },
+  { key: 'utilities', icon: 'wrench' },
+  { key: 'customcmd', icon: 'terminal' },
+  { key: 'leveling', icon: 'trending' },
+  { key: 'economy', icon: 'coins' },
+  { key: 'webhooks', icon: 'webhook' },
+  { key: 'quiz', icon: 'quiz' },
+];
+const cardCls = 'rounded-2xl border border-slate-800 bg-slate-900/60 p-5';
+const btnGhost = 'flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-1.5 text-sm transition hover:border-slate-500 disabled:opacity-50';
 
 export default function BotDetailPage() {
   const { t } = useI18n();
@@ -96,62 +110,86 @@ export default function BotDetailPage() {
   };
 
   if (error && !bot) return <main><p className="text-sm text-rose-400">{error}</p></main>;
-  if (!bot) return <main><p className="text-slate-400">{t('common.loading')}</p></main>;
+  if (!bot) {
+    return (
+      <main className="space-y-4">
+        <div className="h-24 animate-pulse rounded-2xl border border-slate-800/60 bg-slate-900/40" />
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-16 animate-pulse rounded-xl border border-slate-800/60 bg-slate-900/40" />
+          ))}
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">{bot.name}</h1>
-          <p className="mt-1 text-xs text-slate-500">
-            {t('bots.tokenLabel')}: <code>{bot.tokenMasked}</code> • prefix <code>{bot.prefix}</code> •{' '}
+      {/* Hero bot */}
+      <section className="flex flex-wrap items-center gap-4 rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-900/40 p-5">
+        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-xl font-bold text-white">
+          {bot.name[0]?.toUpperCase()}
+        </span>
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate text-xl font-bold tracking-tight">{bot.name}</h1>
+          <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
+            <span>{t('bots.tokenLabel')}: <code>{bot.tokenMasked}</code></span>
+            <span aria-hidden>•</span>
+            <span>prefix <code className="text-slate-400">{bot.prefix}</code></span>
+            <span aria-hidden>•</span>
             <StatusBadge runtimeStatus={bot.runtimeStatus} status={bot.status} />
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href={`/dashboard/bots/${botId}/integrations`}
-            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500">
-            {t('integrations.title')} →
-          </Link>
-          <Link href={`/dashboard/bots/${botId}/monitoring`}
-            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500">
-            {t('monitoring.title')} →
-          </Link>
           <button onClick={() => patch({ status: bot.status === 'paused' ? 'running' : 'paused' })} disabled={busy}
-            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm transition hover:border-slate-500 disabled:opacity-50">
+            className={btnGhost}>
+            <Icon name={bot.status === 'paused' ? 'play' : 'pause'} className="h-3.5 w-3.5" />
             {bot.status === 'paused' ? t('detail.resume') : t('detail.pause')}
           </button>
-          <button onClick={remove} className="rounded-lg border border-rose-900 px-3 py-1.5 text-sm text-rose-400 hover:border-rose-500">
-            {t('common.delete')}
+          <button onClick={remove}
+            className="flex items-center gap-2 rounded-lg border border-rose-900 px-3 py-1.5 text-sm text-rose-400 transition hover:border-rose-500">
+            <Icon name="trash" className="h-3.5 w-3.5" /> {t('common.delete')}
           </button>
         </div>
-      </div>
+      </section>
 
       {flash && <p className="text-sm text-emerald-400">{flash}</p>}
       {error && <p className="text-sm text-rose-400">{error}</p>}
 
+      {/* Undangan */}
       <section className={cardCls}>
-        <h2 className="mb-2 font-semibold">{t('detail.inviteTitle')}</h2>
+        <h2 className="mb-3 font-semibold">{t('detail.inviteTitle')}</h2>
         <div className="flex gap-2">
-          <input readOnly value={bot.inviteUrl} className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 font-mono text-xs" />
+          <input readOnly value={bot.inviteUrl} className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 font-mono text-xs text-slate-300 outline-none" />
           <button onClick={() => { void navigator.clipboard.writeText(bot.inviteUrl); notify(t('common.copied')); }}
-            className="shrink-0 rounded-lg bg-indigo-500 px-3 py-2 text-sm hover:bg-indigo-400">{t('common.copy')}</button>
+            className="flex shrink-0 items-center gap-2 rounded-lg bg-indigo-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-400">
+            <Icon name="copy" className="h-3.5 w-3.5" /> {t('common.copy')}
+          </button>
         </div>
       </section>
 
-      <section className={cardCls}>
+      {/* Modul — kartu toggle ala MEE6/Carl-bot */}
+      <section>
         <h2 className="mb-3 font-semibold">{t('detail.modulesTitle')}</h2>
-        <div className="flex flex-wrap gap-2">
-          {MODULE_KEYS.map((m) => (
-            <label key={m} className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm transition hover:border-slate-600">
-              <input type="checkbox" className="h-4 w-4 accent-indigo-500" checked={bot.modules.includes(m)}
-                onChange={(e) => patch({ modules: e.target.checked ? [...bot.modules, m] : bot.modules.filter((x) => x !== m) })} />
-              {t(`mod.${m}`)}
-            </label>
-          ))}
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {MODULES.map(({ key, icon }) => {
+            const on = bot.modules.includes(key);
+            return (
+              <div key={key}
+                className={`flex items-center gap-3 rounded-xl border p-3.5 transition ${on ? 'border-indigo-500/40 bg-indigo-500/[0.06]' : 'border-slate-800 bg-slate-900/60'}`}>
+                <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg transition ${on ? 'bg-indigo-500/20 text-indigo-300' : 'bg-slate-800 text-slate-500'}`}>
+                  <Icon name={icon} />
+                </span>
+                <p className="min-w-0 flex-1 truncate text-sm font-medium">{t(`mod.${key}`)}</p>
+                <Toggle checked={on} label={t(`mod.${key}`)}
+                  onChange={(v) => patch({ modules: v ? [...bot.modules, key] : bot.modules.filter((x) => x !== key) })} />
+              </div>
+            );
+          })}
         </div>
       </section>
 
+      {/* Server & config */}
       <section className={cardCls}>
         <h2 className="mb-3 font-semibold">{t('detail.guildsTitle')}</h2>
         {bot.guilds.length === 0 ? (
@@ -159,8 +197,8 @@ export default function BotDetailPage() {
         ) : (
           <>
             <div className="mb-4 max-w-md">
-              <p className="mb-1 block text-sm text-slate-300">{t('detail.selectGuild')}</p>
-              <select value={guildId} onChange={(e) => { setGuildId(e.target.value); void loadGuildData(e.target.value); }}
+              <label className="mb-1 block text-sm text-slate-300" htmlFor="guild-select">{t('detail.selectGuild')}</label>
+              <select id="guild-select" value={guildId} onChange={(e) => { setGuildId(e.target.value); void loadGuildData(e.target.value); }}
                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none transition focus:border-indigo-400">
                 <option value="">{t('common.select')}</option>
                 {bot.guilds.map((g) => <option key={g.id} value={g.discordGuildId}>{g.name}</option>)}
@@ -170,7 +208,7 @@ export default function BotDetailPage() {
               <>
                 <GuildConfigPanel cfg={cfg} channels={channels} roles={roles} onChange={setCfg} />
                 <button onClick={saveConfig} disabled={busy}
-                  className="mt-5 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium hover:bg-indigo-400 disabled:opacity-50">
+                  className="mt-5 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-400 disabled:opacity-50">
                   {busy ? t('common.saving') : t('common.save')}
                 </button>
               </>
