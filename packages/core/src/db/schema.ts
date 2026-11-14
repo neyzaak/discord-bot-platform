@@ -1,6 +1,7 @@
 import {
   integer, jsonb, pgTable, serial, text, timestamp, uniqueIndex, varchar,
 } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -20,6 +21,8 @@ export const bots = pgTable('bots', {
   tokenLast4: varchar('token_last4', { length: 8 }).notNull(),
   status: varchar('status', { length: 16 }).notNull().default('running'), // running | paused
   prefix: varchar('prefix', { length: 8 }).notNull().default('!'),
+  /** Discord ID staf yang boleh mengelola bot ini (selain pemilik). */
+  managers: text('managers').array().notNull().default(sql`'{}'::text[]`),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

@@ -1,5 +1,5 @@
 import { Router, type Request } from 'express';
-import { and, desc, eq, gte, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, or, sql } from 'drizzle-orm';
 import {
   BOTS_CHANNEL, BOT_STATUS_KEY, botConfigs, botGuilds, bots, botLevelConfigSchema,
   buildInviteUrl, commandLogs, createBotSchema, db, decryptToken, encryptToken, errors,
@@ -30,12 +30,23 @@ export function httpError(status: number, message: string): Error {
   return Object.assign(new Error(message), { status });
 }
 
+/** Bot bisa diakses pemilik ATAU staf (managers). Aksi destruktif (hapus, kelola staf) tetap cek assertOwner. */
 export async function loadOwnedBot(req: Request): Promise<BotRow> {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) throw httpError(400, 'id tidak valid');
-  const [bot] = await db.select().from(bots).where(and(eq(bots.id, id), eq(bots.userId, req.user!.id)));
+  const [bot] = await db.select().from(bots).where(and(
+    eq(bots.id, id),
+    or(
+      eq(bots.userId, req.user!.id),
+      sql`${bots.managers} @> ARRAY[${req.user!.discordId}]::text[]`,
+    ),
+  ));
   if (!bot) throw httpError(404, 'bot tidak ditemukan');
   return bot;
+}
+
+export function assertOwner(bot: BotRow, req: Request): void {
+  if (bot.userId !== req.user!.id) throw httpError(403, 'hanya pemilik bot yang bisa melakukan ini');
 }
 
 export async function botLevelModules(botId: number): Promise<ModuleName[]> {
@@ -69,7 +80,10 @@ async function assertUserManagesGuild(discordUserId: string, guildId: string): P
 // ---- CRUD ----
 
 botsRouter.get('/', requireAuth, asyncHandler(async (req, res) => {
-  const rows = await db.select(SAFE_COLUMNS).from(bots).where(eq(bots.userId, req.user!.id)).orderBy(desc(bots.createdAt));
+  const rows = await db.select(SAFE_COLUMNS).from(bots).where(or(
+    eq(bots.userId, req.user!.id),
+    sql`${bots.managers} @> ARRAY[${req.user!.discordId}]::text[]`,
+  )).orderBy(desc(bots.createdAt));
   const statuses = rows.length ? await redis.mget(...rows.map((b) => BOT_STATUS_KEY(b.id))) : [];
   res.json({ bots: rows.map((b, i) => ({ ...b, runtimeStatus: parseRuntimeStatus(statuses[i]) })) });
 }));
@@ -119,8 +133,32 @@ botsRouter.get('/:id', requireAuth, asyncHandler(async (req, res) => {
       runtimeStatus: parseRuntimeStatus(statusRaw),
       inviteUrl: buildInviteUrl(bot.applicationId, modules),
       guilds: guildRows.map((g) => ({ id: g.id, discordGuildId: g.discordGuildId, name: g.name })),
+      ...(bot.userId === req.user!.id ? { managers: bot.managers } : {}),
     },
   });
+}));
+
+// ---- Staf (managers) — kelola oleh pemilik ----
+
+const MANAGER_LIMIT = 10;
+
+botsRouter.post('/:id/managers', requireAuth, asyncHandler(async (req, res) => {
+  const bot = await loadOwnedBot(req);
+  assertOwner(bot, req);
+  const discordId = String((req.body as { discordId?: unknown })?.discordId ?? '');
+  if (!isSnowflake(discordId)) throw httpError(400, 'discordId tidak valid');
+  if (bot.managers.includes(discordId)) throw httpError(400, 'staf sudah terdaftar');
+  if (bot.managers.length >= MANAGER_LIMIT) throw httpError(400, `maksimal ${MANAGER_LIMIT} staf`);
+  await db.update(bots).set({ managers: [...bot.managers, discordId], updatedAt: new Date() }).where(eq(bots.id, bot.id));
+  res.json({ ok: true, managers: [...bot.managers, discordId] });
+}));
+
+botsRouter.delete('/:id/managers/:discordId', requireAuth, asyncHandler(async (req, res) => {
+  const bot = await loadOwnedBot(req);
+  assertOwner(bot, req);
+  const managers = bot.managers.filter((m) => m !== req.params.discordId);
+  await db.update(bots).set({ managers, updatedAt: new Date() }).where(eq(bots.id, bot.id));
+  res.json({ ok: true, managers });
 }));
 
 botsRouter.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
@@ -150,6 +188,7 @@ botsRouter.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
 
 botsRouter.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
   const bot = await loadOwnedBot(req);
+  assertOwner(bot, req);
   await db.delete(bots).where(eq(bots.id, bot.id));
   publishBot(bot.id, 'stop');
   logger.info({ botId: bot.id }, 'bot dihapus');

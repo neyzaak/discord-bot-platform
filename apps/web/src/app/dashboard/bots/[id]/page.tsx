@@ -14,7 +14,7 @@ interface Guild { id: number; discordGuildId: string; name: string }
 interface BotDetail {
   id: number; name: string; prefix: string; status: 'running' | 'paused';
   runtimeStatus: 'online' | 'offline'; tokenMasked: string; applicationId: string;
-  modules: string[]; inviteUrl: string; guilds: Guild[];
+  modules: string[]; inviteUrl: string; guilds: Guild[]; managers?: string[];
 }
 
 const MODULES: Array<{ key: string; icon: IconName }> = [
@@ -47,6 +47,7 @@ export default function BotDetailPage() {
   const [channels, setChannels] = useState<Opt[]>([]);
   const [roles, setRoles] = useState<Opt[]>([]);
   const [cfg, setCfg] = useState<GuildConfigData | null>(null);
+  const [staffInput, setStaffInput] = useState('');
 
   const notify = (msg: string) => { setFlash(msg); setTimeout(() => setFlash(''), 2500); };
   const fail = (e: unknown) => {
@@ -109,6 +110,26 @@ export default function BotDetailPage() {
     } catch (e) { fail(e); } finally { setBusy(false); }
   };
 
+  const addStaff = async () => {
+    const discordId = staffInput.trim();
+    if (!discordId) return;
+    setBusy(true); setError('');
+    try {
+      const d = await api<{ managers: string[] }>(`/bots/${botId}/managers`, { method: 'POST', body: JSON.stringify({ discordId }) });
+      setBot((b) => (b ? { ...b, managers: d.managers } : b));
+      setStaffInput('');
+      notify(t('common.saved'));
+    } catch (e) { fail(e); } finally { setBusy(false); }
+  };
+
+  const removeStaff = async (discordId: string) => {
+    setBusy(true); setError('');
+    try {
+      const d = await api<{ managers: string[] }>(`/bots/${botId}/managers/${discordId}`, { method: 'DELETE' });
+      setBot((b) => (b ? { ...b, managers: d.managers } : b));
+    } catch (e) { fail(e); } finally { setBusy(false); }
+  };
+
   if (error && !bot) return <main><p className="text-sm text-rose-400">{error}</p></main>;
   if (!bot) {
     return (
@@ -167,6 +188,36 @@ export default function BotDetailPage() {
           </button>
         </div>
       </section>
+
+      {/* Staf — hanya terlihat pemilik (API kirim managers hanya ke owner) */}
+      {bot.managers && (
+        <section className={cardCls}>
+          <h2 className="mb-1 font-semibold">{t('detail.staffTitle')}</h2>
+          <p className="mb-3 text-xs text-slate-500">{t('detail.staffHint')}</p>
+          {bot.managers.length === 0 && <p className="mb-3 text-sm text-slate-400">{t('detail.staffEmpty')}</p>}
+          {bot.managers.length > 0 && (
+            <ul className="mb-3 space-y-2">
+              {bot.managers.map((m) => (
+                <li key={m} className="flex items-center justify-between gap-2 rounded-lg border border-slate-800 bg-slate-950 px-3 py-2">
+                  <code className="font-mono text-xs text-slate-300">{m}</code>
+                  <button onClick={() => removeStaff(m)} disabled={busy} aria-label={t('common.delete')}
+                    className="text-slate-500 transition hover:text-rose-400 disabled:opacity-50">
+                    <Icon name="x" className="h-3.5 w-3.5" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="flex gap-2">
+            <input value={staffInput} onChange={(e) => setStaffInput(e.target.value)} maxLength={20} placeholder="123456789012345678"
+              className="w-full max-w-xs rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 font-mono text-sm outline-none transition focus:border-indigo-400" />
+            <button onClick={addStaff} disabled={busy || staffInput.trim() === ''}
+              className="rounded-lg bg-indigo-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-400 disabled:opacity-50">
+              {t('detail.staffAdd')}
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* Modul — kartu toggle ala MEE6/Carl-bot */}
       <section>
