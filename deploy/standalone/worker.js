@@ -104309,6 +104309,8 @@ var quizConfigSchema = external_exports.object({
   timePerQuestionSec: external_exports.number().int().min(5).max(600).default(240),
   pointsPerQuestion: external_exports.number().int().min(10).max(1e3).default(100),
   questionsPerSession: external_exports.number().int().min(1).max(50).default(10),
+  /** Role yang di-ping saat soal muncul (kosong = tanpa ping). */
+  mentionRoleId: snowflakeOrEmpty.default(""),
   questions: quizQuestionsSchema
 }).superRefine((v, ctx) => {
   for (const [i, q] of v.questions.entries()) {
@@ -107892,6 +107894,8 @@ var bots = pgTable("bots", {
   status: varchar("status", { length: 16 }).notNull().default("running"),
   // running | paused
   prefix: varchar("prefix", { length: 8 }).notNull().default("!"),
+  /** Discord ID staf yang boleh mengelola bot ini (selain pemilik). */
+  managers: text("managers").array().notNull().default(sql`'{}'::text[]`),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
 });
@@ -108841,7 +108845,8 @@ async function nextQuestion(ctx, s) {
   };
   const ch = await ctx.client.channels.fetch(s.channelId).catch(() => null);
   if (!ch?.isTextBased() || !("send" in ch)) return endQuiz(ctx, s, "kanal tidak tersedia");
-  const msg = await ch.send({ content: "<@&1555168151656996904>", embeds: [embed], components: [questionRow(s, q)] }).catch((e) => {
+  const mention = config2.mentionRoleId ? `<@&${config2.mentionRoleId}>` : void 0;
+  const msg = await ch.send({ content: mention, embeds: [embed], components: [questionRow(s, q)] }).catch((e) => {
     recordError(ctx.botId, e);
     return null;
   });

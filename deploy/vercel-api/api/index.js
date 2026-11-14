@@ -51821,6 +51821,8 @@ var quizConfigSchema = external_exports.object({
   timePerQuestionSec: external_exports.number().int().min(5).max(600).default(240),
   pointsPerQuestion: external_exports.number().int().min(10).max(1e3).default(100),
   questionsPerSession: external_exports.number().int().min(1).max(50).default(10),
+  /** Role yang di-ping saat soal muncul (kosong = tanpa ping). */
+  mentionRoleId: snowflakeOrEmpty.default(""),
   questions: quizQuestionsSchema
 }).superRefine((v, ctx) => {
   for (const [i, q] of v.questions.entries()) {
@@ -58697,16 +58699,16 @@ var asyncHandler = (fn) => (req, res, next) => {
 
 // apps/api/src/lib/discord.ts
 var API = "https://discord.com/api/v10";
-async function discordFetch(path2, init = {}) {
+async function discordFetch(path2, init, tries = 3) {
   const headers = new Headers(init.headers);
   if (init.token) headers.set("Authorization", `${init.auth ?? "Bot"} ${init.token}`);
   if (init.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
   const res = await fetch(`${API}${path2}`, { ...init, headers });
-  if (res.status === 429) {
+  if (res.status === 429 && tries > 1) {
     const body = await res.json().catch(() => ({}));
     const wait = Math.min((body.retry_after ?? 1) * 1e3, 1e4);
     await new Promise((r) => setTimeout(r, wait));
-    return discordFetch(path2, init);
+    return discordFetch(path2, init, tries - 1);
   }
   return res;
 }

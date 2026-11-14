@@ -4,17 +4,17 @@ const API = 'https://discord.com/api/v10';
 
 interface FetchOpts { token?: string; auth?: 'Bot' | 'Bearer' }
 
-/** Discord REST helper — hormati 429 (retry sekali sesuai retry_after). */
-export async function discordFetch(path: string, init: RequestInit & FetchOpts = {}): Promise<Response> {
+/** Discord REST helper — hormati 429 (retry sesuai retry_after, maks 3 percobaan). */
+export async function discordFetch(path: string, init: RequestInit & FetchOpts, tries = 3): Promise<Response> {
   const headers = new Headers(init.headers);
   if (init.token) headers.set('Authorization', `${init.auth ?? 'Bot'} ${init.token}`);
   if (init.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
   const res = await fetch(`${API}${path}`, { ...init, headers });
-  if (res.status === 429) {
+  if (res.status === 429 && tries > 1) {
     const body = (await res.json().catch(() => ({}))) as { retry_after?: number };
     const wait = Math.min((body.retry_after ?? 1) * 1000, 10_000);
     await new Promise((r) => setTimeout(r, wait));
-    return discordFetch(path, init);
+    return discordFetch(path, init, tries - 1);
   }
   return res;
 }

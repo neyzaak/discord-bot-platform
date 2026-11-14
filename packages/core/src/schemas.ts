@@ -123,6 +123,8 @@ export const quizConfigSchema = z.object({
   timePerQuestionSec: z.number().int().min(5).max(600).default(240),
   pointsPerQuestion: z.number().int().min(10).max(1000).default(100),
   questionsPerSession: z.number().int().min(1).max(50).default(10),
+  /** Role yang di-ping saat soal muncul (kosong = tanpa ping). */
+  mentionRoleId: snowflakeOrEmpty.default(''),
   questions: quizQuestionsSchema,
 }).superRefine((v, ctx) => {
   for (const [i, q] of v.questions.entries()) {

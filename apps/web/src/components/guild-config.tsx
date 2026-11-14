@@ -16,7 +16,7 @@ export interface GuildConfigData {
   leveling: { enabled: boolean; xpMin: number; xpMax: number; cooldownSec: number; announceChannelId: string; levelUpMessage: string; roleRewards: Array<{ level: number; roleId: string }> };
   economy: { enabled: boolean; currencyName: string; dailyAmount: number; workMin: number; workMax: number; workCooldownSec: number; shop: Array<{ name: string; price: number; roleId: string }> };
   webhooks: { enabled: boolean };
-  quiz: { enabled: boolean; title: string; pointsName: string; timePerQuestionSec: number; pointsPerQuestion: number; questionsPerSession: number; questions: QuizQuestion[] };
+  quiz: { enabled: boolean; title: string; pointsName: string; timePerQuestionSec: number; pointsPerQuestion: number; questionsPerSession: number; mentionRoleId: string; questions: QuizQuestion[] };
 }
 
 const inputCls = 'w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-400';
@@ -320,6 +320,11 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
           <div><label className={labelCls}>{t('mod.quiz.time')}</label><Num value={cfg.quiz.timePerQuestionSec} min={5} max={600} onChange={(v) => set('quiz', { ...cfg.quiz, timePerQuestionSec: v })} /></div>
           <div><label className={labelCls}>{t('mod.quiz.points')}</label><Num value={cfg.quiz.pointsPerQuestion} min={10} max={1000} onChange={(v) => set('quiz', { ...cfg.quiz, pointsPerQuestion: v })} /></div>
           <div><label className={labelCls}>{t('mod.quiz.perSession')}</label><Num value={cfg.quiz.questionsPerSession} min={1} max={50} onChange={(v) => set('quiz', { ...cfg.quiz, questionsPerSession: v })} /></div>
+        </div>
+        <div className="mb-3">
+          <label className={labelCls}>{t('mod.quiz.mentionRole')}</label>
+          <input value={cfg.quiz.mentionRoleId ?? ''} maxLength={25} placeholder="123456789012345678 (opsional)" className={`${inputCls} font-mono`}
+            onChange={(e) => set('quiz', { ...cfg.quiz, mentionRoleId: e.target.value.replace(/\D/g, '') })} />
         </div>
 
         <label className={labelCls}>{t('mod.quiz.questions')}</label>

@@ -19,7 +19,7 @@ interface QuizQuestion { question: string; choices: string[]; correctIndex: numb
 interface QuizCfg {
   enabled: boolean; title: string; pointsName: string;
   timePerQuestionSec: number; pointsPerQuestion: number;
-  questionsPerSession: number;
+  questionsPerSession: number; mentionRoleId?: string;
 }
 const cfg = (c: Record<string, unknown>): QuizCfg => c as unknown as QuizCfg;
 
@@ -105,7 +105,8 @@ async function nextQuestion(ctx: ModuleCtx, s: QuizSession): Promise<void> {
 
   const ch = await ctx.client.channels.fetch(s.channelId).catch(() => null);
   if (!ch?.isTextBased() || !('send' in ch)) return endQuiz(ctx, s, 'kanal tidak tersedia');
-  const msg = await ch.send({ content: '<@&1555168151656996904>', embeds: [embed], components: [questionRow(s, q)] })
+  const mention = config.mentionRoleId ? `<@&${config.mentionRoleId}>` : undefined;
+  const msg = await ch.send({ content: mention, embeds: [embed], components: [questionRow(s, q)] })
     .catch((e) => { recordError(ctx.botId, e); return null; });
   if (!msg) return endQuiz(ctx, s, 'gagal mengirim soal');
 
