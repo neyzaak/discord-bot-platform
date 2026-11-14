@@ -37,7 +37,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       ]
     : [];
 
-  const active = (href: string) => pathname === href || (href !== '/dashboard' && pathname?.startsWith(href));
+  // Item nav aktif = href paling spesifik (terpanjang) yang cocok dengan path saat ini.
+  const allNav = [...mainNav, ...botNav];
+  const best = allNav
+    .filter((n) => pathname === n.href || pathname?.startsWith(`${n.href}/`))
+    .sort((a, b) => b.href.length - a.href.length)[0];
+  const active = (href: string) => best?.href === href;
   const linkCls = (on: boolean) =>
     `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition ${on ? 'bg-indigo-500/15 text-indigo-300' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'}`;
 
