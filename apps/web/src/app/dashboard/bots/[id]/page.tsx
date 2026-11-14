@@ -118,7 +118,7 @@ export default function BotDetailPage() {
             {t('monitoring.title')} →
           </Link>
           <button onClick={() => patch({ status: bot.status === 'paused' ? 'running' : 'paused' })} disabled={busy}
-            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500">
+            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm transition hover:border-slate-500 disabled:opacity-50">
             {bot.status === 'paused' ? t('detail.resume') : t('detail.pause')}
           </button>
           <button onClick={remove} className="rounded-lg border border-rose-900 px-3 py-1.5 text-sm text-rose-400 hover:border-rose-500">
@@ -141,10 +141,10 @@ export default function BotDetailPage() {
 
       <section className={cardCls}>
         <h2 className="mb-3 font-semibold">{t('detail.modulesTitle')}</h2>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-2">
           {MODULE_KEYS.map((m) => (
-            <label key={m} className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={bot.modules.includes(m)}
+            <label key={m} className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm transition hover:border-slate-600">
+              <input type="checkbox" className="h-4 w-4 accent-indigo-500" checked={bot.modules.includes(m)}
                 onChange={(e) => patch({ modules: e.target.checked ? [...bot.modules, m] : bot.modules.filter((x) => x !== m) })} />
               {t(`mod.${m}`)}
             </label>
@@ -158,10 +158,10 @@ export default function BotDetailPage() {
           <p className="text-sm text-slate-400">{t('detail.guildsEmpty')}</p>
         ) : (
           <>
-            <div className="mb-4 max-w-xs">
+            <div className="mb-4 max-w-md">
               <p className="mb-1 block text-sm text-slate-300">{t('detail.selectGuild')}</p>
               <select value={guildId} onChange={(e) => { setGuildId(e.target.value); void loadGuildData(e.target.value); }}
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-400">
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none transition focus:border-indigo-400">
                 <option value="">{t('common.select')}</option>
                 {bot.guilds.map((g) => <option key={g.id} value={g.discordGuildId}>{g.name}</option>)}
               </select>
