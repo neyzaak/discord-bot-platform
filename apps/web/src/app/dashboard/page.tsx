@@ -11,6 +11,7 @@ import { useI18n } from '../../lib/i18n';
 interface BotListItem {
   id: number; name: string; prefix: string; status: string;
   runtimeStatus: 'online' | 'offline'; tokenLast4: string;
+  avatarUrl: string | null; guildCount: number;
 }
 
 export default function BotsPage() {
@@ -63,21 +64,30 @@ export default function BotsPage() {
           <Link
             key={b.id}
             href={`/dashboard/bots/${b.id}`}
-            className="group flex items-center gap-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-4 transition hover:border-indigo-500/50 hover:bg-slate-900"
+            className="group flex items-center gap-4 rounded-2xl border border-slate-800/80 bg-slate-900/50 p-4 transition hover:-translate-y-0.5 hover:border-indigo-500/50 hover:bg-slate-900"
           >
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-lg font-bold text-white">
-              {b.name[0]?.toUpperCase()}
-            </span>
+            {b.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={b.avatarUrl} alt="" className="h-12 w-12 shrink-0 rounded-2xl object-cover" />
+            ) : (
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-lg font-bold text-white">
+                {b.name[0]?.toUpperCase()}
+              </span>
+            )}
             <div className="min-w-0 flex-1">
-              <p className="truncate font-semibold">{b.name}</p>
-              <p className="mt-0.5 truncate text-xs text-slate-500">
-                {t('bots.tokenLabel')}: ••••{b.tokenLast4} • prefix <code className="text-slate-400">{b.prefix}</code>
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="truncate font-semibold">{b.name}</p>
+                <StatusBadge runtimeStatus={b.runtimeStatus} status={b.status} />
+              </div>
+              <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]">
+                <span className="rounded-md bg-white/5 px-1.5 py-0.5 font-medium text-slate-300">{b.guildCount} server</span>
+                <span className="rounded-md bg-white/5 px-1.5 py-0.5 font-mono text-slate-400">prefix {b.prefix}</span>
+                <span className="rounded-md bg-white/5 px-1.5 py-0.5 font-mono text-slate-500">••••{b.tokenLast4}</span>
+              </div>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
-              <StatusBadge runtimeStatus={b.runtimeStatus} status={b.status} />
-              <Icon name="arrowRight" className="text-slate-600 transition group-hover:translate-x-0.5 group-hover:text-slate-400" />
-            </div>
+            <span aria-hidden className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/5 text-slate-400 transition group-hover:bg-indigo-500/20 group-hover:text-indigo-300">
+              <Icon name="arrowRight" />
+            </span>
           </Link>
         ))}
       </div>

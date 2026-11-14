@@ -1,11 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
   color-scheme: dark;
+}
+
+body {
+  /* Nuansa ungu-gelap ala top.gg (rgb(7,5,16)) — sedikit diangkat agar kartu slate-900 tetap terbaca. */
+  background-color: rgb(9, 6, 18);
 }
 
 ::selection {

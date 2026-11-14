@@ -58865,7 +58865,11 @@ async function assertUserManagesGuild(discordUserId, guildId) {
   }
 }
 botsRouter.get("/", requireAuth, asyncHandler(async (req, res) => {
-  const rows = await db.select(SAFE_COLUMNS).from(bots).where(or(
+  const gc = db.select({ botId: botGuilds.botId, count: sql`count(*)::int`.as("count") }).from(botGuilds).groupBy(botGuilds.botId).as("gc");
+  const rows = await db.select({
+    ...SAFE_COLUMNS,
+    guildCount: sql`coalesce(${gc.count}, 0)::int`
+  }).from(bots).leftJoin(gc, eq(gc.botId, bots.id)).where(or(
     eq(bots.userId, req.user.id),
     sql`${bots.managers} @> ARRAY[${req.user.discordId}]::text[]`
   )).orderBy(desc(bots.createdAt));

@@ -74,7 +74,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <button
             onClick={() => setLang(lang === 'id' ? 'en' : 'id')}
             aria-label="Ganti bahasa"
-            className="flex items-center gap-1.5 rounded-md border border-slate-700 px-2 py-1 text-xs font-medium uppercase text-slate-300 transition hover:border-slate-500"
+            className="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1 text-xs font-medium uppercase text-slate-300 transition hover:bg-white/10"
           >
             <Icon name="globe" className="h-3.5 w-3.5" /> {lang}
           </button>
@@ -83,7 +83,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               await fetch('/api/auth/logout', { method: 'POST' });
               router.replace('/login');
             }}
-            className="flex items-center gap-1.5 rounded-md border border-slate-700 px-2 py-1 text-xs text-slate-300 transition hover:border-rose-500/60 hover:text-rose-300"
+            className="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1 text-xs text-slate-300 transition hover:bg-rose-500/15 hover:text-rose-300"
           >
             <Icon name="logout" className="h-3.5 w-3.5" /> {t('nav.logout')}
           </button>
