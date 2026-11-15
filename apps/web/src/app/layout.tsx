@@ -6,7 +6,7 @@ import './globals.css';
 const manrope = Manrope({ subsets: ['latin'], display: 'swap', variable: '--font-manrope' });
 
 export const metadata: Metadata = {
-  title: 'Bot Geng Sulawesi',
+  title: 'Bot Caches',
   description: 'No-code builder untuk bot Discord',
 };
 

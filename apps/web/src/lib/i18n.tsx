@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 type Dict = Record<string, string>;
 
 const id: Dict = {
-  'app.title': 'Bot Geng Sulawesi',
+  'app.title': 'Bot Caches',
   'nav.logout': 'Keluar',
   'nav.overview': 'Ringkasan',
   'common.loading': 'Memuat…',
@@ -157,7 +157,7 @@ const id: Dict = {
 };
 
 const en: Dict = {
-  'app.title': 'Bot Geng Sulawesi',
+  'app.title': 'Bot Caches',
   'nav.logout': 'Log out',
   'nav.overview': 'Overview',
   'common.loading': 'Loading…',
