@@ -197,7 +197,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
         <h3 className="mb-3 font-medium">{t('mod.leveling')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.leveling.commands')}</p>
         <div className="mb-3"><Check label={t('mod.enabled')} checked={cfg.leveling.enabled} onChange={(v) => set('leveling', { ...cfg.leveling, enabled: v })} /></div>
-        <div className="mb-3 grid grid-cols-3 gap-3">
+        <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div><label className={labelCls}>{t('mod.leveling.xpMin')}</label><Num value={cfg.leveling.xpMin} min={1} max={50} onChange={(v) => set('leveling', { ...cfg.leveling, xpMin: v })} /></div>
           <div><label className={labelCls}>{t('mod.leveling.xpMax')}</label><Num value={cfg.leveling.xpMax} min={1} max={50} onChange={(v) => set('leveling', { ...cfg.leveling, xpMax: v })} /></div>
           <div><label className={labelCls}>{t('mod.leveling.cooldown')}</label><Num value={cfg.leveling.cooldownSec} min={0} max={600} onChange={(v) => set('leveling', { ...cfg.leveling, cooldownSec: v })} /></div>
@@ -215,7 +215,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
         <label className={labelCls}>{t('mod.leveling.rewards')}</label>
         <div className="space-y-2">
           {cfg.leveling.roleRewards.map((r, i) => (
-            <div key={i} className="flex items-center gap-2">
+            <div key={i} className="flex flex-wrap items-center gap-2">
               <span className="text-xs text-slate-500">Lv</span>
               <Num value={r.level} min={1} max={500} w="w-24" onChange={(v) => {
                 const rr = [...cfg.leveling.roleRewards];
@@ -251,7 +251,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
           <input value={cfg.economy.currencyName} maxLength={16}
             onChange={(e) => set('economy', { ...cfg.economy, currencyName: e.target.value })} className={`${inputCls} max-w-[200px]`} />
         </div>
-        <div className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-4">
           <div><label className={labelCls}>{t('mod.economy.daily')}</label><Num value={cfg.economy.dailyAmount} min={1} max={100000} onChange={(v) => set('economy', { ...cfg.economy, dailyAmount: v })} /></div>
           <div><label className={labelCls}>{t('mod.economy.workMin')}</label><Num value={cfg.economy.workMin} min={1} max={10000} onChange={(v) => set('economy', { ...cfg.economy, workMin: v })} /></div>
           <div><label className={labelCls}>{t('mod.economy.workMax')}</label><Num value={cfg.economy.workMax} min={1} max={10000} onChange={(v) => set('economy', { ...cfg.economy, workMax: v })} /></div>
@@ -260,7 +260,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
         <label className={labelCls}>{t('mod.economy.shop')}</label>
         <div className="space-y-2">
           {cfg.economy.shop.map((it, i) => (
-            <div key={i} className="flex items-center gap-2">
+            <div key={i} className="flex flex-wrap items-center gap-2">
               <input value={it.name} maxLength={32} placeholder={t('mod.economy.itemName')}
                 onChange={(e) => {
                   const shop = [...cfg.economy.shop];
@@ -304,7 +304,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
         <h3 className="mb-3 font-medium">{t('mod.quiz')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.quiz.commands')}</p>
         <div className="mb-3"><Check label={t('mod.enabled')} checked={cfg.quiz.enabled} onChange={(v) => set('quiz', { ...cfg.quiz, enabled: v })} /></div>
-        <div className="mb-3 grid grid-cols-2 gap-3">
+        <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className={labelCls}>{t('mod.quiz.title')}</label>
             <input value={cfg.quiz.title} maxLength={100}
@@ -316,7 +316,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
               onChange={(e) => set('quiz', { ...cfg.quiz, pointsName: e.target.value })} className={inputCls} />
           </div>
         </div>
-        <div className="mb-3 grid grid-cols-3 gap-3">
+        <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div><label className={labelCls}>{t('mod.quiz.time')}</label><Num value={cfg.quiz.timePerQuestionSec} min={5} max={600} onChange={(v) => set('quiz', { ...cfg.quiz, timePerQuestionSec: v })} /></div>
           <div><label className={labelCls}>{t('mod.quiz.points')}</label><Num value={cfg.quiz.pointsPerQuestion} min={10} max={1000} onChange={(v) => set('quiz', { ...cfg.quiz, pointsPerQuestion: v })} /></div>
           <div><label className={labelCls}>{t('mod.quiz.perSession')}</label><Num value={cfg.quiz.questionsPerSession} min={1} max={50} onChange={(v) => set('quiz', { ...cfg.quiz, questionsPerSession: v })} /></div>

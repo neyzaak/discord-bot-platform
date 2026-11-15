@@ -73,7 +73,7 @@ export default function NewBotPage() {
           <label className={labelCls}>{t('bots.nameLabel')}</label>
           <input value={name} onChange={(e) => setName(e.target.value)} required minLength={2} maxLength={100} className={inputCls} />
         </div>
-        <div className="grid grid-cols-[1fr_2fr] gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_2fr]">
           <div>
             <label className={labelCls}>{t('bots.prefixLabel')}</label>
             <input value={prefix} onChange={(e) => setPrefix(e.target.value)} required maxLength={8} className={`${inputCls} font-mono`} />
@@ -87,7 +87,7 @@ export default function NewBotPage() {
         </div>
         <div>
           <label className={labelCls}>{t('bots.templateLabel')}</label>
-          <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label={t('bots.templateLabel')}>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3" role="radiogroup" aria-label={t('bots.templateLabel')}>
             {templates.map((tpl) => (
               <button key={tpl} type="button" role="radio" aria-checked={template === tpl} onClick={() => setTemplate(tpl)}
                 className={`rounded-xl border px-2 py-2.5 text-center text-xs font-medium transition ${
