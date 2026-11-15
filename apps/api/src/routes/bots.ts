@@ -268,6 +268,26 @@ botsRouter.get('/:id/stats', requireAuth, asyncHandler(async (req, res) => {
   res.json({ topCommands: top, commands24h: last24[0]?.total ?? 0 });
 }));
 
+// ---- Avatar (set avatar aplikasi bot di Discord) ----
+
+const AVATAR_RE = /^data:image\/(png|jpeg|jpg|webp|gif);base64,/;
+
+botsRouter.post('/:id/avatar', requireAuth, configLimiter, asyncHandler(async (req, res) => {
+  const bot = await loadOwnedBot(req);
+  const dataUri = String((req.body as { dataUri?: unknown })?.dataUri ?? '');
+  if (!AVATAR_RE.test(dataUri)) throw httpError(400, 'harus data URL gambar (png/jpeg/webp/gif)');
+  if (dataUri.length > 14_000_000) throw httpError(400, 'gambar terlalu besar (maks ~10 MB)');
+  const res2 = await discordFetch('/users/@me', {
+    token: decryptToken(bot.tokenEncrypted), method: 'PATCH', body: JSON.stringify({ avatar: dataUri }),
+  });
+  if (!res2.ok) throw httpError(502, `gagal set avatar ke Discord (HTTP ${res2.status})`);
+  const u = (await res2.json()) as { id: string; avatar: string | null };
+  const avatarUrl = u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png?size=128` : null;
+  await db.update(bots).set({ avatarUrl, updatedAt: new Date() }).where(eq(bots.id, bot.id));
+  logger.info({ botId: bot.id }, 'avatar bot diperbarui');
+  res.json({ ok: true, avatarUrl });
+}));
+
 // ---- Channel & role (via token bot, untuk dropdown config) ----
 
 async function fetchGuildResource(bot: BotRow, guildId: string, path: 'channels' | 'roles') {

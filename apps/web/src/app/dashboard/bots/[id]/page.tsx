@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api, ApiError } from '../../../../lib/api';
@@ -131,6 +131,22 @@ export default function BotDetailPage() {
     } catch (e) { fail(e); } finally { setBusy(false); }
   };
 
+  const changeAvatar = (file: File) => {
+    if (file.size > 10 * 1024 * 1024) { setError(t('detail.avatarTooBig')); return; }
+    const reader = new FileReader();
+    reader.onload = async () => {
+      setBusy(true); setError('');
+      try {
+        const d = await api<{ avatarUrl: string | null }>(`/bots/${botId}/avatar`, {
+          method: 'POST', body: JSON.stringify({ dataUri: reader.result }),
+        });
+        setBot((b) => (b ? { ...b, avatarUrl: d.avatarUrl } : b));
+        notify(t('detail.avatarSaved'));
+      } catch (e) { fail(e); } finally { setBusy(false); }
+    };
+    reader.readAsDataURL(file);
+  };
+
   if (error && !bot) return <main><p className="text-sm text-rose-400">{error}</p></main>;
   if (!bot) {
     return (
@@ -149,14 +165,21 @@ export default function BotDetailPage() {
     <main className="space-y-6">
       {/* Hero bot */}
       <section className="flex flex-wrap items-center gap-4 rounded-2xl border border-slate-800/80 bg-slate-900/50 p-5">
-        {bot.avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={bot.avatarUrl} alt="" className="h-14 w-14 shrink-0 rounded-2xl object-cover" />
-        ) : (
-          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-xl font-bold text-white">
-            {bot.name[0]?.toUpperCase()}
+        <label className="group relative shrink-0 cursor-pointer" title={t('detail.avatarChange')}>
+          {bot.avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={bot.avatarUrl} alt="" className="h-14 w-14 rounded-2xl object-cover" />
+          ) : (
+            <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-xl font-bold text-white">
+              {bot.name[0]?.toUpperCase()}
+            </span>
+          )}
+          <span className="absolute inset-0 grid place-items-center rounded-2xl bg-black/50 text-[10px] font-medium text-white opacity-0 transition group-hover:opacity-100">
+            {t('common.edit')}
           </span>
-        )}
+          <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) changeAvatar(f); e.target.value = ''; }} />
+        </label>
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-xl font-bold tracking-tight">{bot.name}</h1>
           <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">

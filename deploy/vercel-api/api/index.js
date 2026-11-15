@@ -59010,6 +59010,24 @@ botsRouter.get("/:id/stats", requireAuth, asyncHandler(async (req, res) => {
   const last24 = await db.select({ total: sql`count(*)::int` }).from(commandLogs).where(and(eq(commandLogs.botId, bot.id), gte(commandLogs.createdAt, new Date(Date.now() - 24 * 3600 * 1e3))));
   res.json({ topCommands: top, commands24h: last24[0]?.total ?? 0 });
 }));
+var AVATAR_RE = /^data:image\/(png|jpeg|jpg|webp|gif);base64,/;
+botsRouter.post("/:id/avatar", requireAuth, configLimiter, asyncHandler(async (req, res) => {
+  const bot = await loadOwnedBot(req);
+  const dataUri = String(req.body?.dataUri ?? "");
+  if (!AVATAR_RE.test(dataUri)) throw httpError(400, "harus data URL gambar (png/jpeg/webp/gif)");
+  if (dataUri.length > 14e6) throw httpError(400, "gambar terlalu besar (maks ~10 MB)");
+  const res2 = await discordFetch("/users/@me", {
+    token: decryptToken(bot.tokenEncrypted),
+    method: "PATCH",
+    body: JSON.stringify({ avatar: dataUri })
+  });
+  if (!res2.ok) throw httpError(502, `gagal set avatar ke Discord (HTTP ${res2.status})`);
+  const u = await res2.json();
+  const avatarUrl = u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png?size=128` : null;
+  await db.update(bots).set({ avatarUrl, updatedAt: /* @__PURE__ */ new Date() }).where(eq(bots.id, bot.id));
+  logger.info({ botId: bot.id }, "avatar bot diperbarui");
+  res.json({ ok: true, avatarUrl });
+}));
 async function fetchGuildResource(bot, guildId, path2) {
   const res = await discordFetch(`/guilds/${guildId}/${path2}`, { token: decryptToken(bot.tokenEncrypted) });
   if (!res.ok) throw httpError(502, `gagal mengambil ${path2} dari Discord (HTTP ${res.status})`);
