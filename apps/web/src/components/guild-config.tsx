@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { useI18n } from '../lib/i18n';
+import { Dropdown } from './select';
 
 export interface Opt { id: string; name: string; type?: number }
 export interface CustomEntry { name: string; response: string; embed: boolean }
@@ -25,12 +26,7 @@ const labelCls = 'mb-1 block text-sm text-slate-300';
 export function Select({ value, onChange, options, noneLabel }: {
   value: string; onChange: (v: string) => void; options: Opt[]; noneLabel: string;
 }) {
-  return (
-    <select value={value} onChange={(e) => onChange(e.target.value)} className={inputCls}>
-      <option value="">{noneLabel}</option>
-      {options.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
-    </select>
-  );
+  return <Dropdown value={value} onChange={onChange} options={options} noneLabel={noneLabel} />;
 }
 
 export function Check({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {

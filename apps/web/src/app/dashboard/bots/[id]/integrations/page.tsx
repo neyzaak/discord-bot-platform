@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api, ApiError } from '../../../../../lib/api';
 import { Icon } from '../../../../../components/icons';
+import { Dropdown } from '../../../../../components/select';
 import { useI18n } from '../../../../../lib/i18n';
 
 interface Guild { id: number; discordGuildId: string; name: string }
@@ -131,24 +132,18 @@ export default function IntegrationsPage() {
           </div>
           <div>
             <label className={labelCls}>{t('integrations.source')}</label>
-            <select value={source} onChange={(e) => setSource(e.target.value as typeof source)} className={inputCls}>
-              <option value="github">{t('integrations.source.github')}</option>
-              <option value="generic">{t('integrations.source.generic')}</option>
-            </select>
+            <Dropdown value={source} onChange={(v) => setSource(v as typeof source)}
+              options={[{ id: 'github', name: t('integrations.source.github') }, { id: 'generic', name: t('integrations.source.generic') }]} />
           </div>
           <div>
             <label className={labelCls}>{t('integrations.guild')}</label>
-            <select value={guildId} onChange={(e) => void pickGuild(e.target.value)} required className={inputCls}>
-              <option value="">{t('common.select')}</option>
-              {guilds.map((g) => <option key={g.id} value={g.discordGuildId}>{g.name}</option>)}
-            </select>
+            <Dropdown value={guildId} onChange={(v) => void pickGuild(v)}
+              options={guilds.map((g) => ({ id: g.discordGuildId, name: g.name }))} noneLabel={t('common.select')} />
           </div>
           <div>
             <label className={labelCls}>{t('integrations.channel')}</label>
-            <select value={channelId} onChange={(e) => setChannelId(e.target.value)} required disabled={!guildId} className={inputCls}>
-              <option value="">{t('common.select')}</option>
-              {channels.map((c) => <option key={c.id} value={c.id}>#{c.name}</option>)}
-            </select>
+            <Dropdown value={channelId} onChange={setChannelId} disabled={!guildId}
+              options={channels.map((c) => ({ id: c.id, name: `#${c.name}` }))} noneLabel={t('common.select')} />
           </div>
           <button type="submit" disabled={busy || !guildId || !channelId}
             className="rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-400 disabled:opacity-50 sm:col-span-2">

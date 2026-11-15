@@ -8,6 +8,7 @@ import { StatusBadge } from '../../../../components/status-badge';
 import { GuildConfigPanel, type GuildConfigData, type Opt } from '../../../../components/guild-config';
 import { Icon, type IconName } from '../../../../components/icons';
 import { Toggle } from '../../../../components/toggle';
+import { Dropdown } from '../../../../components/select';
 import { useI18n } from '../../../../lib/i18n';
 
 interface Guild { id: number; discordGuildId: string; name: string }
@@ -277,12 +278,9 @@ export default function BotDetailPage() {
         ) : (
           <>
             <div className="mb-4 max-w-md">
-              <label className="mb-1 block text-sm text-slate-300" htmlFor="guild-select">{t('detail.selectGuild')}</label>
-              <select id="guild-select" value={guildId} onChange={(e) => { setGuildId(e.target.value); void loadGuildData(e.target.value); }}
-                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none transition focus:border-indigo-400">
-                <option value="">{t('common.select')}</option>
-                {bot.guilds.map((g) => <option key={g.id} value={g.discordGuildId}>{g.name}</option>)}
-              </select>
+              <label className="mb-1 block text-sm text-slate-300">{t('detail.selectGuild')}</label>
+              <Dropdown value={guildId} onChange={(v) => { setGuildId(v); void loadGuildData(v); }}
+                options={bot.guilds.map((g) => ({ id: g.discordGuildId, name: g.name }))} noneLabel={t('common.select')} />
             </div>
             {guildId && cfg && (
               <>
