@@ -179,9 +179,11 @@ export class BotRunner {
     const hit = this.cfgCache.get(key);
     if (hit && hit.exp > Date.now()) return hit.v;
     // Ambil HANYA config modul yang dipakai — bukan seluruh JSONB. Bank soal (1,2 MB) dan
-    // data modul lain tidak ikut terkirim tiap 60 dtk. Soal diambil satu per satu saat /quiz start.
+    // bank kutipan (500 entri) tidak ikut terkirim tiap 60 dtk: soal/kutipan diambil satu per satu.
+    const strip = moduleName === 'quiz' ? sql` #- '{questions}'`
+      : moduleName === 'quotes' ? sql` #- '{quotes}'` : sql``;
     const [row] = await db.select({
-      cfg: sql<Record<string, unknown> | null>`(${botConfigs.data} -> ${moduleName}) #- '{questions}'`.as('cfg'),
+      cfg: sql<Record<string, unknown> | null>`(${botConfigs.data} -> ${moduleName})${strip}`.as('cfg'),
     }).from(botConfigs)
       .where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
     const raw = (row?.cfg ?? {}) as Record<string, unknown>;

@@ -109215,11 +109215,21 @@ async function saveState(botId, msgId, st) {
   });
 }
 async function loadCfg(botId, guildId) {
-  const [row] = await db.select({ cfg: sql`${botConfigs.data} -> 'quotes'` }).from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
+  const [row] = await db.select({
+    cfg: sql`(${botConfigs.data} -> 'quotes') #- '{quotes}'`
+  }).from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
   return quotesConfigSchema.parse(row?.cfg ?? {});
 }
+async function pickQuote(botId, guildId, dayIndex) {
+  const arr = sql`${botConfigs.data}->'quotes'->'quotes'`;
+  const idx = dayIndex === void 0 ? sql`floor(random() * NULLIF(jsonb_array_length(${arr}), 0))::int` : sql`((${dayIndex}::int) % NULLIF(jsonb_array_length(${arr}), 0))::int`;
+  const [row] = await db.select({ q: sql`(${arr})->${idx}`.as("q") }).from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
+  const q = row?.q;
+  if (!q || typeof q.text !== "string" || !q.text.trim()) return null;
+  return { text: q.text, author: typeof q.author === "string" ? q.author : "", imageUrl: typeof q.imageUrl === "string" ? q.imageUrl : "" };
+}
 function stateFor(botId, msg, cfg5) {
-  return loadState(botId, msg.id).then((st) => st ?? stateFrom(cfg5, cfg5.quotes[0] ?? {
+  return loadState(botId, msg.id).then((st) => st ?? stateFrom(cfg5, {
     text: "Kutipan hari ini",
     author: "",
     imageUrl: ""
@@ -109237,7 +109247,7 @@ var quoteCommand = {
     const cfg5 = ctx.config;
     const raw = String(args.teks ?? "").trim();
     const [teks, penulis] = raw.split("|").map((s) => s.trim());
-    const q = teks ? { text: teks.slice(0, 300), author: (penulis || "").slice(0, 64), imageUrl: "" } : cfg5.quotes.length ? cfg5.quotes[Math.floor(Math.random() * cfg5.quotes.length)] : null;
+    const q = teks ? { text: teks.slice(0, 300), author: (penulis || "").slice(0, 64), imageUrl: "" } : await pickQuote(ctx.botId, ctx.guild.id);
     if (!q) return ctx.reply("\u274C Belum ada kutipan di bank. Tambahkan di dashboard \u2192 Quotes, atau `/quote teks:...`.");
     const ch = ctx.channel;
     if (!ch || !ch.isTextBased() || !("send" in ch)) return ctx.reply("\u274C Kanal ini tidak bisa dikirimi pesan.");
@@ -109259,13 +109269,15 @@ async function tick(client, botId) {
   for (const guild of client.guilds.cache.values()) {
     try {
       const cfg5 = await loadCfg(botId, guild.id);
-      if (!cfg5.enabled || !cfg5.daily || !cfg5.channelId || cfg5.quotes.length === 0) continue;
+      if (!cfg5.enabled || !cfg5.daily || !cfg5.channelId) continue;
       if (cfg5.scheduleHour !== hour) continue;
+      const q = await pickQuote(botId, guild.id, wibDayIndex());
+      if (!q) continue;
       const once = await redis.set(`qsent:${botId}:${guild.id}:${dateKey}`, "1", "EX", 129600, "NX");
       if (once !== "OK") continue;
       const ch = await guild.channels.fetch(cfg5.channelId).catch(() => null);
       if (!ch || !ch.isTextBased() || !("send" in ch)) continue;
-      const st = stateFrom(cfg5, cfg5.quotes[wibDayIndex() % cfg5.quotes.length]);
+      const st = stateFrom(cfg5, q);
       const msg = await ch.send(await cardPayload(client.user?.username ?? "Bot", cfg5, st));
       await saveState(botId, msg.id, st);
       logger.info({ botId, guildId: guild.id, messageId: msg.id }, "quotes: kutipan harian terkirim");
@@ -109867,8 +109879,9 @@ var BotRunner = class {
     const key2 = `${bot.id}:${guildId}:${moduleName}`;
     const hit = this.cfgCache.get(key2);
     if (hit && hit.exp > Date.now()) return hit.v;
+    const strip = moduleName === "quiz" ? sql` #- '{questions}'` : moduleName === "quotes" ? sql` #- '{quotes}'` : sql``;
     const [row] = await db.select({
-      cfg: sql`(${botConfigs.data} -> ${moduleName}) #- '{questions}'`.as("cfg")
+      cfg: sql`(${botConfigs.data} -> ${moduleName})${strip}`.as("cfg")
     }).from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
     const raw = row?.cfg ?? {};
     const v = moduleSchemas[moduleName].parse(raw);

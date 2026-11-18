@@ -219,14 +219,29 @@ async function saveState(botId: number, msgId: string, st: CardState): Promise<v
   await redis.set(stateKey(botId, msgId), JSON.stringify(st), 'EX', 7 * 86_400).catch(() => {});
 }
 
+/** Setting modul saja — bank kutipan tidak ikut ditarik dari DB (hemat egress). */
 async function loadCfg(botId: number, guildId: string): Promise<QuotesCfg> {
-  const [row] = await db.select({ cfg: sql<Record<string, unknown> | null>`${botConfigs.data} -> 'quotes'` })
-    .from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
+  const [row] = await db.select({
+    cfg: sql<Record<string, unknown> | null>`(${botConfigs.data} -> 'quotes') #- '{quotes}'`,
+  }).from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
   return quotesConfigSchema.parse((row?.cfg ?? {}) as Record<string, unknown>);
 }
 
+/** Ambil 1 kutipan langsung di Postgres. `dayIndex` kosong = acak. */
+async function pickQuote(botId: number, guildId: string, dayIndex?: number): Promise<Quote | null> {
+  const arr = sql`${botConfigs.data}->'quotes'->'quotes'`;
+  const idx = dayIndex === undefined
+    ? sql`floor(random() * NULLIF(jsonb_array_length(${arr}), 0))::int`
+    : sql`((${dayIndex}::int) % NULLIF(jsonb_array_length(${arr}), 0))::int`;
+  const [row] = await db.select({ q: sql<Quote | null>`(${arr})->${idx}`.as('q') })
+    .from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
+  const q = row?.q;
+  if (!q || typeof q.text !== 'string' || !q.text.trim()) return null;
+  return { text: q.text, author: typeof q.author === 'string' ? q.author : '', imageUrl: typeof q.imageUrl === 'string' ? q.imageUrl : '' };
+}
+
 function stateFor(botId: number, msg: Message, cfg: QuotesCfg): Promise<CardState> {
-  return loadState(botId, msg.id).then((st) => st ?? stateFrom(cfg, cfg.quotes[0] ?? {
+  return loadState(botId, msg.id).then((st) => st ?? stateFrom(cfg, {
     text: 'Kutipan hari ini', author: '', imageUrl: '',
   }));
 }
@@ -249,7 +264,7 @@ const quoteCommand: ModuleCommand = {
     const [teks, penulis] = raw.split('|').map((s) => s.trim());
     const q: Quote | null = teks
       ? { text: teks.slice(0, 300), author: (penulis || '').slice(0, 64), imageUrl: '' }
-      : cfg.quotes.length ? cfg.quotes[Math.floor(Math.random() * cfg.quotes.length)]! : null;
+      : await pickQuote(ctx.botId, ctx.guild.id);
     if (!q) return ctx.reply('❌ Belum ada kutipan di bank. Tambahkan di dashboard → Quotes, atau `/quote teks:...`.');
 
     const ch = ctx.channel;
@@ -277,8 +292,11 @@ async function tick(client: Client, botId: number): Promise<void> {
   for (const guild of client.guilds.cache.values()) {
     try {
       const cfg = await loadCfg(botId, guild.id);
-      if (!cfg.enabled || !cfg.daily || !cfg.channelId || cfg.quotes.length === 0) continue;
+      if (!cfg.enabled || !cfg.daily || !cfg.channelId) continue;
       if (cfg.scheduleHour !== hour) continue;
+
+      const q = await pickQuote(botId, guild.id, wibDayIndex());
+      if (!q) continue;
 
       const once = await redis.set(`qsent:${botId}:${guild.id}:${dateKey}`, '1', 'EX', 129_600, 'NX');
       if (once !== 'OK') continue;
@@ -286,7 +304,7 @@ async function tick(client: Client, botId: number): Promise<void> {
       const ch = await guild.channels.fetch(cfg.channelId).catch(() => null);
       if (!ch || !ch.isTextBased() || !('send' in ch)) continue;
 
-      const st = stateFrom(cfg, cfg.quotes[wibDayIndex() % cfg.quotes.length]!);
+      const st = stateFrom(cfg, q);
       const msg = await ch.send(await cardPayload(client.user?.username ?? 'Bot', cfg, st));
       await saveState(botId, msg.id, st);
       logger.info({ botId, guildId: guild.id, messageId: msg.id }, 'quotes: kutipan harian terkirim');
