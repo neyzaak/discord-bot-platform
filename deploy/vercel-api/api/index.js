@@ -51700,6 +51700,7 @@ var MODULE_NAMES = [
   "economy",
   "webhooks",
   "quiz",
+  "quotes",
   "ktp"
 ];
 var snowflakeOrEmpty = external_exports.string().regex(/^(\d{5,25})?$/, "harus ID Discord (angka) atau kosong");
@@ -51760,7 +51761,8 @@ var RESERVED_COMMANDS = [
   "transfer",
   "shop",
   "buy",
-  "quiz"
+  "quiz",
+  "quote"
 ];
 var customcmdConfigSchema = external_exports.object({
   enabled: external_exports.boolean().default(true),
@@ -51835,6 +51837,23 @@ var quizConfigSchema = external_exports.object({
     }
   }
 });
+var quotesConfigSchema = external_exports.object({
+  enabled: external_exports.boolean().default(true),
+  channelId: snowflakeOrEmpty.default(""),
+  /** Kirim satu kutipan otomatis tiap hari di jam ini (WIB). */
+  daily: external_exports.boolean().default(false),
+  scheduleHour: external_exports.number().int().min(0).max(23).default(7),
+  watermark: external_exports.string().trim().min(1).max(40).default("Geng Sulawesi Quote"),
+  font: external_exports.enum(["poppins", "playfair"]).default("poppins"),
+  textSize: external_exports.enum(["kecil", "sedang", "besar"]).default("sedang"),
+  photoPosition: external_exports.enum(["kiri", "tengah", "kanan"]).default("kiri"),
+  quotes: external_exports.array(external_exports.object({
+    text: external_exports.string().trim().min(1).max(300),
+    author: external_exports.string().trim().max(64).default(""),
+    /** URL foto untuk sisi kiri/kanan kartu (kosong = latar gradien). */
+    imageUrl: external_exports.string().trim().max(500).default("")
+  })).max(500, "maksimal 500 kutipan").default([])
+});
 var moduleSchemas = {
   welcome: welcomeConfigSchema,
   moderation: moderationConfigSchema,
@@ -51846,6 +51865,7 @@ var moduleSchemas = {
   economy: economyConfigSchema,
   webhooks: webhooksConfigSchema,
   quiz: quizConfigSchema,
+  quotes: quotesConfigSchema,
   ktp: external_exports.object({}).passthrough().optional()
 };
 var guildConfigSchema = external_exports.object({
@@ -51859,6 +51879,7 @@ var guildConfigSchema = external_exports.object({
   economy: economyConfigSchema.optional(),
   webhooks: webhooksConfigSchema.optional(),
   quiz: quizConfigSchema.optional(),
+  quotes: quotesConfigSchema.optional(),
   ktp: external_exports.object({}).passthrough().optional()
 });
 var botLevelConfigSchema = external_exports.object({
@@ -51890,6 +51911,7 @@ var PERMISSION_BITS = {
   SendMessages: 1n << 11n,
   ManageMessages: 1n << 13n,
   EmbedLinks: 1n << 14n,
+  AttachFiles: 1n << 15n,
   ManageRoles: 1n << 28n,
   ModerateMembers: 1n << 40n
 };
@@ -51904,6 +51926,7 @@ var moduleInvitePermissions = {
   economy: ["ViewChannel", "SendMessages", "EmbedLinks"],
   webhooks: ["ViewChannel", "SendMessages", "EmbedLinks"],
   quiz: ["ViewChannel", "SendMessages", "EmbedLinks"],
+  quotes: ["ViewChannel", "SendMessages", "EmbedLinks", "AttachFiles"],
   ktp: ["ViewChannel", "SendMessages", "EmbedLinks"]
 };
 function invitePermissionsBitfield(modules) {
