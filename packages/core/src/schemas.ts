@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-/** Modul aktif platform (10): F1 welcome+moderation, F2 tickets/logging/utilities/customcmd, F3 leveling/economy/webhooks, prioritas pengguna: quiz. */
+/** Modul aktif platform: F1 welcome+moderation, F2 tickets/logging/utilities/customcmd, F3 leveling/economy/webhooks, quiz, quotes (kartu kutipan), ktp. */
 export const MODULE_NAMES = [
   'welcome', 'moderation', 'tickets', 'logging', 'utilities',
-  'customcmd', 'leveling', 'economy', 'webhooks', 'quiz', 'ktp',
+  'customcmd', 'leveling', 'economy', 'webhooks', 'quiz', 'quotes', 'ktp',
 ] as const;
 export type ModuleName = (typeof MODULE_NAMES)[number];
 
@@ -56,7 +56,7 @@ export const RESERVED_COMMANDS = [
   'kick', 'ban', 'timeout', 'clear', 'ticket',
   'ping', 'avatar', 'userinfo', 'serverinfo', 'calc', 'weather',
   'rank', 'leaderboard', 'balance', 'daily', 'work', 'transfer', 'shop', 'buy',
-  'quiz',
+  'quiz', 'quote',
 ];
 
 export const customcmdConfigSchema = z.object({
@@ -138,6 +138,24 @@ export const quizConfigSchema = z.object({
   }
 });
 
+export const quotesConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  channelId: snowflakeOrEmpty.default(''),
+  /** Kirim satu kutipan otomatis tiap hari di jam ini (WIB). */
+  daily: z.boolean().default(false),
+  scheduleHour: z.number().int().min(0).max(23).default(7),
+  watermark: z.string().trim().min(1).max(40).default('Geng Sulawesi Quote'),
+  font: z.enum(['poppins', 'playfair']).default('poppins'),
+  textSize: z.enum(['kecil', 'sedang', 'besar']).default('sedang'),
+  photoPosition: z.enum(['kiri', 'tengah', 'kanan']).default('kiri'),
+  quotes: z.array(z.object({
+    text: z.string().trim().min(1).max(300),
+    author: z.string().trim().max(64).default(''),
+    /** URL foto untuk sisi kiri/kanan kartu (kosong = latar gradien). */
+    imageUrl: z.string().trim().max(500).default(''),
+  })).max(500, 'maksimal 500 kutipan').default([]),
+});
+
 export const moduleSchemas = {
   welcome: welcomeConfigSchema,
   moderation: moderationConfigSchema,
@@ -149,6 +167,7 @@ export const moduleSchemas = {
   economy: economyConfigSchema,
   webhooks: webhooksConfigSchema,
   quiz: quizConfigSchema,
+  quotes: quotesConfigSchema,
   ktp: z.object({}).passthrough().optional(),
 } satisfies Record<ModuleName, z.ZodTypeAny>;
 
@@ -164,6 +183,7 @@ export const guildConfigSchema = z.object({
   economy: economyConfigSchema.optional(),
   webhooks: webhooksConfigSchema.optional(),
   quiz: quizConfigSchema.optional(),
+  quotes: quotesConfigSchema.optional(),
   ktp: z.object({}).passthrough().optional(),
 });
 
@@ -202,6 +222,7 @@ const PERMISSION_BITS: Record<string, bigint> = {
   SendMessages: 1n << 11n,
   ManageMessages: 1n << 13n,
   EmbedLinks: 1n << 14n,
+  AttachFiles: 1n << 15n,
   ManageRoles: 1n << 28n,
   ModerateMembers: 1n << 40n,
 };
@@ -218,6 +239,7 @@ export const moduleInvitePermissions: Record<ModuleName, string[]> = {
   economy: ['ViewChannel', 'SendMessages', 'EmbedLinks'],
   webhooks: ['ViewChannel', 'SendMessages', 'EmbedLinks'],
   quiz: ['ViewChannel', 'SendMessages', 'EmbedLinks'],
+  quotes: ['ViewChannel', 'SendMessages', 'EmbedLinks', 'AttachFiles'],
   ktp: ['ViewChannel', 'SendMessages', 'EmbedLinks'],
 };
 

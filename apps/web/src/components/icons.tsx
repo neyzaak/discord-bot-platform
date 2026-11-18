@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 /** Ikon inline gaya lucide (stroke 2) — tanpa dependency. */
 export type IconName =
   | 'dashboard' | 'plus' | 'bot' | 'mail' | 'shield' | 'ticket' | 'scroll'
-  | 'wrench' | 'terminal' | 'trending' | 'coins' | 'webhook' | 'quiz'
+  | 'wrench' | 'terminal' | 'trending' | 'coins' | 'webhook' | 'quiz' | 'quote'
   | 'plug' | 'activity' | 'logout' | 'menu' | 'x' | 'copy' | 'pause'
   | 'play' | 'trash' | 'globe' | 'arrowLeft' | 'arrowRight';
 
@@ -21,6 +21,7 @@ const P: Record<IconName, ReactNode> = {
   coins: <><circle cx="8" cy="8" r="6" /><path d="M18.09 10.37A6 6 0 1 1 10.34 18" /><path d="M7 6h1v4" /><path d="m16.71 13.88.7.71-2.82 2.82" /></>,
   webhook: <><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 13.5 6.4 4" /><path d="m15.4 6.5-6.4 4" /></>,
   quiz: <><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></>,
+  quote: <><path d="M10 11H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3" /><path d="M20 11h-4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3" /></>,
   plug: <><path d="M12 22v-5" /><path d="M9 8V2" /><path d="M15 8V2" /><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z" /></>,
   activity: <path d="M22 12h-4l-3 9L9 3l-3 9H2" />,
   logout: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="m16 17 5-5-5-5" /><path d="M21 12H9" /></>,

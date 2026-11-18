@@ -136,12 +136,18 @@ export class BotRunner {
     logger.info({ botId: this.botId }, 'runner: memanggil client.login');
     await client.login(token);
     logger.info({ botId: this.botId }, 'runner: client.login selesai');
+    for (const mod of this.mods) {
+      try { mod.start?.(client, bot.id); } catch (e) { await recordError(bot.id, e); }
+    }
     this.startHeartbeat();
   }
 
   async stop(): Promise<void> {
     if (this.heartbeat) clearInterval(this.heartbeat);
     this.heartbeat = null;
+    for (const mod of this.mods) {
+      try { mod.stop?.(this.botId); } catch { /* teardown tidak boleh menggagalkan stop */ }
+    }
     const client = this.client;
     this.client = null;
     await redis.del(BOT_STATUS_KEY(this.botId)).catch(() => {});

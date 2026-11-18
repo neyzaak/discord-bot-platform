@@ -8,7 +8,7 @@ import { botConfigs, bots, buildInviteUrl, db, encryptToken, users } from './ind
 
 const MODULE_NAMES = [
   'welcome', 'moderation', 'tickets', 'logging', 'utilities',
-  'customcmd', 'leveling', 'economy', 'webhooks', 'quiz',
+  'customcmd', 'leveling', 'economy', 'webhooks', 'quiz', 'quotes',
 ] as const;
 
 const token = process.env.BOT_TOKEN ?? '';

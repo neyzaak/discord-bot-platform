@@ -7,6 +7,7 @@ import { Dropdown } from './select';
 export interface Opt { id: string; name: string; type?: number }
 export interface CustomEntry { name: string; response: string; embed: boolean }
 export interface QuizQuestion { question: string; choices: string[]; correctIndex: number; explanation: string }
+export interface QuoteEntry { text: string; author: string; imageUrl: string }
 export interface GuildConfigData {
   welcome: { enabled: boolean; channelId: string; message: string; dmEnabled: boolean; dmMessage: string; autoRoleId: string };
   moderation: { enabled: boolean; moderatorRoleId: string; modLogChannelId: string };
@@ -18,6 +19,11 @@ export interface GuildConfigData {
   economy: { enabled: boolean; currencyName: string; dailyAmount: number; workMin: number; workMax: number; workCooldownSec: number; shop: Array<{ name: string; price: number; roleId: string }> };
   webhooks: { enabled: boolean };
   quiz: { enabled: boolean; title: string; pointsName: string; timePerQuestionSec: number; pointsPerQuestion: number; questionsPerSession: number; mentionRoleId: string; questions: QuizQuestion[] };
+  quotes: {
+    enabled: boolean; channelId: string; daily: boolean; scheduleHour: number; watermark: string;
+    font: 'poppins' | 'playfair'; textSize: 'kecil' | 'sedang' | 'besar'; photoPosition: 'kiri' | 'tengah' | 'kanan';
+    quotes: QuoteEntry[];
+  };
 }
 
 const inputCls = 'w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-400';
@@ -55,6 +61,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
   const textChannels = channels.filter((c) => c.type !== 4);
   const categories = channels.filter((c) => c.type === 4);
   const [showSoal, setShowSoal] = useState(25);
+  const [showQuote, setShowQuote] = useState(25);
   const set = <K extends keyof GuildConfigData>(k: K, v: GuildConfigData[K]) => onChange({ ...cfg, [k]: v });
 
   return (
@@ -403,6 +410,100 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
             onClick={() => set('quiz', { ...cfg.quiz, questions: [...cfg.quiz.questions, { question: '', choices: ['', ''], correctIndex: 0, explanation: '' }] })}
             className="mt-3 rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500">
             + {t('mod.quiz.addQuestion')}
+          </button>
+        )}
+      </div>
+
+      {/* Quotes */}
+      <div className="rounded-xl border border-slate-800 p-4">
+        <h3 className="mb-3 font-medium">{t('mod.quotes')}</h3>
+        <p className="mb-3 text-xs text-slate-500">{t('mod.quotes.commands')}</p>
+        <div className="mb-3"><Check label={t('mod.enabled')} checked={cfg.quotes.enabled} onChange={(v) => set('quotes', { ...cfg.quotes, enabled: v })} /></div>
+        <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label className={labelCls}>{t('mod.quotes.channel')}</label>
+            <Select value={cfg.quotes.channelId} onChange={(v) => set('quotes', { ...cfg.quotes, channelId: v })} options={textChannels} noneLabel={t('common.none')} />
+          </div>
+          <div>
+            <label className={labelCls}>{t('mod.quotes.watermark')}</label>
+            <input value={cfg.quotes.watermark} maxLength={40}
+              onChange={(e) => set('quotes', { ...cfg.quotes, watermark: e.target.value })} className={inputCls} />
+          </div>
+        </div>
+        <div className="mb-3 flex flex-wrap items-end gap-4">
+          <Check label={t('mod.quotes.daily')} checked={cfg.quotes.daily} onChange={(v) => set('quotes', { ...cfg.quotes, daily: v })} />
+          {cfg.quotes.daily && (
+            <div>
+              <label className={labelCls}>{t('mod.quotes.hour')}</label>
+              <Num value={cfg.quotes.scheduleHour} min={0} max={23} onChange={(v) => set('quotes', { ...cfg.quotes, scheduleHour: v })} w="max-w-[90px]" />
+            </div>
+          )}
+        </div>
+        <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div>
+            <label className={labelCls}>{t('mod.quotes.font')}</label>
+            <Dropdown value={cfg.quotes.font} onChange={(v) => set('quotes', { ...cfg.quotes, font: v as GuildConfigData['quotes']['font'] })}
+              options={[{ id: 'poppins', name: 'Poppins' }, { id: 'playfair', name: 'Playfair Display' }]} />
+          </div>
+          <div>
+            <label className={labelCls}>{t('mod.quotes.size')}</label>
+            <Dropdown value={cfg.quotes.textSize} onChange={(v) => set('quotes', { ...cfg.quotes, textSize: v as GuildConfigData['quotes']['textSize'] })}
+              options={[{ id: 'kecil', name: 'Kecil' }, { id: 'sedang', name: 'Sedang' }, { id: 'besar', name: 'Besar' }]} />
+          </div>
+          <div>
+            <label className={labelCls}>{t('mod.quotes.pos')}</label>
+            <Dropdown value={cfg.quotes.photoPosition} onChange={(v) => set('quotes', { ...cfg.quotes, photoPosition: v as GuildConfigData['quotes']['photoPosition'] })}
+              options={[{ id: 'kiri', name: 'Kiri' }, { id: 'tengah', name: 'Tengah' }, { id: 'kanan', name: 'Kanan' }]} />
+          </div>
+        </div>
+
+        <label className={labelCls}>{t('mod.quotes.bank')}</label>
+        <p className="mb-2 text-xs text-slate-500">{cfg.quotes.quotes.length} {t('mod.quotes.stored')}</p>
+        <div className="space-y-3">
+          {cfg.quotes.quotes.slice(0, showQuote).map((q, qi) => (
+            <div key={qi} className="rounded-lg border border-slate-800 p-3">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-xs text-slate-500">#{qi + 1}</span>
+                <button type="button" onClick={() => set('quotes', { ...cfg.quotes, quotes: cfg.quotes.quotes.filter((_, j) => j !== qi) })}
+                  className="text-xs text-rose-400 hover:text-rose-300">{t('mod.customcmd.remove')}</button>
+              </div>
+              <textarea value={q.text} maxLength={300} rows={2} placeholder={t('mod.quotes.textPh')}
+                onChange={(e) => {
+                  const qs = [...cfg.quotes.quotes];
+                  qs[qi] = { ...q, text: e.target.value };
+                  set('quotes', { ...cfg.quotes, quotes: qs });
+                }}
+                className={inputCls} />
+              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <input value={q.author} maxLength={64} placeholder={t('mod.quotes.authorPh')}
+                  onChange={(e) => {
+                    const qs = [...cfg.quotes.quotes];
+                    qs[qi] = { ...q, author: e.target.value };
+                    set('quotes', { ...cfg.quotes, quotes: qs });
+                  }}
+                  className={inputCls} />
+                <input value={q.imageUrl} maxLength={500} placeholder="https://… (foto latar)"
+                  onChange={(e) => {
+                    const qs = [...cfg.quotes.quotes];
+                    qs[qi] = { ...q, imageUrl: e.target.value };
+                    set('quotes', { ...cfg.quotes, quotes: qs });
+                  }}
+                  className={inputCls} />
+              </div>
+            </div>
+          ))}
+        </div>
+        {cfg.quotes.quotes.length > showQuote && (
+          <button type="button" onClick={() => setShowQuote(showQuote + 25)}
+            className="mt-3 rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500">
+            + {t('mod.quiz.showMore')} ({cfg.quotes.quotes.length - showQuote})
+          </button>
+        )}
+        {cfg.quotes.quotes.length < 500 && (
+          <button type="button"
+            onClick={() => set('quotes', { ...cfg.quotes, quotes: [...cfg.quotes.quotes, { text: '', author: '', imageUrl: '' }] })}
+            className="mt-3 rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500">
+            + {t('mod.quotes.add')}
           </button>
         )}
       </div>

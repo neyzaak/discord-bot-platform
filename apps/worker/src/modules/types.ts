@@ -48,4 +48,7 @@ export interface BotModule {
   onInteraction?: (ctx: ModuleCtx, interaction: Interaction) => Promise<void>;
   /** Custom command prefix. Return true jika nama ditangani. */
   onPrefixCommand?: (ctx: CommandContext, name: string, rest: string[]) => Promise<boolean>;
+  /** Dipanggil sekali setelah bot login (mis. penjadwal harian modul). */
+  start?: (client: Client, botId: number) => void;
+  stop?: (botId?: number) => void;
 }
