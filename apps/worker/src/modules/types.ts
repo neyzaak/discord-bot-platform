@@ -13,6 +13,8 @@ export interface CommandContext {
   user: User;
   channel: TextBasedChannel | null;
   config: Record<string, unknown>;
+  /** Pesan pemicu untuk command prefix (dipakai mis. quote menghapus pesan peminta). */
+  sourceMessage?: Message;
   reply: (payload: string | { embeds?: APIEmbed[]; files?: AttachmentBuilder[] }) => Promise<unknown>;
   /** Hanya tersedia untuk slash command — dipakai mis. modal tiket. */
   showModal?: (modal: ModalBuilder) => Promise<unknown>;

@@ -329,6 +329,7 @@ export class BotRunner {
       user: message.author,
       channel: message.channel,
       config,
+      sourceMessage: message,
       reply: (payload: ReplyPayload) => message.reply({
         ...(typeof payload === 'string' ? { content: payload } : payload),
         allowedMentions: { parse: [] },

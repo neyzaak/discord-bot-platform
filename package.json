@@ -7,7 +7,8 @@
     "typecheck": "pnpm -r run typecheck",
     "db:push": "pnpm --filter @platform/core db:push",
     "check": "pnpm --filter @platform/core check",
-    "build:api": "node scripts/build-api.mjs"
+    "build:api": "node scripts/build-api.mjs",
+    "build:worker": "node scripts/build-worker.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",

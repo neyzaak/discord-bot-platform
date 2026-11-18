@@ -30,7 +30,9 @@ const ORDER = {
   size: ['kecil', 'sedang', 'besar'] as const,
   font: ['poppins', 'playfair'] as const,
 };
-const FONT_DIR = fileURLToPath(new URL('../../assets/fonts/', import.meta.url));
+const FONT_DIR = ['../../assets/fonts/', './assets/fonts/']
+  .map((p) => fileURLToPath(new URL(p, import.meta.url)))
+  .find((p) => existsSync(p)) ?? '';
 
 // ponytail: font opsional — kalau file TTF tidak ikut ter-copy ke deploy, canvas pakai sans-serif
 let canvasMod: typeof import('@napi-rs/canvas') | null | undefined;
@@ -247,7 +249,7 @@ const quoteCommand: ModuleCommand = {
     const [teks, penulis] = raw.split('|').map((s) => s.trim());
     const q: Quote | null = teks
       ? { text: teks.slice(0, 300), author: (penulis || '').slice(0, 64), imageUrl: '' }
-      : cfg.quotes.length ? cfg.quotes[wibDayIndex() % cfg.quotes.length]! : null;
+      : cfg.quotes.length ? cfg.quotes[Math.floor(Math.random() * cfg.quotes.length)]! : null;
     if (!q) return ctx.reply('❌ Belum ada kutipan di bank. Tambahkan di dashboard → Quotes, atau `/quote teks:...`.');
 
     const ch = ctx.channel;
@@ -256,6 +258,12 @@ const quoteCommand: ModuleCommand = {
     const st = stateFrom(cfg, q);
     const msg = await ch.send(await cardPayload(ctx.client.user?.username ?? 'Bot', cfg, st));
     await saveState(ctx.botId, msg.id, st);
+
+    // Prefix command: hapus pesan peminta setelah kartu tampil (butuh Manage Messages).
+    if (ctx.sourceMessage) {
+      await ctx.sourceMessage.delete().catch(() => {});
+      return;
+    }
     return ctx.reply('✅ Kartu kutipan dikirim.');
   },
 };

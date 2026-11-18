@@ -2401,7 +2401,7 @@ var require_thread_stream = __commonJS({
     var { version: version2 } = require_package2();
     var { EventEmitter } = __require("events");
     var { Worker } = __require("worker_threads");
-    var { join } = __require("path");
+    var { join: join2 } = __require("path");
     var { pathToFileURL } = __require("url");
     var { wait } = require_wait();
     var {
@@ -2444,7 +2444,7 @@ var require_thread_stream = __commonJS({
     function createWorker(stream, opts) {
       const { filename, workerData } = opts;
       const bundlerOverrides = "__bundlerPathsOverrides" in globalThis ? globalThis.__bundlerPathsOverrides : {};
-      const toExecute = bundlerOverrides["thread-stream-worker"] || join(__dirname, "lib", "worker.js");
+      const toExecute = bundlerOverrides["thread-stream-worker"] || join2(__dirname, "lib", "worker.js");
       const worker = new Worker(toExecute, {
         ...opts.workerOpts,
         trackUnmanagedFds: false,
@@ -2847,7 +2847,7 @@ var require_transport = __commonJS({
     "use strict";
     var { createRequire } = __require("module");
     var getCallers = require_caller();
-    var { join, isAbsolute, sep } = __require("node:path");
+    var { join: join2, isAbsolute, sep } = __require("node:path");
     var sleep = require_atomic_sleep();
     var onExit = require_on_exit_leak_free();
     var ThreadStream = require_thread_stream();
@@ -2910,7 +2910,7 @@ var require_transport = __commonJS({
         throw new Error("only one of target or targets can be specified");
       }
       if (targets) {
-        target = bundlerOverrides["pino-worker"] || join(__dirname, "worker.js");
+        target = bundlerOverrides["pino-worker"] || join2(__dirname, "worker.js");
         options.targets = targets.filter((dest) => dest.target).map((dest) => {
           return {
             ...dest,
@@ -2928,7 +2928,7 @@ var require_transport = __commonJS({
           });
         });
       } else if (pipeline) {
-        target = bundlerOverrides["pino-worker"] || join(__dirname, "worker.js");
+        target = bundlerOverrides["pino-worker"] || join2(__dirname, "worker.js");
         options.pipelines = [pipeline.map((dest) => {
           return {
             ...dest,
@@ -2950,7 +2950,7 @@ var require_transport = __commonJS({
           return origin;
         }
         if (origin === "pino/file") {
-          return join(__dirname, "..", "file.js");
+          return join2(__dirname, "..", "file.js");
         }
         let fixTarget2;
         for (const filePath of callers) {
@@ -3939,7 +3939,7 @@ var require_safe_stable_stringify = __commonJS({
               return circularValue;
             }
             let res = "";
-            let join = ",";
+            let join2 = ",";
             const originalIndentation = indentation;
             if (Array.isArray(value)) {
               if (value.length === 0) {
@@ -3953,7 +3953,7 @@ var require_safe_stable_stringify = __commonJS({
                 indentation += spacer;
                 res += `
 ${indentation}`;
-                join = `,
+                join2 = `,
 ${indentation}`;
               }
               const maximumValuesToStringify = Math.min(value.length, maximumBreadth);
@@ -3961,13 +3961,13 @@ ${indentation}`;
               for (; i < maximumValuesToStringify - 1; i++) {
                 const tmp2 = stringifyFnReplacer(String(i), value, stack, replacer, spacer, indentation);
                 res += tmp2 !== void 0 ? tmp2 : "null";
-                res += join;
+                res += join2;
               }
               const tmp = stringifyFnReplacer(String(i), value, stack, replacer, spacer, indentation);
               res += tmp !== void 0 ? tmp : "null";
               if (value.length - 1 > maximumBreadth) {
                 const removedKeys = value.length - maximumBreadth - 1;
-                res += `${join}"... ${getItemCount(removedKeys)} not stringified"`;
+                res += `${join2}"... ${getItemCount(removedKeys)} not stringified"`;
               }
               if (spacer !== "") {
                 res += `
@@ -3988,7 +3988,7 @@ ${originalIndentation}`;
             let separator = "";
             if (spacer !== "") {
               indentation += spacer;
-              join = `,
+              join2 = `,
 ${indentation}`;
               whitespace = " ";
             }
@@ -4002,13 +4002,13 @@ ${indentation}`;
               const tmp = stringifyFnReplacer(key3, value, stack, replacer, spacer, indentation);
               if (tmp !== void 0) {
                 res += `${separator}${strEscape(key3)}:${whitespace}${tmp}`;
-                separator = join;
+                separator = join2;
               }
             }
             if (keyLength > maximumBreadth) {
               const removedKeys = keyLength - maximumBreadth;
               res += `${separator}"...":${whitespace}"${getItemCount(removedKeys)} not stringified"`;
-              separator = join;
+              separator = join2;
             }
             if (spacer !== "" && separator.length > 1) {
               res = `
@@ -4049,7 +4049,7 @@ ${originalIndentation}`;
             }
             const originalIndentation = indentation;
             let res = "";
-            let join = ",";
+            let join2 = ",";
             if (Array.isArray(value)) {
               if (value.length === 0) {
                 return "[]";
@@ -4062,7 +4062,7 @@ ${originalIndentation}`;
                 indentation += spacer;
                 res += `
 ${indentation}`;
-                join = `,
+                join2 = `,
 ${indentation}`;
               }
               const maximumValuesToStringify = Math.min(value.length, maximumBreadth);
@@ -4070,13 +4070,13 @@ ${indentation}`;
               for (; i < maximumValuesToStringify - 1; i++) {
                 const tmp2 = stringifyArrayReplacer(String(i), value[i], stack, replacer, spacer, indentation);
                 res += tmp2 !== void 0 ? tmp2 : "null";
-                res += join;
+                res += join2;
               }
               const tmp = stringifyArrayReplacer(String(i), value[i], stack, replacer, spacer, indentation);
               res += tmp !== void 0 ? tmp : "null";
               if (value.length - 1 > maximumBreadth) {
                 const removedKeys = value.length - maximumBreadth - 1;
-                res += `${join}"... ${getItemCount(removedKeys)} not stringified"`;
+                res += `${join2}"... ${getItemCount(removedKeys)} not stringified"`;
               }
               if (spacer !== "") {
                 res += `
@@ -4089,7 +4089,7 @@ ${originalIndentation}`;
             let whitespace = "";
             if (spacer !== "") {
               indentation += spacer;
-              join = `,
+              join2 = `,
 ${indentation}`;
               whitespace = " ";
             }
@@ -4098,7 +4098,7 @@ ${indentation}`;
               const tmp = stringifyArrayReplacer(key3, value[key3], stack, replacer, spacer, indentation);
               if (tmp !== void 0) {
                 res += `${separator}${strEscape(key3)}:${whitespace}${tmp}`;
-                separator = join;
+                separator = join2;
               }
             }
             if (spacer !== "" && separator.length > 1) {
@@ -4156,20 +4156,20 @@ ${originalIndentation}`;
               indentation += spacer;
               let res2 = `
 ${indentation}`;
-              const join2 = `,
+              const join3 = `,
 ${indentation}`;
               const maximumValuesToStringify = Math.min(value.length, maximumBreadth);
               let i = 0;
               for (; i < maximumValuesToStringify - 1; i++) {
                 const tmp2 = stringifyIndent(String(i), value[i], stack, spacer, indentation);
                 res2 += tmp2 !== void 0 ? tmp2 : "null";
-                res2 += join2;
+                res2 += join3;
               }
               const tmp = stringifyIndent(String(i), value[i], stack, spacer, indentation);
               res2 += tmp !== void 0 ? tmp : "null";
               if (value.length - 1 > maximumBreadth) {
                 const removedKeys = value.length - maximumBreadth - 1;
-                res2 += `${join2}"... ${getItemCount(removedKeys)} not stringified"`;
+                res2 += `${join3}"... ${getItemCount(removedKeys)} not stringified"`;
               }
               res2 += `
 ${originalIndentation}`;
@@ -4185,16 +4185,16 @@ ${originalIndentation}`;
               return '"[Object]"';
             }
             indentation += spacer;
-            const join = `,
+            const join2 = `,
 ${indentation}`;
             let res = "";
             let separator = "";
             let maximumPropertiesToStringify = Math.min(keyLength, maximumBreadth);
             if (isTypedArrayWithEntries(value)) {
-              res += stringifyTypedArray(value, join, maximumBreadth);
+              res += stringifyTypedArray(value, join2, maximumBreadth);
               keys = keys.slice(value.length);
               maximumPropertiesToStringify -= value.length;
-              separator = join;
+              separator = join2;
             }
             if (deterministic) {
               keys = sort(keys, comparator);
@@ -4205,13 +4205,13 @@ ${indentation}`;
               const tmp = stringifyIndent(key3, value[key3], stack, spacer, indentation);
               if (tmp !== void 0) {
                 res += `${separator}${strEscape(key3)}: ${tmp}`;
-                separator = join;
+                separator = join2;
               }
             }
             if (keyLength > maximumBreadth) {
               const removedKeys = keyLength - maximumBreadth;
               res += `${separator}"...": "${getItemCount(removedKeys)} not stringified"`;
-              separator = join;
+              separator = join2;
             }
             if (separator !== "") {
               res = `
@@ -23655,7 +23655,7 @@ var require_connect = __commonJS({
     var assert = __require("node:assert");
     var util2 = require_util2();
     var { InvalidArgumentError, ConnectTimeoutError } = require_errors2();
-    var timers = require_timers();
+    var timers2 = require_timers();
     function noop() {
     }
     var tls;
@@ -23785,13 +23785,13 @@ var require_connect = __commonJS({
       }
       let s1 = null;
       let s2 = null;
-      const fastTimer = timers.setFastTimeout(() => {
+      const fastTimer = timers2.setFastTimeout(() => {
         s1 = setImmediate(() => {
           s2 = setImmediate(() => onConnectTimeout(socketWeakRef.deref(), opts));
         });
       }, opts.timeout);
       return () => {
-        timers.clearFastTimeout(fastTimer);
+        timers2.clearFastTimeout(fastTimer);
         clearImmediate(s1);
         clearImmediate(s2);
       };
@@ -23800,13 +23800,13 @@ var require_connect = __commonJS({
         return noop;
       }
       let s1 = null;
-      const fastTimer = timers.setFastTimeout(() => {
+      const fastTimer = timers2.setFastTimeout(() => {
         s1 = setImmediate(() => {
           onConnectTimeout(socketWeakRef.deref(), opts);
         });
       }, opts.timeout);
       return () => {
-        timers.clearFastTimeout(fastTimer);
+        timers2.clearFastTimeout(fastTimer);
         clearImmediate(s1);
       };
     };
@@ -26877,7 +26877,7 @@ var require_client_h1 = __commonJS({
     var assert = __require("node:assert");
     var util2 = require_util2();
     var { channels } = require_diagnostics();
-    var timers = require_timers();
+    var timers2 = require_timers();
     var {
       RequestContentLengthMismatchError,
       ResponseContentLengthMismatchError,
@@ -27023,12 +27023,12 @@ var require_client_h1 = __commonJS({
       setTimeout(delay, type) {
         if (delay !== this.timeoutValue || type & USE_FAST_TIMER ^ this.timeoutType & USE_FAST_TIMER) {
           if (this.timeout) {
-            timers.clearTimeout(this.timeout);
+            timers2.clearTimeout(this.timeout);
             this.timeout = null;
           }
           if (delay) {
             if (type & USE_FAST_TIMER) {
-              this.timeout = timers.setFastTimeout(onParserTimeout, delay, new WeakRef(this));
+              this.timeout = timers2.setFastTimeout(onParserTimeout, delay, new WeakRef(this));
             } else {
               this.timeout = setTimeout(onParserTimeout, delay, new WeakRef(this));
               this.timeout.unref();
@@ -27148,7 +27148,7 @@ var require_client_h1 = __commonJS({
         assert(currentParser == null);
         this.llhttp.llhttp_free(this.ptr);
         this.ptr = null;
-        this.timeout && timers.clearTimeout(this.timeout);
+        this.timeout && timers2.clearTimeout(this.timeout);
         this.timeout = null;
         this.timeoutValue = null;
         this.timeoutType = null;
@@ -40328,32 +40328,32 @@ var require_v10 = __commonJS({
       GatewayCloseCodes2[GatewayCloseCodes2["InvalidIntents"] = 4013] = "InvalidIntents";
       GatewayCloseCodes2[GatewayCloseCodes2["DisallowedIntents"] = 4014] = "DisallowedIntents";
     })(GatewayCloseCodes || (exports2.GatewayCloseCodes = GatewayCloseCodes = {}));
-    var GatewayIntentBits12;
-    (function(GatewayIntentBits13) {
-      GatewayIntentBits13[GatewayIntentBits13["Guilds"] = 1] = "Guilds";
-      GatewayIntentBits13[GatewayIntentBits13["GuildMembers"] = 2] = "GuildMembers";
-      GatewayIntentBits13[GatewayIntentBits13["GuildModeration"] = 4] = "GuildModeration";
-      GatewayIntentBits13[GatewayIntentBits13["GuildBans"] = 4] = "GuildBans";
-      GatewayIntentBits13[GatewayIntentBits13["GuildExpressions"] = 8] = "GuildExpressions";
-      GatewayIntentBits13[GatewayIntentBits13["GuildEmojisAndStickers"] = 8] = "GuildEmojisAndStickers";
-      GatewayIntentBits13[GatewayIntentBits13["GuildIntegrations"] = 16] = "GuildIntegrations";
-      GatewayIntentBits13[GatewayIntentBits13["GuildWebhooks"] = 32] = "GuildWebhooks";
-      GatewayIntentBits13[GatewayIntentBits13["GuildInvites"] = 64] = "GuildInvites";
-      GatewayIntentBits13[GatewayIntentBits13["GuildVoiceStates"] = 128] = "GuildVoiceStates";
-      GatewayIntentBits13[GatewayIntentBits13["GuildPresences"] = 256] = "GuildPresences";
-      GatewayIntentBits13[GatewayIntentBits13["GuildMessages"] = 512] = "GuildMessages";
-      GatewayIntentBits13[GatewayIntentBits13["GuildMessageReactions"] = 1024] = "GuildMessageReactions";
-      GatewayIntentBits13[GatewayIntentBits13["GuildMessageTyping"] = 2048] = "GuildMessageTyping";
-      GatewayIntentBits13[GatewayIntentBits13["DirectMessages"] = 4096] = "DirectMessages";
-      GatewayIntentBits13[GatewayIntentBits13["DirectMessageReactions"] = 8192] = "DirectMessageReactions";
-      GatewayIntentBits13[GatewayIntentBits13["DirectMessageTyping"] = 16384] = "DirectMessageTyping";
-      GatewayIntentBits13[GatewayIntentBits13["MessageContent"] = 32768] = "MessageContent";
-      GatewayIntentBits13[GatewayIntentBits13["GuildScheduledEvents"] = 65536] = "GuildScheduledEvents";
-      GatewayIntentBits13[GatewayIntentBits13["AutoModerationConfiguration"] = 1048576] = "AutoModerationConfiguration";
-      GatewayIntentBits13[GatewayIntentBits13["AutoModerationExecution"] = 2097152] = "AutoModerationExecution";
-      GatewayIntentBits13[GatewayIntentBits13["GuildMessagePolls"] = 16777216] = "GuildMessagePolls";
-      GatewayIntentBits13[GatewayIntentBits13["DirectMessagePolls"] = 33554432] = "DirectMessagePolls";
-    })(GatewayIntentBits12 || (exports2.GatewayIntentBits = GatewayIntentBits12 = {}));
+    var GatewayIntentBits13;
+    (function(GatewayIntentBits14) {
+      GatewayIntentBits14[GatewayIntentBits14["Guilds"] = 1] = "Guilds";
+      GatewayIntentBits14[GatewayIntentBits14["GuildMembers"] = 2] = "GuildMembers";
+      GatewayIntentBits14[GatewayIntentBits14["GuildModeration"] = 4] = "GuildModeration";
+      GatewayIntentBits14[GatewayIntentBits14["GuildBans"] = 4] = "GuildBans";
+      GatewayIntentBits14[GatewayIntentBits14["GuildExpressions"] = 8] = "GuildExpressions";
+      GatewayIntentBits14[GatewayIntentBits14["GuildEmojisAndStickers"] = 8] = "GuildEmojisAndStickers";
+      GatewayIntentBits14[GatewayIntentBits14["GuildIntegrations"] = 16] = "GuildIntegrations";
+      GatewayIntentBits14[GatewayIntentBits14["GuildWebhooks"] = 32] = "GuildWebhooks";
+      GatewayIntentBits14[GatewayIntentBits14["GuildInvites"] = 64] = "GuildInvites";
+      GatewayIntentBits14[GatewayIntentBits14["GuildVoiceStates"] = 128] = "GuildVoiceStates";
+      GatewayIntentBits14[GatewayIntentBits14["GuildPresences"] = 256] = "GuildPresences";
+      GatewayIntentBits14[GatewayIntentBits14["GuildMessages"] = 512] = "GuildMessages";
+      GatewayIntentBits14[GatewayIntentBits14["GuildMessageReactions"] = 1024] = "GuildMessageReactions";
+      GatewayIntentBits14[GatewayIntentBits14["GuildMessageTyping"] = 2048] = "GuildMessageTyping";
+      GatewayIntentBits14[GatewayIntentBits14["DirectMessages"] = 4096] = "DirectMessages";
+      GatewayIntentBits14[GatewayIntentBits14["DirectMessageReactions"] = 8192] = "DirectMessageReactions";
+      GatewayIntentBits14[GatewayIntentBits14["DirectMessageTyping"] = 16384] = "DirectMessageTyping";
+      GatewayIntentBits14[GatewayIntentBits14["MessageContent"] = 32768] = "MessageContent";
+      GatewayIntentBits14[GatewayIntentBits14["GuildScheduledEvents"] = 65536] = "GuildScheduledEvents";
+      GatewayIntentBits14[GatewayIntentBits14["AutoModerationConfiguration"] = 1048576] = "AutoModerationConfiguration";
+      GatewayIntentBits14[GatewayIntentBits14["AutoModerationExecution"] = 2097152] = "AutoModerationExecution";
+      GatewayIntentBits14[GatewayIntentBits14["GuildMessagePolls"] = 16777216] = "GuildMessagePolls";
+      GatewayIntentBits14[GatewayIntentBits14["DirectMessagePolls"] = 33554432] = "DirectMessagePolls";
+    })(GatewayIntentBits13 || (exports2.GatewayIntentBits = GatewayIntentBits13 = {}));
     var GatewayCapabilityBits;
     (function(GatewayCapabilityBits2) {
       GatewayCapabilityBits2[GatewayCapabilityBits2["ChannelObfuscation"] = 32768] = "ChannelObfuscation";
@@ -41733,20 +41733,20 @@ var require_message = __commonJS({
       ComponentType2[ComponentType2["Checkbox"] = 23] = "Checkbox";
       ComponentType2[ComponentType2["SelectMenu"] = 3] = "SelectMenu";
     })(ComponentType || (exports2.ComponentType = ComponentType = {}));
-    var ButtonStyle3;
-    (function(ButtonStyle4) {
-      ButtonStyle4[ButtonStyle4["Primary"] = 1] = "Primary";
-      ButtonStyle4[ButtonStyle4["Secondary"] = 2] = "Secondary";
-      ButtonStyle4[ButtonStyle4["Success"] = 3] = "Success";
-      ButtonStyle4[ButtonStyle4["Danger"] = 4] = "Danger";
-      ButtonStyle4[ButtonStyle4["Link"] = 5] = "Link";
-      ButtonStyle4[ButtonStyle4["Premium"] = 6] = "Premium";
-    })(ButtonStyle3 || (exports2.ButtonStyle = ButtonStyle3 = {}));
-    var TextInputStyle2;
-    (function(TextInputStyle3) {
-      TextInputStyle3[TextInputStyle3["Short"] = 1] = "Short";
-      TextInputStyle3[TextInputStyle3["Paragraph"] = 2] = "Paragraph";
-    })(TextInputStyle2 || (exports2.TextInputStyle = TextInputStyle2 = {}));
+    var ButtonStyle4;
+    (function(ButtonStyle5) {
+      ButtonStyle5[ButtonStyle5["Primary"] = 1] = "Primary";
+      ButtonStyle5[ButtonStyle5["Secondary"] = 2] = "Secondary";
+      ButtonStyle5[ButtonStyle5["Success"] = 3] = "Success";
+      ButtonStyle5[ButtonStyle5["Danger"] = 4] = "Danger";
+      ButtonStyle5[ButtonStyle5["Link"] = 5] = "Link";
+      ButtonStyle5[ButtonStyle5["Premium"] = 6] = "Premium";
+    })(ButtonStyle4 || (exports2.ButtonStyle = ButtonStyle4 = {}));
+    var TextInputStyle3;
+    (function(TextInputStyle4) {
+      TextInputStyle4[TextInputStyle4["Short"] = 1] = "Short";
+      TextInputStyle4[TextInputStyle4["Paragraph"] = 2] = "Paragraph";
+    })(TextInputStyle3 || (exports2.TextInputStyle = TextInputStyle3 = {}));
     var SelectMenuDefaultValueType;
     (function(SelectMenuDefaultValueType2) {
       SelectMenuDefaultValueType2["Channel"] = "channel";
@@ -45062,7 +45062,7 @@ var require_dist4 = __commonJS({
               })(e3)) in t3 ? Object.defineProperty(t3, e3, { value: r2, enumerable: true, configurable: true, writable: true }) : t3[e3] = r2, t3;
             }
             __name(u, "u");
-            var l, f, s, y = r(425), p = y.AggregateError, g = y.AggregateErrorPrototype, v = y.Array, h = y.ArrayBuffer, d = y.ArrayBufferPrototype, b = y.ArrayIsArray, m = y.ArrayPrototype, S = y.ArrayPrototypeFilter, P = y.ArrayPrototypeForEach, x = y.ArrayPrototypeIncludes, w = y.ArrayPrototypeIndexOf, A = y.ArrayPrototypeJoin, O = y.ArrayPrototypeMap, _ = y.ArrayPrototypePop, j = y.ArrayPrototypePush, E = y.ArrayPrototypePushApply, k = y.ArrayPrototypeSlice, I = y.ArrayPrototypeSort, R = y.ArrayPrototypeSplice, L = y.ArrayPrototypeUnshift, T = y.BigIntPrototypeValueOf, B = y.Boolean, z = y.BooleanPrototype, M = y.BooleanPrototypeValueOf, C = y.DataView, D = y.DataViewPrototype, N = y.Date, F = y.DatePrototype, W2 = y.DatePrototypeGetTime, H2 = y.DatePrototypeToISOString, U = y.DatePrototypeToString, G = y.Error, V = y.ErrorPrototype, Z = y.ErrorPrototypeToString, $ = y.Function, Y = y.FunctionPrototype, q = y.FunctionPrototypeBind, J = y.FunctionPrototypeCall, K = y.FunctionPrototypeSymbolHasInstance, Q = y.FunctionPrototypeToString, X = y.JSONStringify, tt = y.Map, et = y.MapPrototype, rt = y.MapPrototypeEntries, nt = y.MapPrototypeGetSize, ot = y.MathFloor, at = y.MathMax, it = y.MathMin, ct = y.MathRound, ut = y.MathSqrt, lt2 = y.MathTrunc, ft = y.Number, st = y.NumberIsFinite, yt = y.NumberIsNaN, pt = y.NumberParseFloat, gt2 = y.NumberParseInt, vt = y.NumberPrototype, ht = y.NumberPrototypeToString, dt = y.NumberPrototypeValueOf, bt = y.Object, mt = y.ObjectAssign, St = y.ObjectDefineProperty, Pt = y.ObjectGetOwnPropertyDescriptor, xt = y.ObjectGetOwnPropertyNames, wt = y.ObjectGetOwnPropertySymbols, At = y.ObjectGetPrototypeOf, Ot = y.ObjectIs, _t = y.ObjectKeys, jt = y.ObjectPrototype, Et = y.ObjectPrototypeHasOwnProperty, kt = y.ObjectPrototypePropertyIsEnumerable, It = y.ObjectSeal, Rt = y.ObjectSetPrototypeOf, Lt = y.Promise, Tt = y.PromisePrototype, Bt = y.RangeError, zt = y.RangeErrorPrototype, Mt = y.ReflectApply, Ct = y.ReflectOwnKeys, Dt = y.RegExp, Nt = y.RegExpPrototype, Ft = y.RegExpPrototypeExec, Wt = y.RegExpPrototypeSymbolReplace, Ht = y.RegExpPrototypeSymbolSplit, Ut = y.RegExpPrototypeToString, Gt = y.SafeMap, Vt = y.SafeSet, Zt = y.SafeStringIterator, $t = y.Set, Yt = y.SetPrototype, qt = y.SetPrototypeGetSize, Jt = y.SetPrototypeValues, Kt = y.String, Qt = y.StringPrototype, Xt = y.StringPrototypeCharCodeAt, te = y.StringPrototypeCodePointAt, ee = y.StringPrototypeEndsWith, re = y.StringPrototypeIncludes, ne2 = y.StringPrototypeIndexOf, oe = y.StringPrototypeLastIndexOf, ae = y.StringPrototypeNormalize, ie = y.StringPrototypePadEnd, ce = y.StringPrototypePadStart, ue = y.StringPrototypeRepeat, le = y.StringPrototypeReplace, fe = y.StringPrototypeReplaceAll, se = y.StringPrototypeSlice, ye = y.StringPrototypeSplit, pe = y.StringPrototypeStartsWith, ge = y.StringPrototypeToLowerCase, ve = y.StringPrototypeTrim, he = y.StringPrototypeValueOf, de = y.SymbolIterator, be = y.SymbolPrototypeToString, me = y.SymbolPrototypeValueOf, Se = y.SymbolToPrimitive, Pe = y.SymbolToStringTag, xe = y.TypeError, we = y.TypeErrorPrototype, Ae = y.TypedArray, Oe = y.TypedArrayPrototype, _e = y.TypedArrayPrototypeGetLength, je = y.TypedArrayPrototypeGetSymbolToStringTag, Ee = y.Uint8Array, ke = y.WeakMap, Ie = y.WeakMapPrototype, Re = y.WeakSet, Le = y.WeakSetPrototype, Te = y.globalThis, Be = y.internalBinding, ze = y.uncurryThis, Me = r(153), Ce = Me.constants, De = Ce.ALL_PROPERTIES, Ne = Ce.ONLY_ENUMERABLE, Fe = Ce.kPending, We = Ce.kRejected, He = Me.getOwnNonIndexProperties, Ue = Me.getPromiseDetails, Ge = Me.getProxyDetails, Ve = Me.previewEntries, Ze = Me.getConstructorName, $e = Me.getExternalValue, Ye = Me.Proxy, qe = r(923), Je = qe.customInspectSymbol, Ke = qe.isError, Qe = qe.join, Xe = qe.removeColors, tr = r(924).isStackOverflowError, er = r(617), rr = er.isAsyncFunction, nr = er.isGeneratorFunction, or2 = er.isAnyArrayBuffer, ar = er.isArrayBuffer, ir = er.isArgumentsObject, cr = er.isBoxedPrimitive, ur = er.isDataView, lr = er.isExternal, fr = er.isMap, sr = er.isMapIterator, yr = er.isModuleNamespaceObject, pr = er.isNativeError, gr = er.isPromise, vr = er.isSet, hr = er.isSetIterator, dr = er.isWeakMap, br = er.isWeakSet, mr = er.isRegExp, Sr = er.isDate, Pr = er.isTypedArray, xr = er.isStringObject, wr = er.isNumberObject, Ar = er.isBooleanObject, Or = er.isBigIntObject, _r = r(229), jr = r(705).BuiltinModule, Er = r(116), kr = Er.validateObject, Ir = Er.validateString, Rr = Er.kValidateObjectAllowArray;
+            var l, f, s, y = r(425), p = y.AggregateError, g = y.AggregateErrorPrototype, v = y.Array, h = y.ArrayBuffer, d = y.ArrayBufferPrototype, b = y.ArrayIsArray, m = y.ArrayPrototype, S = y.ArrayPrototypeFilter, P = y.ArrayPrototypeForEach, x = y.ArrayPrototypeIncludes, w = y.ArrayPrototypeIndexOf, A = y.ArrayPrototypeJoin, O = y.ArrayPrototypeMap, _ = y.ArrayPrototypePop, j = y.ArrayPrototypePush, E = y.ArrayPrototypePushApply, k = y.ArrayPrototypeSlice, I = y.ArrayPrototypeSort, R = y.ArrayPrototypeSplice, L = y.ArrayPrototypeUnshift, T = y.BigIntPrototypeValueOf, B = y.Boolean, z = y.BooleanPrototype, M = y.BooleanPrototypeValueOf, C = y.DataView, D = y.DataViewPrototype, N = y.Date, F = y.DatePrototype, W3 = y.DatePrototypeGetTime, H3 = y.DatePrototypeToISOString, U = y.DatePrototypeToString, G = y.Error, V = y.ErrorPrototype, Z = y.ErrorPrototypeToString, $ = y.Function, Y = y.FunctionPrototype, q = y.FunctionPrototypeBind, J = y.FunctionPrototypeCall, K = y.FunctionPrototypeSymbolHasInstance, Q = y.FunctionPrototypeToString, X = y.JSONStringify, tt = y.Map, et = y.MapPrototype, rt = y.MapPrototypeEntries, nt = y.MapPrototypeGetSize, ot = y.MathFloor, at = y.MathMax, it = y.MathMin, ct = y.MathRound, ut = y.MathSqrt, lt2 = y.MathTrunc, ft = y.Number, st = y.NumberIsFinite, yt = y.NumberIsNaN, pt = y.NumberParseFloat, gt2 = y.NumberParseInt, vt = y.NumberPrototype, ht = y.NumberPrototypeToString, dt = y.NumberPrototypeValueOf, bt = y.Object, mt = y.ObjectAssign, St = y.ObjectDefineProperty, Pt = y.ObjectGetOwnPropertyDescriptor, xt = y.ObjectGetOwnPropertyNames, wt = y.ObjectGetOwnPropertySymbols, At = y.ObjectGetPrototypeOf, Ot = y.ObjectIs, _t = y.ObjectKeys, jt = y.ObjectPrototype, Et = y.ObjectPrototypeHasOwnProperty, kt = y.ObjectPrototypePropertyIsEnumerable, It = y.ObjectSeal, Rt = y.ObjectSetPrototypeOf, Lt = y.Promise, Tt = y.PromisePrototype, Bt = y.RangeError, zt = y.RangeErrorPrototype, Mt = y.ReflectApply, Ct = y.ReflectOwnKeys, Dt = y.RegExp, Nt = y.RegExpPrototype, Ft = y.RegExpPrototypeExec, Wt = y.RegExpPrototypeSymbolReplace, Ht = y.RegExpPrototypeSymbolSplit, Ut = y.RegExpPrototypeToString, Gt = y.SafeMap, Vt = y.SafeSet, Zt = y.SafeStringIterator, $t = y.Set, Yt = y.SetPrototype, qt = y.SetPrototypeGetSize, Jt = y.SetPrototypeValues, Kt = y.String, Qt = y.StringPrototype, Xt = y.StringPrototypeCharCodeAt, te = y.StringPrototypeCodePointAt, ee = y.StringPrototypeEndsWith, re = y.StringPrototypeIncludes, ne2 = y.StringPrototypeIndexOf, oe = y.StringPrototypeLastIndexOf, ae = y.StringPrototypeNormalize, ie = y.StringPrototypePadEnd, ce = y.StringPrototypePadStart, ue = y.StringPrototypeRepeat, le = y.StringPrototypeReplace, fe = y.StringPrototypeReplaceAll, se = y.StringPrototypeSlice, ye = y.StringPrototypeSplit, pe = y.StringPrototypeStartsWith, ge = y.StringPrototypeToLowerCase, ve = y.StringPrototypeTrim, he = y.StringPrototypeValueOf, de = y.SymbolIterator, be = y.SymbolPrototypeToString, me = y.SymbolPrototypeValueOf, Se = y.SymbolToPrimitive, Pe = y.SymbolToStringTag, xe = y.TypeError, we = y.TypeErrorPrototype, Ae = y.TypedArray, Oe = y.TypedArrayPrototype, _e = y.TypedArrayPrototypeGetLength, je = y.TypedArrayPrototypeGetSymbolToStringTag, Ee = y.Uint8Array, ke = y.WeakMap, Ie = y.WeakMapPrototype, Re = y.WeakSet, Le = y.WeakSetPrototype, Te = y.globalThis, Be = y.internalBinding, ze = y.uncurryThis, Me = r(153), Ce = Me.constants, De = Ce.ALL_PROPERTIES, Ne = Ce.ONLY_ENUMERABLE, Fe = Ce.kPending, We = Ce.kRejected, He = Me.getOwnNonIndexProperties, Ue = Me.getPromiseDetails, Ge = Me.getProxyDetails, Ve = Me.previewEntries, Ze = Me.getConstructorName, $e = Me.getExternalValue, Ye = Me.Proxy, qe = r(923), Je = qe.customInspectSymbol, Ke = qe.isError, Qe = qe.join, Xe = qe.removeColors, tr = r(924).isStackOverflowError, er = r(617), rr = er.isAsyncFunction, nr = er.isGeneratorFunction, or2 = er.isAnyArrayBuffer, ar = er.isArrayBuffer, ir = er.isArgumentsObject, cr = er.isBoxedPrimitive, ur = er.isDataView, lr = er.isExternal, fr = er.isMap, sr = er.isMapIterator, yr = er.isModuleNamespaceObject, pr = er.isNativeError, gr = er.isPromise, vr = er.isSet, hr = er.isSetIterator, dr = er.isWeakMap, br = er.isWeakSet, mr = er.isRegExp, Sr = er.isDate, Pr = er.isTypedArray, xr = er.isStringObject, wr = er.isNumberObject, Ar = er.isBooleanObject, Or = er.isBigIntObject, _r = r(229), jr = r(705).BuiltinModule, Er = r(116), kr = Er.validateObject, Ir = Er.validateString, Rr = Er.kValidateObjectAllowArray;
             function Lr(t3) {
               return (f = f || r(802)).pathToFileURL(t3).href;
             }
@@ -45351,7 +45351,7 @@ var require_dist4 = __commonJS({
                     var V2 = sn(u3, l3, "RegExp");
                     if ("RegExp " !== V2 && (v3 = "".concat(V2).concat(v3)), 0 === i3.length && void 0 === c2 || n2 > t4.depth && null !== t4.depth) return t4.stylize(v3, "regexp");
                   } else if (Sr(e4)) {
-                    v3 = yt(W2(e4)) ? U(e4) : H2(e4);
+                    v3 = yt(W3(e4)) ? U(e4) : H3(e4);
                     var Z2 = sn(u3, l3, "Date");
                     if ("Date " !== Z2 && (v3 = "".concat(Z2).concat(v3)), 0 === i3.length && void 0 === c2) return t4.stylize(v3, "date");
                   } else if (Ke(e4)) {
@@ -46588,7 +46588,7 @@ var require_dist4 = __commonJS({
               var e3 = t3.name, r2 = t3.original;
               P[e3] = r2, z(r2, P, e3), z(r2.prototype, P, "".concat(e3, "Prototype"));
             }), P.IteratorPrototype = Reflect.getPrototypeOf(P.ArrayIteratorPrototype);
-            var M = P.ArrayPrototypeForEach, C = P.FinalizationRegistry, D = P.FunctionPrototypeCall, N = P.Map, F = P.ObjectFreeze, W2 = P.ObjectSetPrototypeOf, H2 = P.RegExp, U = P.Set, G = P.SymbolIterator, V = P.WeakMap, Z = P.WeakRef, $ = P.WeakSet, Y = /* @__PURE__ */ __name(function(t3, e3) {
+            var M = P.ArrayPrototypeForEach, C = P.FinalizationRegistry, D = P.FunctionPrototypeCall, N = P.Map, F = P.ObjectFreeze, W3 = P.ObjectSetPrototypeOf, H3 = P.RegExp, U = P.Set, G = P.SymbolIterator, V = P.WeakMap, Z = P.WeakRef, $ = P.WeakSet, Y = /* @__PURE__ */ __name(function(t3, e3) {
               var r2 = (function() {
                 return f(/* @__PURE__ */ __name(function e4(r3) {
                   u(this, e4), this._iterator = t3(r3);
@@ -46598,7 +46598,7 @@ var require_dist4 = __commonJS({
                   return this;
                 }, "value") }]);
               })();
-              return W2(r2.prototype, null), F(r2.prototype), F(r2), r2;
+              return W3(r2.prototype, null), F(r2.prototype), F(r2), r2;
             }, "Y");
             P.SafeArrayIterator = Y(P.ArrayPrototypeSymbolIterator, P.ArrayIteratorPrototypeNext), P.SafeStringIterator = Y(P.StringPrototypeSymbolIterator, P.StringIteratorPrototypeNext);
             var q = /* @__PURE__ */ __name(function(t3, e3) {
@@ -46623,7 +46623,7 @@ var require_dist4 = __commonJS({
                   }
                 });
               } else q(t3.prototype, e3.prototype);
-              return q(t3, e3), W2(e3.prototype, null), F(e3.prototype), F(e3), e3;
+              return q(t3, e3), W3(e3.prototype, null), F(e3.prototype), F(e3), e3;
             }, "J");
             P.makeSafe = J, P.SafeMap = J(N, (function(t3) {
               function e3(t4) {
@@ -46669,8 +46669,8 @@ var require_dist4 = __commonJS({
               if ("config" === t3) return { hasIntl: false };
               throw new Error('unknown module: "'.concat(t3, '"'));
             }, P._stringPrototypeReplaceAll = function(t3, e3, r2) {
-              return "[object regexp]" === Object.prototype.toString.call(e3).toLowerCase() ? t3.replace(e3, r2) : t3.replace(new H2(e3, "g"), r2);
-            }, P.StringPrototypeReplaceAll = P.StringPrototypeReplaceAll || P._stringPrototypeReplaceAll, W2(P, null), F(P), t2.exports = P;
+              return "[object regexp]" === Object.prototype.toString.call(e3).toLowerCase() ? t3.replace(e3, r2) : t3.replace(new H3(e3, "g"), r2);
+            }, P.StringPrototypeReplaceAll = P.StringPrototypeReplaceAll || P._stringPrototypeReplaceAll, W3(P, null), F(P), t2.exports = P;
           }, 569: (t2, e2, r) => {
             function n(t3) {
               return n = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(t4) {
@@ -46946,7 +46946,7 @@ var require_dist4 = __commonJS({
               }, l(t3, e3);
             }
             __name(l, "l");
-            var f, s, y = r(425), p = y.ArrayIsArray, g = y.ArrayPrototypeIncludes, v = y.ArrayPrototypeIndexOf, h = y.ArrayPrototypeJoin, d = y.ArrayPrototypePush, b = y.ArrayPrototypeSlice, m = y.ArrayPrototypeSplice, S = y.Error, P = y.ErrorCaptureStackTrace, x = y.JSONStringify, w = y.ObjectDefineProperty, A = y.ReflectApply, O = y.RegExpPrototypeExec, _ = y.SafeMap, j = y.SafeWeakMap, E = y.String, k = y.StringPrototypeEndsWith, I = y.StringPrototypeIncludes, R = y.StringPrototypeIndexOf, L = y.StringPrototypeSlice, T = y.StringPrototypeToLowerCase, B = y.Symbol, z = y.TypeError, M = B("kIsNodeError"), C = new _(), D = {}, N = /^[A-Z][a-zA-Z0-9]*$/, F = ["string", "function", "number", "object", "Function", "Object", "boolean", "bigint", "symbol"], W2 = new j(), H2 = r(229), U = null;
+            var f, s, y = r(425), p = y.ArrayIsArray, g = y.ArrayPrototypeIncludes, v = y.ArrayPrototypeIndexOf, h = y.ArrayPrototypeJoin, d = y.ArrayPrototypePush, b = y.ArrayPrototypeSlice, m = y.ArrayPrototypeSplice, S = y.Error, P = y.ErrorCaptureStackTrace, x = y.JSONStringify, w = y.ObjectDefineProperty, A = y.ReflectApply, O = y.RegExpPrototypeExec, _ = y.SafeMap, j = y.SafeWeakMap, E = y.String, k = y.StringPrototypeEndsWith, I = y.StringPrototypeIncludes, R = y.StringPrototypeIndexOf, L = y.StringPrototypeSlice, T = y.StringPrototypeToLowerCase, B = y.Symbol, z = y.TypeError, M = B("kIsNodeError"), C = new _(), D = {}, N = /^[A-Z][a-zA-Z0-9]*$/, F = ["string", "function", "number", "object", "Function", "Object", "boolean", "bigint", "symbol"], W3 = new j(), H3 = r(229), U = null;
             function G(t3, e3) {
               var r2 = (function(t4) {
                 function r3() {
@@ -46986,7 +46986,7 @@ var require_dist4 = __commonJS({
             __name(V, "V");
             function Z(t3, e3, r2) {
               var n2 = C.get(t3);
-              if ("function" == typeof n2) return H2(n2.length <= e3.length, "Code: ".concat(t3, "; The provided arguments length (").concat(e3.length, ") does not ") + "match the required ones (".concat(n2.length, ").")), A(n2, r2, e3);
+              if ("function" == typeof n2) return H3(n2.length <= e3.length, "Code: ".concat(t3, "; The provided arguments length (").concat(e3.length, ") does not ") + "match the required ones (".concat(n2.length, ").")), A(n2, r2, e3);
             }
             __name(Z, "Z");
             var $ = B("kEnhanceStackBeforeInspector");
@@ -47048,11 +47048,11 @@ var require_dist4 = __commonJS({
                 s = t4.message, f = t4.name;
               }
               return t3 && t3.name === f && t3.message === s;
-            }, "isStackOverflowError"), kEnhanceStackBeforeInspector: $, kIsNodeError: M, overrideStackTrace: W2 }, V("ERR_INTERNAL_ASSERTION", function(t3) {
+            }, "isStackOverflowError"), kEnhanceStackBeforeInspector: $, kIsNodeError: M, overrideStackTrace: W3 }, V("ERR_INTERNAL_ASSERTION", function(t3) {
               var e3 = "This is caused by either a bug in Node.js or incorrect usage of Node.js internals.\nPlease open an issue with this stack trace at https://github.com/nodejs/node/issues\n";
               return void 0 === t3 ? e3 : "".concat(t3, "\n").concat(e3);
             }, S), V("ERR_INVALID_ARG_TYPE", function(t3, e3, r2) {
-              H2("string" == typeof t3, "'name' must be a string"), p(e3) || (e3 = [e3]);
+              H3("string" == typeof t3, "'name' must be a string"), p(e3) || (e3 = [e3]);
               var o2 = "The ";
               if (k(t3, " argument")) o2 += "".concat(t3, " ");
               else {
@@ -47100,7 +47100,7 @@ var require_dist4 = __commonJS({
               try {
                 for (f2.s(); !(i2 = f2.n()).done; ) {
                   var s2 = i2.value;
-                  H2("string" == typeof s2, "All expected entries have to be of type string"), g(F, s2) ? d(c2, T(s2)) : null !== O(N, s2) ? d(u2, s2) : (H2("object" !== s2, 'The value "object" should be written as "Object"'), d(l2, s2));
+                  H3("string" == typeof s2, "All expected entries have to be of type string"), g(F, s2) ? d(c2, T(s2)) : null !== O(N, s2) ? d(u2, s2) : (H3("object" !== s2, 'The value "object" should be written as "Object"'), d(l2, s2));
                 }
               } catch (t4) {
                 f2.e(t4);
@@ -49242,7 +49242,7 @@ var require_dist6 = __commonJS({
     }
     __name(getDefaultStrategy, "getDefaultStrategy");
     var import_node_http2 = __require("http");
-    var import_node_url2 = __require("url");
+    var import_node_url3 = __require("url");
     var import_node_util = __require("util");
     var import_undici = require_undici();
     async function makeRequest(url, init) {
@@ -49281,7 +49281,7 @@ var require_dist6 = __commonJS({
         return body;
       } else if (import_node_util.types.isArrayBuffer(body)) {
         return new Uint8Array(body);
-      } else if (body instanceof import_node_url2.URLSearchParams) {
+      } else if (body instanceof import_node_url3.URLSearchParams) {
         return body.toString();
       } else if (body instanceof DataView) {
         return new Uint8Array(body.buffer);
@@ -52072,7 +52072,7 @@ var require_BitField = __commonJS({
 var require_PermissionsBitField = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/util/PermissionsBitField.js"(exports2, module2) {
     "use strict";
-    var { PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var BitField = require_BitField();
     var PermissionsBitField2 = class extends BitField {
       /**
@@ -52081,13 +52081,13 @@ var require_PermissionsBitField = __commonJS({
        * @memberof PermissionsBitField
        * @see {@link https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags}
        */
-      static Flags = PermissionFlagsBits4;
+      static Flags = PermissionFlagsBits5;
       /**
        * Bitfield representing every permission combined
        * @type {bigint}
        * @memberof PermissionsBitField
        */
-      static All = Object.values(PermissionFlagsBits4).reduce((all, p) => all | p, 0n);
+      static All = Object.values(PermissionFlagsBits5).reduce((all, p) => all | p, 0n);
       /**
        * Bitfield representing the default permissions for users
        * @type {bigint}
@@ -52099,7 +52099,7 @@ var require_PermissionsBitField = __commonJS({
        * @type {bigint}
        * @memberof PermissionsBitField
        */
-      static StageModerator = PermissionFlagsBits4.ManageChannels | PermissionFlagsBits4.MuteMembers | PermissionFlagsBits4.MoveMembers;
+      static StageModerator = PermissionFlagsBits5.ManageChannels | PermissionFlagsBits5.MuteMembers | PermissionFlagsBits5.MoveMembers;
       /**
        * @type {bigint}
        * @memberof PermissionsBitField
@@ -52126,7 +52126,7 @@ var require_PermissionsBitField = __commonJS({
        * @returns {string[]}
        */
       missing(bits, checkAdmin = true) {
-        return checkAdmin && this.has(PermissionFlagsBits4.Administrator) ? [] : super.missing(bits);
+        return checkAdmin && this.has(PermissionFlagsBits5.Administrator) ? [] : super.missing(bits);
       }
       /**
        * Checks whether the bitfield has a permission, or any of multiple permissions.
@@ -52135,7 +52135,7 @@ var require_PermissionsBitField = __commonJS({
        * @returns {boolean}
        */
       any(permission, checkAdmin = true) {
-        return checkAdmin && super.has(PermissionFlagsBits4.Administrator) || super.any(permission);
+        return checkAdmin && super.has(PermissionFlagsBits5.Administrator) || super.any(permission);
       }
       /**
        * Checks whether the bitfield has a permission, or multiple permissions.
@@ -52144,7 +52144,7 @@ var require_PermissionsBitField = __commonJS({
        * @returns {boolean}
        */
       has(permission, checkAdmin = true) {
-        return checkAdmin && super.has(PermissionFlagsBits4.Administrator) || super.has(permission);
+        return checkAdmin && super.has(PermissionFlagsBits5.Administrator) || super.has(permission);
       }
       /**
        * Gets an {@link Array} of bitfield names based on the permissions available.
@@ -53239,7 +53239,7 @@ var require_RoleFlagsBitField = __commonJS({
 var require_Role = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/structures/Role.js"(exports2) {
     "use strict";
-    var { PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var BaseRole = require_BaseRole();
     var { DiscordjsError: DiscordjsError2, ErrorCodes: ErrorCodes2 } = require_errors3();
     var PermissionsBitField2 = require_PermissionsBitField();
@@ -53306,7 +53306,7 @@ var require_Role = __commonJS({
       get editable() {
         if (this.managed) return false;
         const clientMember = this.guild.members.resolve(this.client.user);
-        if (!clientMember.permissions.has(PermissionFlagsBits4.ManageRoles)) return false;
+        if (!clientMember.permissions.has(PermissionFlagsBits5.ManageRoles)) return false;
         return clientMember.roles.highest.comparePositionTo(this) > 0;
       }
       /**
@@ -53868,7 +53868,7 @@ var require_GuildChannel = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/structures/GuildChannel.js"(exports2, module2) {
     "use strict";
     var { Snowflake } = require_cjs();
-    var { PermissionFlagsBits: PermissionFlagsBits4, ChannelType: ChannelType2 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5, ChannelType: ChannelType2 } = require_v106();
     var { BaseChannel } = require_BaseChannel();
     var { DiscordjsError: DiscordjsError2, ErrorCodes: ErrorCodes2 } = require_errors3();
     var PermissionOverwriteManager = require_PermissionOverwriteManager();
@@ -54009,7 +54009,7 @@ var require_GuildChannel = __commonJS({
         }
         const roles = member.roles.cache;
         const permissions = new PermissionsBitField2(roles.map((role) => role.permissions));
-        if (checkAdmin && permissions.has(PermissionFlagsBits4.Administrator)) {
+        if (checkAdmin && permissions.has(PermissionFlagsBits5.Administrator)) {
           return new PermissionsBitField2(PermissionsBitField2.All).freeze();
         }
         const overwrites = this.overwritesFor(member, true, roles);
@@ -54024,7 +54024,7 @@ var require_GuildChannel = __commonJS({
        * @private
        */
       rolePermissions(role, checkAdmin) {
-        if (checkAdmin && role.permissions.has(PermissionFlagsBits4.Administrator)) {
+        if (checkAdmin && role.permissions.has(PermissionFlagsBits5.Administrator)) {
           return new PermissionsBitField2(PermissionsBitField2.All).freeze();
         }
         const basePermissions = new PermissionsBitField2([role.permissions, role.guild.roles.everyone.permissions]);
@@ -54050,7 +54050,7 @@ var require_GuildChannel = __commonJS({
        */
       get members() {
         return this.guild.members.cache.filter(
-          (member) => this.permissionsFor(member).has(PermissionFlagsBits4.ViewChannel, false)
+          (member) => this.permissionsFor(member).has(PermissionFlagsBits5.ViewChannel, false)
         );
       }
       /**
@@ -54184,10 +54184,10 @@ var require_GuildChannel = __commonJS({
         if (this.client.user.id === this.guild.ownerId) return true;
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
         if (this.guild.members.me.communicationDisabledUntilTimestamp > Date.now()) return false;
-        const baseBitfield = PermissionFlagsBits4.ViewChannel | PermissionFlagsBits4.ManageChannels;
-        const bitfield = VoiceBasedChannelTypes.includes(this.type) ? baseBitfield | PermissionFlagsBits4.Connect : baseBitfield;
+        const baseBitfield = PermissionFlagsBits5.ViewChannel | PermissionFlagsBits5.ManageChannels;
+        const bitfield = VoiceBasedChannelTypes.includes(this.type) ? baseBitfield | PermissionFlagsBits5.Connect : baseBitfield;
         return permissions.has(bitfield, false);
       }
       /**
@@ -54199,7 +54199,7 @@ var require_GuildChannel = __commonJS({
         if (this.client.user.id === this.guild.ownerId) return true;
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        return permissions.has(PermissionFlagsBits4.ViewChannel, false);
+        return permissions.has(PermissionFlagsBits5.ViewChannel, false);
       }
       /**
        * Deletes this channel.
@@ -55321,13 +55321,13 @@ var require_Collector = __commonJS({
               yield queue.shift();
             } else {
               await new Promise((resolve) => {
-                const tick = () => {
-                  this.removeListener("collect", tick);
-                  this.removeListener("end", tick);
+                const tick2 = () => {
+                  this.removeListener("collect", tick2);
+                  this.removeListener("end", tick2);
                   return resolve();
                 };
-                this.on("collect", tick);
-                this.on("end", tick);
+                this.on("collect", tick2);
+                this.on("end", tick2);
               });
             }
           }
@@ -56758,7 +56758,7 @@ var require_Invite = __commonJS({
     var { Buffer: Buffer2 } = __require("node:buffer");
     var { Collection: Collection2 } = require_dist7();
     var { lazy } = require_dist2();
-    var { RouteBases, Routes: Routes3, PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { RouteBases, Routes: Routes3, PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var Base = require_Base();
     var { GuildScheduledEvent } = require_GuildScheduledEvent();
     var IntegrationApplication = require_IntegrationApplication();
@@ -56906,7 +56906,7 @@ var require_Invite = __commonJS({
         if (!guild || !this.client.guilds.cache.has(guild.id)) return false;
         if (!guild.members.me) throw new DiscordjsError2(ErrorCodes2.GuildUncachedMe);
         return Boolean(
-          this.channel?.permissionsFor(this.client.user).has(PermissionFlagsBits4.ManageChannels, false) || guild.members.me.permissions.has(PermissionFlagsBits4.ManageGuild)
+          this.channel?.permissionsFor(this.client.user).has(PermissionFlagsBits5.ManageChannels, false) || guild.members.me.permissions.has(PermissionFlagsBits5.ManageGuild)
         );
       }
       /**
@@ -60911,10 +60911,10 @@ var require_cjs3 = __commonJS({
       return "[object Set]" === m2(e3);
     }
     __name(N, "N");
-    function W2(e3) {
+    function W3(e3) {
       return "[object WeakMap]" === m2(e3);
     }
-    __name(W2, "W");
+    __name(W3, "W");
     function $(e3) {
       return "[object WeakSet]" === m2(e3);
     }
@@ -60943,10 +60943,10 @@ var require_cjs3 = __commonJS({
       return "undefined" != typeof SharedArrayBuffer && (J.working ? J(e3) : e3 instanceof SharedArrayBuffer);
     }
     __name(_, "_");
-    function H2(e3) {
+    function H3(e3) {
       return O(e3, h2);
     }
-    __name(H2, "H");
+    __name(H3, "H");
     function Z(e3) {
       return O(e3, j);
     }
@@ -60971,8 +60971,8 @@ var require_cjs3 = __commonJS({
       return "undefined" != typeof Map && (T2.working ? T2(e3) : e3 instanceof Map);
     }, N.working = "undefined" != typeof Set && N(/* @__PURE__ */ new Set()), o$2.isSet = function(e3) {
       return "undefined" != typeof Set && (N.working ? N(e3) : e3 instanceof Set);
-    }, W2.working = "undefined" != typeof WeakMap && W2(/* @__PURE__ */ new WeakMap()), o$2.isWeakMap = function(e3) {
-      return "undefined" != typeof WeakMap && (W2.working ? W2(e3) : e3 instanceof WeakMap);
+    }, W3.working = "undefined" != typeof WeakMap && W3(/* @__PURE__ */ new WeakMap()), o$2.isWeakMap = function(e3) {
+      return "undefined" != typeof WeakMap && (W3.working ? W3(e3) : e3 instanceof WeakMap);
     }, $.working = "undefined" != typeof WeakSet && $(/* @__PURE__ */ new WeakSet()), o$2.isWeakSet = function(e3) {
       return $(e3);
     }, C.working = "undefined" != typeof ArrayBuffer && C(new ArrayBuffer()), o$2.isArrayBuffer = V, G.working = "undefined" != typeof ArrayBuffer && "undefined" != typeof DataView && G(new DataView(new ArrayBuffer(1), 0, 1)), o$2.isDataView = R, J.working = "undefined" != typeof SharedArrayBuffer && J(new SharedArrayBuffer()), o$2.isSharedArrayBuffer = _, o$2.isAsyncFunction = function(e3) {
@@ -60985,8 +60985,8 @@ var require_cjs3 = __commonJS({
       return "[object Generator]" === m2(e3);
     }, o$2.isWebAssemblyCompiledModule = function(e3) {
       return "[object WebAssembly.Module]" === m2(e3);
-    }, o$2.isNumberObject = H2, o$2.isStringObject = Z, o$2.isBooleanObject = q, o$2.isBigIntObject = K, o$2.isSymbolObject = L, o$2.isBoxedPrimitive = function(e3) {
-      return H2(e3) || Z(e3) || q(e3) || K(e3) || L(e3);
+    }, o$2.isNumberObject = H3, o$2.isStringObject = Z, o$2.isBooleanObject = q, o$2.isBigIntObject = K, o$2.isSymbolObject = L, o$2.isBoxedPrimitive = function(e3) {
+      return H3(e3) || Z(e3) || q(e3) || K(e3) || L(e3);
     }, o$2.isAnyArrayBuffer = function(e3) {
       return l$1 && (V(e3) || _(e3));
     }, ["isProxy", "isExternal", "isModuleNamespaceObject"].forEach(function(e3) {
@@ -64168,14 +64168,14 @@ var require_dist9 = __commonJS({
     };
     var index_exports = {};
     __export2(index_exports, {
-      ActionRowBuilder: () => ActionRowBuilder3,
+      ActionRowBuilder: () => ActionRowBuilder4,
       ApplicationCommandNumericOptionMinMaxValueMixin: () => ApplicationCommandNumericOptionMinMaxValueMixin,
       ApplicationCommandOptionBase: () => ApplicationCommandOptionBase,
       ApplicationCommandOptionChannelTypesMixin: () => ApplicationCommandOptionChannelTypesMixin,
       ApplicationCommandOptionWithAutocompleteMixin: () => ApplicationCommandOptionWithAutocompleteMixin,
       ApplicationCommandOptionWithChoicesMixin: () => ApplicationCommandOptionWithChoicesMixin,
       BaseSelectMenuBuilder: () => BaseSelectMenuBuilder,
-      ButtonBuilder: () => ButtonBuilder3,
+      ButtonBuilder: () => ButtonBuilder4,
       ChannelSelectMenuBuilder: () => ChannelSelectMenuBuilder,
       CheckboxAssertions: () => Assertions_exports3,
       CheckboxBuilder: () => CheckboxBuilder,
@@ -64198,7 +64198,7 @@ var require_dist9 = __commonJS({
       MediaGalleryItemBuilder: () => MediaGalleryItemBuilder,
       MentionableSelectMenuBuilder: () => MentionableSelectMenuBuilder,
       ModalAssertions: () => Assertions_exports9,
-      ModalBuilder: () => ModalBuilder2,
+      ModalBuilder: () => ModalBuilder3,
       RadioGroupBuilder: () => RadioGroupBuilder,
       RadioGroupOptionBuilder: () => RadioGroupOptionBuilder,
       RoleSelectMenuBuilder: () => RoleSelectMenuBuilder,
@@ -64214,7 +64214,7 @@ var require_dist9 = __commonJS({
       SlashCommandAssertions: () => Assertions_exports10,
       SlashCommandAttachmentOption: () => SlashCommandAttachmentOption,
       SlashCommandBooleanOption: () => SlashCommandBooleanOption,
-      SlashCommandBuilder: () => SlashCommandBuilder8,
+      SlashCommandBuilder: () => SlashCommandBuilder9,
       SlashCommandChannelOption: () => SlashCommandChannelOption,
       SlashCommandIntegerOption: () => SlashCommandIntegerOption,
       SlashCommandMentionableOption: () => SlashCommandMentionableOption,
@@ -64228,7 +64228,7 @@ var require_dist9 = __commonJS({
       StringSelectMenuOptionBuilder: () => StringSelectMenuOptionBuilder,
       TextDisplayBuilder: () => TextDisplayBuilder,
       TextInputAssertions: () => Assertions_exports5,
-      TextInputBuilder: () => TextInputBuilder2,
+      TextInputBuilder: () => TextInputBuilder3,
       ThumbnailBuilder: () => ThumbnailBuilder,
       UserSelectMenuBuilder: () => UserSelectMenuBuilder,
       createComponentBuilder: () => createComponentBuilder,
@@ -64742,7 +64742,7 @@ var require_dist9 = __commonJS({
     };
     var import_v1027 = require_v106();
     var import_v102 = require_v106();
-    var ButtonBuilder3 = class extends ComponentBuilder {
+    var ButtonBuilder4 = class extends ComponentBuilder {
       static {
         __name(this, "ButtonBuilder");
       }
@@ -66148,7 +66148,7 @@ var require_dist9 = __commonJS({
     var import_util4 = require_dist2();
     var import_v1016 = require_v106();
     var import_fast_deep_equal = __toESM2(require_fast_deep_equal());
-    var TextInputBuilder2 = class extends ComponentBuilder {
+    var TextInputBuilder3 = class extends ComponentBuilder {
       static {
         __name(this, "TextInputBuilder");
       }
@@ -66408,7 +66408,7 @@ var require_dist9 = __commonJS({
        * @param input - A function that returns a component builder or an already built builder
        */
       setTextInputComponent(input) {
-        this.data.component = resolveBuilder(input, TextInputBuilder2);
+        this.data.component = resolveBuilder(input, TextInputBuilder3);
         return this;
       }
       /**
@@ -66571,7 +66571,7 @@ var require_dist9 = __commonJS({
     var dividerPredicate = import_shapeshift9.s.boolean();
     var spacingPredicate = import_shapeshift9.s.nativeEnum(import_v1020.SeparatorSpacingSize);
     var textDisplayContentPredicate = import_shapeshift9.s.string().lengthGreaterThanOrEqual(1).lengthLessThanOrEqual(4e3).setValidationEnabled(isValidationEnabled);
-    var accessoryPredicate = import_shapeshift9.s.instance(ButtonBuilder3).or(import_shapeshift9.s.instance(ThumbnailBuilder)).setValidationEnabled(isValidationEnabled);
+    var accessoryPredicate = import_shapeshift9.s.instance(ButtonBuilder4).or(import_shapeshift9.s.instance(ThumbnailBuilder)).setValidationEnabled(isValidationEnabled);
     var containerColorPredicate = colorPredicate.nullish();
     function assertReturnOfBuilder(input, ExpectedInstanceOf) {
       import_shapeshift9.s.instance(ExpectedInstanceOf).setValidationEnabled(isValidationEnabled).parse(input);
@@ -66824,7 +66824,7 @@ var require_dist9 = __commonJS({
        */
       addActionRowComponents(...components) {
         this.components.push(
-          ...normalizeArray(components).map((component) => resolveBuilder(component, ActionRowBuilder3))
+          ...normalizeArray(components).map((component) => resolveBuilder(component, ActionRowBuilder4))
         );
         return this;
       }
@@ -67146,7 +67146,7 @@ var require_dist9 = __commonJS({
        * @param accessory - The accessory to use
        */
       setButtonAccessory(accessory) {
-        Reflect.set(this, "accessory", accessoryPredicate.parse(resolveBuilder(accessory, ButtonBuilder3)));
+        Reflect.set(this, "accessory", accessoryPredicate.parse(resolveBuilder(accessory, ButtonBuilder4)));
         return this;
       }
       /**
@@ -67210,13 +67210,13 @@ var require_dist9 = __commonJS({
       }
       switch (data.type) {
         case import_v1027.ComponentType.ActionRow:
-          return new ActionRowBuilder3(data);
+          return new ActionRowBuilder4(data);
         case import_v1027.ComponentType.Button:
-          return new ButtonBuilder3(data);
+          return new ButtonBuilder4(data);
         case import_v1027.ComponentType.StringSelect:
           return new StringSelectMenuBuilder(data);
         case import_v1027.ComponentType.TextInput:
-          return new TextInputBuilder2(data);
+          return new TextInputBuilder3(data);
         case import_v1027.ComponentType.UserSelect:
           return new UserSelectMenuBuilder(data);
         case import_v1027.ComponentType.RoleSelect:
@@ -67268,7 +67268,7 @@ var require_dist9 = __commonJS({
       return new Constructor(builder);
     }
     __name(resolveBuilder, "resolveBuilder");
-    var ActionRowBuilder3 = class extends ComponentBuilder {
+    var ActionRowBuilder4 = class extends ComponentBuilder {
       static {
         __name(this, "ActionRowBuilder");
       }
@@ -67351,14 +67351,14 @@ var require_dist9 = __commonJS({
     });
     var import_shapeshift10 = require_cjs3();
     var titleValidator = import_shapeshift10.s.string().lengthGreaterThanOrEqual(1).lengthLessThanOrEqual(45).setValidationEnabled(isValidationEnabled);
-    var componentsValidator = import_shapeshift10.s.union([import_shapeshift10.s.instance(ActionRowBuilder3), import_shapeshift10.s.instance(LabelBuilder), import_shapeshift10.s.instance(TextDisplayBuilder)]).array().lengthGreaterThanOrEqual(1).setValidationEnabled(isValidationEnabled);
+    var componentsValidator = import_shapeshift10.s.union([import_shapeshift10.s.instance(ActionRowBuilder4), import_shapeshift10.s.instance(LabelBuilder), import_shapeshift10.s.instance(TextDisplayBuilder)]).array().lengthGreaterThanOrEqual(1).setValidationEnabled(isValidationEnabled);
     function validateRequiredParameters2(customId, title, components) {
       customIdValidator.parse(customId);
       titleValidator.parse(title);
       componentsValidator.parse(components);
     }
     __name(validateRequiredParameters2, "validateRequiredParameters");
-    var ModalBuilder2 = class {
+    var ModalBuilder3 = class {
       static {
         __name(this, "ModalBuilder");
       }
@@ -67406,15 +67406,15 @@ var require_dist9 = __commonJS({
       addComponents(...components) {
         this.components.push(
           ...normalizeArray(components).map((component, idx) => {
-            if (component instanceof ActionRowBuilder3 || component instanceof LabelBuilder || component instanceof TextDisplayBuilder) {
+            if (component instanceof ActionRowBuilder4 || component instanceof LabelBuilder || component instanceof TextDisplayBuilder) {
               return component;
             }
-            if (component instanceof TextInputBuilder2) {
-              return new ActionRowBuilder3().addComponents(component);
+            if (component instanceof TextInputBuilder3) {
+              return new ActionRowBuilder4().addComponents(component);
             }
             if ("type" in component) {
               if (component.type === import_v1029.ComponentType.ActionRow) {
-                return new ActionRowBuilder3(component);
+                return new ActionRowBuilder4(component);
               }
               if (component.type === import_v1029.ComponentType.Label) {
                 return new LabelBuilder(component);
@@ -67423,8 +67423,8 @@ var require_dist9 = __commonJS({
                 return new TextDisplayBuilder(component);
               }
               if (component.type === import_v1029.ComponentType.TextInput) {
-                return new ActionRowBuilder3().addComponents(
-                  new TextInputBuilder2(component)
+                return new ActionRowBuilder4().addComponents(
+                  new TextInputBuilder3(component)
                 );
               }
             }
@@ -67463,7 +67463,7 @@ var require_dist9 = __commonJS({
        */
       addActionRowComponents(...components) {
         const normalized = normalizeArray(components);
-        const resolved = normalized.map((row) => resolveBuilder(row, ActionRowBuilder3));
+        const resolved = normalized.map((row) => resolveBuilder(row, ActionRowBuilder4));
         this.components.push(...resolved);
         return this;
       }
@@ -68520,7 +68520,7 @@ var require_dist9 = __commonJS({
         return this;
       }
     };
-    var SlashCommandBuilder8 = class {
+    var SlashCommandBuilder9 = class {
       /**
        * The name of this command.
        */
@@ -68573,10 +68573,10 @@ var require_dist9 = __commonJS({
        */
       nsfw = void 0;
     };
-    __name(SlashCommandBuilder8, "SlashCommandBuilder");
-    SlashCommandBuilder8 = __decorateClass([
+    __name(SlashCommandBuilder9, "SlashCommandBuilder");
+    SlashCommandBuilder9 = __decorateClass([
       (0, import_ts_mixer6.mix)(SharedSlashCommandOptions, SharedNameAndDescription, SharedSlashCommandSubcommands, SharedSlashCommand)
-    ], SlashCommandBuilder8);
+    ], SlashCommandBuilder9);
     var Assertions_exports11 = {};
     __export2(Assertions_exports11, {
       contextsPredicate: () => contextsPredicate2,
@@ -69683,7 +69683,7 @@ var require_GuildEmojiRoleManager = __commonJS({
 var require_GuildEmoji = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/structures/GuildEmoji.js"(exports2, module2) {
     "use strict";
-    var { PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var BaseGuildEmoji = require_BaseGuildEmoji();
     var { DiscordjsError: DiscordjsError2, ErrorCodes: ErrorCodes2 } = require_errors3();
     var GuildEmojiRoleManager = require_GuildEmojiRoleManager();
@@ -69716,7 +69716,7 @@ var require_GuildEmoji = __commonJS({
        */
       get deletable() {
         if (!this.guild.members.me) throw new DiscordjsError2(ErrorCodes2.GuildUncachedMe);
-        return !this.managed && this.guild.members.me.permissions.has(PermissionFlagsBits4.ManageGuildExpressions);
+        return !this.managed && this.guild.members.me.permissions.has(PermissionFlagsBits5.ManageGuildExpressions);
       }
       /**
        * A manager for roles this emoji is active for.
@@ -70163,7 +70163,7 @@ var require_ActionRowBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { createComponentBuilder } = require_Components();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var ActionRowBuilder3 = class extends BuildersActionRow {
+    var ActionRowBuilder4 = class extends BuildersActionRow {
       constructor({ components, ...data } = {}) {
         super({
           ...toSnakeCase2(data),
@@ -70179,7 +70179,7 @@ var require_ActionRowBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ActionRowBuilder3;
+    module2.exports = ActionRowBuilder4;
   }
 });
 
@@ -70191,7 +70191,7 @@ var require_ButtonBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
     var { resolvePartialEmoji } = require_Util();
-    var ButtonBuilder3 = class extends BuildersButton {
+    var ButtonBuilder4 = class extends BuildersButton {
       constructor({ emoji, ...data } = {}) {
         super(toSnakeCase2({ ...data, emoji: emoji && typeof emoji === "string" ? resolvePartialEmoji(emoji) : emoji }));
       }
@@ -70215,7 +70215,7 @@ var require_ButtonBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ButtonBuilder3;
+    module2.exports = ButtonBuilder4;
   }
 });
 
@@ -70821,7 +70821,7 @@ var require_TextInputBuilder = __commonJS({
     var { TextInputBuilder: BuildersTextInput } = require_dist9();
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var TextInputBuilder2 = class extends BuildersTextInput {
+    var TextInputBuilder3 = class extends BuildersTextInput {
       constructor(data) {
         super(toSnakeCase2(data));
       }
@@ -70834,7 +70834,7 @@ var require_TextInputBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = TextInputBuilder2;
+    module2.exports = TextInputBuilder3;
   }
 });
 
@@ -70968,8 +70968,8 @@ var require_Components = __commonJS({
     }
     module2.exports = { createComponent, createComponentBuilder, findComponentByCustomId };
     var ActionRow = require_ActionRow();
-    var ActionRowBuilder3 = require_ActionRowBuilder();
-    var ButtonBuilder3 = require_ButtonBuilder();
+    var ActionRowBuilder4 = require_ActionRowBuilder();
+    var ButtonBuilder4 = require_ButtonBuilder();
     var ButtonComponent = require_ButtonComponent();
     var ChannelSelectMenuBuilder = require_ChannelSelectMenuBuilder();
     var ChannelSelectMenuComponent = require_ChannelSelectMenuComponent();
@@ -70987,7 +70987,7 @@ var require_Components = __commonJS({
     var StringSelectMenuBuilder = require_StringSelectMenuBuilder();
     var StringSelectMenuComponent = require_StringSelectMenuComponent();
     var TextDisplayComponent = require_TextDisplayComponent();
-    var TextInputBuilder2 = require_TextInputBuilder();
+    var TextInputBuilder3 = require_TextInputBuilder();
     var TextInputComponent = require_TextInputComponent();
     var ThumbnailComponent = require_ThumbnailComponent();
     var UserSelectMenuBuilder = require_UserSelectMenuBuilder();
@@ -71011,10 +71011,10 @@ var require_Components = __commonJS({
       [ComponentType.Label]: LabelComponent
     };
     var ComponentTypeToBuilder = {
-      [ComponentType.ActionRow]: ActionRowBuilder3,
-      [ComponentType.Button]: ButtonBuilder3,
+      [ComponentType.ActionRow]: ActionRowBuilder4,
+      [ComponentType.Button]: ButtonBuilder4,
       [ComponentType.StringSelect]: StringSelectMenuBuilder,
-      [ComponentType.TextInput]: TextInputBuilder2,
+      [ComponentType.TextInput]: TextInputBuilder3,
       [ComponentType.UserSelect]: UserSelectMenuBuilder,
       [ComponentType.RoleSelect]: RoleSelectMenuBuilder,
       [ComponentType.MentionableSelect]: MentionableSelectMenuBuilder,
@@ -71035,7 +71035,7 @@ var require_Message = __commonJS({
       ChannelType: ChannelType2,
       MessageType,
       MessageFlags,
-      PermissionFlagsBits: PermissionFlagsBits4,
+      PermissionFlagsBits: PermissionFlagsBits5,
       MessageReferenceType
     } = require_v106();
     var Attachment = require_Attachment();
@@ -71491,7 +71491,7 @@ var require_Message = __commonJS({
           if (this.channel.archived) return false;
           if (this.channel.locked) {
             const permissions = this.channel.permissionsFor(this.client.user);
-            if (!permissions?.has(PermissionFlagsBits4.ManageThreads, true)) return false;
+            if (!permissions?.has(PermissionFlagsBits5.ManageThreads, true)) return false;
           }
         }
         return precheck;
@@ -71511,8 +71511,8 @@ var require_Message = __commonJS({
         }
         const permissions = this.channel?.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
-        return this.type !== MessageType.AutoModerationAction && this.author.id === this.client.user.id || permissions.has(PermissionFlagsBits4.ManageMessages, false) && !this.guild.members.me.isCommunicationDisabled();
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
+        return this.type !== MessageType.AutoModerationAction && this.author.id === this.client.user.id || permissions.has(PermissionFlagsBits5.ManageMessages, false) && !this.guild.members.me.isCommunicationDisabled();
       }
       /**
        * Whether the message is bulk deletable by the client user
@@ -71523,7 +71523,7 @@ var require_Message = __commonJS({
        * channel.bulkDelete(messages.filter(message => message.bulkDeletable));
        */
       get bulkDeletable() {
-        return (this.inGuild() && Date.now() - this.createdTimestamp < MaxBulkDeletableMessageAge && this.deletable && this.channel?.permissionsFor(this.client.user).has(PermissionFlagsBits4.ManageMessages, false)) ?? false;
+        return (this.inGuild() && Date.now() - this.createdTimestamp < MaxBulkDeletableMessageAge && this.deletable && this.channel?.permissionsFor(this.client.user).has(PermissionFlagsBits5.ManageMessages, false)) ?? false;
       }
       /**
        * Whether the message is pinnable by the client user
@@ -71537,7 +71537,7 @@ var require_Message = __commonJS({
         if (!channel || channel.isVoiceBased() || !channel.viewable) return false;
         const permissions = channel?.permissionsFor(this.client.user);
         if (!permissions) return false;
-        return permissions.has(PermissionFlagsBits4.ReadMessageHistory | PermissionFlagsBits4.PinMessages);
+        return permissions.has(PermissionFlagsBits5.ReadMessageHistory | PermissionFlagsBits5.PinMessages);
       }
       /**
        * Fetches the Message this crosspost/reply/pin-add references, if available to the client
@@ -71558,7 +71558,7 @@ var require_Message = __commonJS({
        * @readonly
        */
       get crosspostable() {
-        const bitfield = PermissionFlagsBits4.SendMessages | (this.author.id === this.client.user.id ? PermissionsBitField2.DefaultBit : PermissionFlagsBits4.ManageMessages);
+        const bitfield = PermissionFlagsBits5.SendMessages | (this.author.id === this.client.user.id ? PermissionsBitField2.DefaultBit : PermissionFlagsBits5.ManageMessages);
         const { channel } = this;
         return Boolean(
           channel?.type === ChannelType2.GuildAnnouncement && !this.flags.has(MessageFlags.Crossposted) && this.reference?.type !== MessageReferenceType.Forward && this.type === MessageType.Default && !this.poll && channel.viewable && channel.permissionsFor(this.client.user)?.has(bitfield, false)
@@ -72751,7 +72751,7 @@ var require_GuildMemberFlagsBitField = __commonJS({
 var require_GuildMember = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/structures/GuildMember.js"(exports2) {
     "use strict";
-    var { PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var Base = require_Base();
     var VoiceState = require_VoiceState();
     var TextBasedChannel = require_TextBasedChannel();
@@ -73003,7 +73003,7 @@ var require_GuildMember = __commonJS({
        */
       get kickable() {
         if (!this.guild.members.me) throw new DiscordjsError2(ErrorCodes2.GuildUncachedMe);
-        return this.manageable && this.guild.members.me.permissions.has(PermissionFlagsBits4.KickMembers);
+        return this.manageable && this.guild.members.me.permissions.has(PermissionFlagsBits5.KickMembers);
       }
       /**
        * Whether this member is bannable by the client user
@@ -73012,7 +73012,7 @@ var require_GuildMember = __commonJS({
        */
       get bannable() {
         if (!this.guild.members.me) throw new DiscordjsError2(ErrorCodes2.GuildUncachedMe);
-        return this.manageable && this.guild.members.me.permissions.has(PermissionFlagsBits4.BanMembers);
+        return this.manageable && this.guild.members.me.permissions.has(PermissionFlagsBits5.BanMembers);
       }
       /**
        * Whether this member is moderatable by the client user
@@ -73020,7 +73020,7 @@ var require_GuildMember = __commonJS({
        * @readonly
        */
       get moderatable() {
-        return !this.permissions.has(PermissionFlagsBits4.Administrator) && this.manageable && (this.guild.members.me?.permissions.has(PermissionFlagsBits4.ModerateMembers) ?? false);
+        return !this.permissions.has(PermissionFlagsBits5.Administrator) && this.manageable && (this.guild.members.me?.permissions.has(PermissionFlagsBits5.ModerateMembers) ?? false);
       }
       /**
        * Whether this member is currently timed out
@@ -75897,7 +75897,7 @@ var require_ThreadChannel = __commonJS({
     "use strict";
     var { DiscordAPIError } = require_dist6();
     var { lazy } = require_dist2();
-    var { RESTJSONErrorCodes, ChannelFlags, ChannelType: ChannelType2, PermissionFlagsBits: PermissionFlagsBits4, Routes: Routes3 } = require_v106();
+    var { RESTJSONErrorCodes, ChannelFlags, ChannelType: ChannelType2, PermissionFlagsBits: PermissionFlagsBits5, Routes: Routes3 } = require_v106();
     var { BaseChannel } = require_BaseChannel();
     var getThreadOnlyChannel = lazy(() => require_ThreadOnlyChannel());
     var TextBasedChannel = require_TextBasedChannel();
@@ -76257,7 +76257,7 @@ var require_ThreadChannel = __commonJS({
        */
       get joinable() {
         return !this.archived && !this.joined && this.permissionsFor(this.client.user)?.has(
-          this.type === ChannelType2.PrivateThread ? PermissionFlagsBits4.ManageThreads : PermissionFlagsBits4.ViewChannel,
+          this.type === ChannelType2.PrivateThread ? PermissionFlagsBits5.ManageThreads : PermissionFlagsBits5.ViewChannel,
           false
         );
       }
@@ -76269,8 +76269,8 @@ var require_ThreadChannel = __commonJS({
       get manageable() {
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
-        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits4.ManageThreads, false);
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
+        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits5.ManageThreads, false);
       }
       /**
        * Whether the thread is viewable by the client user
@@ -76281,7 +76281,7 @@ var require_ThreadChannel = __commonJS({
         if (this.client.user.id === this.guild.ownerId) return true;
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        return permissions.has(PermissionFlagsBits4.ViewChannel, false);
+        return permissions.has(PermissionFlagsBits5.ViewChannel, false);
       }
       /**
        * Whether the client user can send messages in this thread
@@ -76291,8 +76291,8 @@ var require_ThreadChannel = __commonJS({
       get sendable() {
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
-        return !(this.archived && this.locked && !this.manageable) && (this.type !== ChannelType2.PrivateThread || this.joined || this.manageable) && permissions.has(PermissionFlagsBits4.SendMessagesInThreads, false) && this.guild.members.me.communicationDisabledUntilTimestamp < Date.now();
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
+        return !(this.archived && this.locked && !this.manageable) && (this.type !== ChannelType2.PrivateThread || this.joined || this.manageable) && permissions.has(PermissionFlagsBits5.SendMessagesInThreads, false) && this.guild.members.me.communicationDisabledUntilTimestamp < Date.now();
       }
       /**
        * Whether the thread is unarchivable by the client user
@@ -76789,7 +76789,7 @@ var require_BaseGuildVoiceChannel = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/structures/BaseGuildVoiceChannel.js"(exports2, module2) {
     "use strict";
     var { Collection: Collection2 } = require_dist7();
-    var { PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var GuildChannel = require_GuildChannel();
     var TextBasedChannel = require_TextBasedChannel();
     var GuildMessageManager = require_GuildMessageManager();
@@ -76860,8 +76860,8 @@ var require_BaseGuildVoiceChannel = __commonJS({
         if (!this.viewable) return false;
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
-        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits4.Connect, false);
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
+        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits5.Connect, false);
       }
       /**
        * Creates an invite to this guild channel.
@@ -77045,7 +77045,7 @@ var require_TextChannel = __commonJS({
 var require_VoiceChannel = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/structures/VoiceChannel.js"(exports2, module2) {
     "use strict";
-    var { PermissionFlagsBits: PermissionFlagsBits4, Routes: Routes3 } = require_v106();
+    var { PermissionFlagsBits: PermissionFlagsBits5, Routes: Routes3 } = require_v106();
     var BaseGuildVoiceChannel = require_BaseGuildVoiceChannel();
     var VoiceChannel = class extends BaseGuildVoiceChannel {
       /**
@@ -77055,7 +77055,7 @@ var require_VoiceChannel = __commonJS({
        */
       get joinable() {
         if (!super.joinable) return false;
-        if (this.full && !this.permissionsFor(this.client.user).has(PermissionFlagsBits4.MoveMembers, false)) return false;
+        if (this.full && !this.permissionsFor(this.client.user).has(PermissionFlagsBits5.MoveMembers, false)) return false;
         return true;
       }
       /**
@@ -77066,8 +77066,8 @@ var require_VoiceChannel = __commonJS({
       get speakable() {
         const permissions = this.permissionsFor(this.client.user);
         if (!permissions) return false;
-        if (permissions.has(PermissionFlagsBits4.Administrator, false)) return true;
-        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits4.Speak, false);
+        if (permissions.has(PermissionFlagsBits5.Administrator, false)) return true;
+        return this.guild.members.me.communicationDisabledUntilTimestamp < Date.now() && permissions.has(PermissionFlagsBits5.Speak, false);
       }
       /**
        * @typedef {Object} SendSoundboardSoundOptions
@@ -85535,7 +85535,7 @@ var require_dist10 = __commonJS({
     var import_node_worker_threads2 = __require("worker_threads");
     var import_collection2 = require_dist3();
     var import_node_events = __require("events");
-    var import_node_path2 = __require("path");
+    var import_node_path3 = __require("path");
     var import_node_worker_threads = __require("worker_threads");
     var import_collection = require_dist3();
     var WorkerSendPayloadOp = /* @__PURE__ */ ((WorkerSendPayloadOp2) => {
@@ -85688,18 +85688,18 @@ var require_dist10 = __commonJS({
       resolveWorkerPath() {
         const path2 = this.options.workerPath;
         if (!path2) {
-          return (0, import_node_path2.join)(__dirname, "defaultWorker.js");
+          return (0, import_node_path3.join)(__dirname, "defaultWorker.js");
         }
-        if ((0, import_node_path2.isAbsolute)(path2)) {
+        if ((0, import_node_path3.isAbsolute)(path2)) {
           return path2;
         }
         if (/^\.\.?[/\\]/.test(path2)) {
-          return (0, import_node_path2.resolve)(path2);
+          return (0, import_node_path3.resolve)(path2);
         }
         try {
           return __require.resolve(path2);
         } catch {
-          return (0, import_node_path2.resolve)(path2);
+          return (0, import_node_path3.resolve)(path2);
         }
       }
       async waitForWorkerReady(worker) {
@@ -85870,7 +85870,7 @@ var require_dist10 = __commonJS({
     var import_node_events2 = __require("events");
     var import_node_timers = __require("timers");
     var import_promises2 = __require("timers/promises");
-    var import_node_url2 = __require("url");
+    var import_node_url3 = __require("url");
     var import_node_util = __require("util");
     var import_node_zlib = __require("zlib");
     var import_collection5 = require_dist3();
@@ -86060,7 +86060,7 @@ var require_dist10 = __commonJS({
           throw new Error("Tried to connect a shard that wasn't idle");
         }
         const { version: version22, encoding, compression } = this.strategy.options;
-        const params = new import_node_url2.URLSearchParams({ v: version22, encoding });
+        const params = new import_node_url3.URLSearchParams({ v: version22, encoding });
         if (compression) {
           const zlib = await getZlibSync();
           if (zlib) {
@@ -86952,7 +86952,7 @@ var require_WebSocketShard = __commonJS({
     var EventEmitter = __require("node:events");
     var process2 = __require("node:process");
     var { setTimeout: setTimeout2, clearTimeout: clearTimeout2 } = __require("node:timers");
-    var { GatewayIntentBits: GatewayIntentBits12 } = require_v106();
+    var { GatewayIntentBits: GatewayIntentBits13 } = require_v106();
     var Status2 = require_Status();
     var WebSocketShardEvents = require_WebSocketShardEvents();
     var deprecationEmittedForImportant = false;
@@ -87039,7 +87039,7 @@ var require_WebSocketShard = __commonJS({
           this.emit(WebSocketShardEvents.AllReady);
           return;
         }
-        const hasGuildsIntent = this.manager.client.options.intents.has(GatewayIntentBits12.Guilds);
+        const hasGuildsIntent = this.manager.client.options.intents.has(GatewayIntentBits13.Guilds);
         const { waitGuildTimeout } = this.manager.client.options;
         this.readyTimeout = setTimeout2(
           () => {
@@ -90177,7 +90177,7 @@ var require_GuildEmojiManager = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/managers/GuildEmojiManager.js"(exports2, module2) {
     "use strict";
     var { Collection: Collection2 } = require_dist7();
-    var { Routes: Routes3, PermissionFlagsBits: PermissionFlagsBits4 } = require_v106();
+    var { Routes: Routes3, PermissionFlagsBits: PermissionFlagsBits5 } = require_v106();
     var BaseGuildEmojiManager2 = require_BaseGuildEmojiManager();
     var { DiscordjsError: DiscordjsError2, DiscordjsTypeError: DiscordjsTypeError2, ErrorCodes: ErrorCodes2 } = require_errors3();
     var { resolveImage } = require_DataResolver();
@@ -90316,7 +90316,7 @@ var require_GuildEmojiManager = __commonJS({
         }
         const { me } = this.guild.members;
         if (!me) throw new DiscordjsError2(ErrorCodes2.GuildUncachedMe);
-        if (!me.permissions.any(PermissionFlagsBits4.CreateGuildExpressions | PermissionFlagsBits4.ManageGuildExpressions)) {
+        if (!me.permissions.any(PermissionFlagsBits5.CreateGuildExpressions | PermissionFlagsBits5.ManageGuildExpressions)) {
           throw new DiscordjsError2(ErrorCodes2.MissingManageGuildExpressionsPermission, this.guild);
         }
         const data = await this.client.rest.get(Routes3.guildEmoji(this.guild.id, emoji.id));
@@ -94646,7 +94646,7 @@ var require_Widget = __commonJS({
 var require_IntentsBitField = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/util/IntentsBitField.js"(exports2, module2) {
     "use strict";
-    var { GatewayIntentBits: GatewayIntentBits12 } = require_v106();
+    var { GatewayIntentBits: GatewayIntentBits13 } = require_v106();
     var BitField = require_BitField();
     var IntentsBitField2 = class extends BitField {
       /**
@@ -94654,7 +94654,7 @@ var require_IntentsBitField = __commonJS({
        * @type {GatewayIntentBits}
        * @memberof IntentsBitField
        */
-      static Flags = GatewayIntentBits12;
+      static Flags = GatewayIntentBits13;
     };
     module2.exports = IntentsBitField2;
   }
@@ -96399,7 +96399,7 @@ var require_AttachmentBuilder = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/structures/AttachmentBuilder.js"(exports2, module2) {
     "use strict";
     var { basename, flatten } = require_Util();
-    var AttachmentBuilder3 = class _AttachmentBuilder {
+    var AttachmentBuilder4 = class _AttachmentBuilder {
       /**
        * @param {BufferResolvable|Stream} attachment The file
        * @param {AttachmentData} [data] Extra data
@@ -96510,7 +96510,7 @@ var require_AttachmentBuilder = __commonJS({
         });
       }
     };
-    module2.exports = AttachmentBuilder3;
+    module2.exports = AttachmentBuilder4;
   }
 });
 
@@ -96521,7 +96521,7 @@ var require_ModalBuilder = __commonJS({
     var { ModalBuilder: BuildersModal, ComponentBuilder } = require_dist9();
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var ModalBuilder2 = class extends BuildersModal {
+    var ModalBuilder3 = class extends BuildersModal {
       constructor({ components, ...data } = {}) {
         super({
           ...toSnakeCase2(data),
@@ -96539,7 +96539,7 @@ var require_ModalBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ModalBuilder2;
+    module2.exports = ModalBuilder3;
   }
 });
 
@@ -97924,7 +97924,7 @@ function sql(strings, ...params) {
     return new SQL([new StringChunk(str)]);
   }
   sql2.raw = raw;
-  function join(chunks, separator) {
+  function join2(chunks, separator) {
     const result = [];
     for (const [i, chunk] of chunks.entries()) {
       if (i > 0 && separator !== void 0) {
@@ -97934,7 +97934,7 @@ function sql(strings, ...params) {
     }
     return new SQL(result);
   }
-  sql2.join = join;
+  sql2.join = join2;
   function identifier(value) {
     return new Name(value);
   }
@@ -104188,6 +104188,7 @@ var MODULE_NAMES = [
   "economy",
   "webhooks",
   "quiz",
+  "quotes",
   "ktp"
 ];
 var snowflakeOrEmpty = external_exports.string().regex(/^(\d{5,25})?$/, "harus ID Discord (angka) atau kosong");
@@ -104248,7 +104249,8 @@ var RESERVED_COMMANDS = [
   "transfer",
   "shop",
   "buy",
-  "quiz"
+  "quiz",
+  "quote"
 ];
 var customcmdConfigSchema = external_exports.object({
   enabled: external_exports.boolean().default(true),
@@ -104323,6 +104325,23 @@ var quizConfigSchema = external_exports.object({
     }
   }
 });
+var quotesConfigSchema = external_exports.object({
+  enabled: external_exports.boolean().default(true),
+  channelId: snowflakeOrEmpty.default(""),
+  /** Kirim satu kutipan otomatis tiap hari di jam ini (WIB). */
+  daily: external_exports.boolean().default(false),
+  scheduleHour: external_exports.number().int().min(0).max(23).default(7),
+  watermark: external_exports.string().trim().min(1).max(40).default("Geng Sulawesi Quote"),
+  font: external_exports.enum(["poppins", "playfair"]).default("poppins"),
+  textSize: external_exports.enum(["kecil", "sedang", "besar"]).default("sedang"),
+  photoPosition: external_exports.enum(["kiri", "tengah", "kanan"]).default("kiri"),
+  quotes: external_exports.array(external_exports.object({
+    text: external_exports.string().trim().min(1).max(300),
+    author: external_exports.string().trim().max(64).default(""),
+    /** URL foto untuk sisi kiri/kanan kartu (kosong = latar gradien). */
+    imageUrl: external_exports.string().trim().max(500).default("")
+  })).max(500, "maksimal 500 kutipan").default([])
+});
 var moduleSchemas = {
   welcome: welcomeConfigSchema,
   moderation: moderationConfigSchema,
@@ -104334,6 +104353,7 @@ var moduleSchemas = {
   economy: economyConfigSchema,
   webhooks: webhooksConfigSchema,
   quiz: quizConfigSchema,
+  quotes: quotesConfigSchema,
   ktp: external_exports.object({}).passthrough().optional()
 };
 var guildConfigSchema = external_exports.object({
@@ -104347,6 +104367,7 @@ var guildConfigSchema = external_exports.object({
   economy: economyConfigSchema.optional(),
   webhooks: webhooksConfigSchema.optional(),
   quiz: quizConfigSchema.optional(),
+  quotes: quotesConfigSchema.optional(),
   ktp: external_exports.object({}).passthrough().optional()
 });
 var botLevelConfigSchema = external_exports.object({
@@ -104372,6 +104393,7 @@ var PERMISSION_BITS = {
   SendMessages: 1n << 11n,
   ManageMessages: 1n << 13n,
   EmbedLinks: 1n << 14n,
+  AttachFiles: 1n << 15n,
   ManageRoles: 1n << 28n,
   ModerateMembers: 1n << 40n
 };
@@ -105801,7 +105823,7 @@ var PgSelectQueryBuilderBase = class extends TypedQueryBuilder {
     return (table, on) => {
       const baseTableName = this.tableName;
       const tableName = getTableLikeName(table);
-      if (typeof tableName === "string" && this.config.joins?.some((join) => join.alias === tableName)) {
+      if (typeof tableName === "string" && this.config.joins?.some((join2) => join2.alias === tableName)) {
         throw new Error(`Alias "${tableName}" is already used in this query`);
       }
       if (!this.isPartialSelect) {
@@ -106825,7 +106847,7 @@ var PgUpdateBase = class extends QueryPromise {
   createJoin(joinType) {
     return (table, on) => {
       const tableName = getTableLikeName(table);
-      if (typeof tableName === "string" && this.config.joins.some((join) => join.alias === tableName)) {
+      if (typeof tableName === "string" && this.config.joins.some((join2) => join2.alias === tableName)) {
         throw new Error(`Alias "${tableName}" is already used in this query`);
       }
       if (typeof on === "function") {
@@ -106921,10 +106943,10 @@ var PgUpdateBase = class extends QueryPromise {
           const fromFields = this.getTableLikeFields(this.config.from);
           fields[tableName] = fromFields;
         }
-        for (const join of this.config.joins) {
-          const tableName2 = getTableLikeName(join.table);
-          if (typeof tableName2 === "string" && !is(join.table, SQL)) {
-            const fromFields = this.getTableLikeFields(join.table);
+        for (const join2 of this.config.joins) {
+          const tableName2 = getTableLikeName(join2.table);
+          if (typeof tableName2 === "string" && !is(join2.table, SQL)) {
+            const fromFields = this.getTableLikeFields(join2.table);
             fields[tableName2] = fromFields;
           }
         }
@@ -107982,7 +108004,7 @@ async function recordError(botId, err) {
 }
 
 // apps/worker/src/runner.ts
-var import_discord11 = __toESM(require_src2(), 1);
+var import_discord12 = __toESM(require_src2(), 1);
 
 // apps/worker/src/modules/customcmd.ts
 var import_discord = __toESM(require_src2(), 1);
@@ -109005,13 +109027,329 @@ var quizModule = {
   }
 };
 
-// apps/worker/src/modules/tickets.ts
+// apps/worker/src/modules/quotes.ts
 var import_discord8 = __toESM(require_src2(), 1);
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath as fileURLToPath2 } from "node:url";
+var W2 = 1200;
+var H2 = 675;
+var TEXT_PX = { kecil: 40, sedang: 52, besar: 64 };
+var ORDER = {
+  pos: ["kiri", "tengah", "kanan"],
+  size: ["kecil", "sedang", "besar"],
+  font: ["poppins", "playfair"]
+};
+var FONT_DIR = ["../../assets/fonts/", "./assets/fonts/"].map((p) => fileURLToPath2(new URL(p, import.meta.url))).find((p) => existsSync(p)) ?? "";
+var canvasMod2;
+async function getCanvas() {
+  if (canvasMod2 !== void 0) return canvasMod2;
+  try {
+    canvasMod2 = await import("@napi-rs/canvas");
+    for (const [file, family] of [["Poppins-SemiBold.ttf", "Poppins"], ["PlayfairDisplay-SemiBold.ttf", "Playfair"]]) {
+      const p = join(FONT_DIR, file);
+      try {
+        if (existsSync(p)) canvasMod2.GlobalFonts.registerFromPath(p, family);
+        else logger.warn({ p }, "font quotes tidak ditemukan \u2014 pakai sans-serif");
+      } catch (e) {
+        logger.warn({ err: e, file }, "gagal daftar font");
+      }
+    }
+  } catch (e) {
+    logger.warn({ err: e }, "canvas tidak tersedia \u2014 /quote nonaktif");
+    canvasMod2 = null;
+  }
+  return canvasMod2;
+}
+var cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+var nextOf = (arr, cur) => arr[(arr.indexOf(cur) + 1) % arr.length];
+function wibNow() {
+  return new Date(Date.now() + 7 * 36e5);
+}
+function wibDayIndex() {
+  return Math.floor((Date.now() + 7 * 36e5) / 864e5);
+}
+var BULAN = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+var tanggalId = (d) => `${d.getUTCDate()} ${BULAN[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+function wrapText(ctx, text2, maxW) {
+  const out = [];
+  for (const para of text2.split("\n")) {
+    let line2 = "";
+    for (const word of para.split(/\s+/).filter(Boolean)) {
+      const cand = line2 ? `${line2} ${word}` : word;
+      if (line2 && ctx.measureText(cand).width > maxW) {
+        out.push(line2);
+        line2 = word;
+      } else line2 = cand;
+    }
+    if (line2) out.push(line2);
+  }
+  return out.length ? out : ["\u2026"];
+}
+async function renderCard(botName, cfg5, st) {
+  const c = await getCanvas();
+  if (!c) throw new Error("canvas tidak tersedia");
+  const canvas = c.createCanvas(W2, H2);
+  const ctx = canvas.getContext("2d");
+  const bg = ctx.createLinearGradient(0, 0, W2, H2);
+  bg.addColorStop(0, "#0e1424");
+  bg.addColorStop(0.55, "#121a2e");
+  bg.addColorStop(1, "#1b1030");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W2, H2);
+  const zones = {
+    kiri: { x: 0, w: 660, align: "left", tx: 720, tw: 420 },
+    kanan: { x: 540, w: 660, align: "left", tx: 60, tw: 420 },
+    tengah: { x: 0, w: W2, align: "center", tx: 120, tw: W2 - 240 }
+  };
+  const z = zones[st.pos];
+  if (st.imageUrl) {
+    try {
+      const img = await c.loadImage(st.imageUrl);
+      const scale = Math.max(z.w / img.width, H2 / img.height);
+      const dw = img.width * scale, dh = img.height * scale;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(z.x, 0, z.w, H2);
+      ctx.clip();
+      ctx.drawImage(img, z.x + (z.w - dw) / 2, (H2 - dh) / 2, dw, dh);
+      ctx.restore();
+      const scrim = ctx.createLinearGradient(0, 0, 0, H2);
+      scrim.addColorStop(0, "rgba(4,7,16,0.30)");
+      scrim.addColorStop(1, "rgba(4,7,16,0.55)");
+      ctx.fillStyle = scrim;
+      ctx.fillRect(z.x, 0, z.w, H2);
+      if (st.pos !== "tengah") {
+        const edge = st.pos === "kiri" ? z.x + z.w : z.x;
+        const dir = st.pos === "kiri" ? 1 : -1;
+        const fade = ctx.createLinearGradient(edge, 0, edge + dir * 220, 0);
+        fade.addColorStop(0, "rgba(14,20,36,0)");
+        fade.addColorStop(1, "rgba(14,20,36,1)");
+        ctx.fillStyle = fade;
+        ctx.fillRect(Math.min(edge, edge + dir * 220), 0, 220, H2);
+      }
+    } catch (e) {
+      logger.warn({ err: e }, "quotes: foto gagal dimuat \u2014 pakai gradien");
+    }
+  }
+  const now = wibNow();
+  const jam = `${String(now.getUTCHours()).padStart(2, "0")}.${String(now.getUTCMinutes()).padStart(2, "0")}`;
+  ctx.textAlign = "left";
+  ctx.font = '600 20px "Poppins", sans-serif';
+  ctx.fillStyle = "rgba(226,232,240,0.75)";
+  ctx.fillText(`${botName}  \xB7  ${jam}`, 48, 56);
+  ctx.textAlign = "right";
+  ctx.font = '600 22px "Poppins", sans-serif';
+  ctx.fillStyle = "rgba(203,213,225,0.85)";
+  ctx.fillText(tanggalId(now), W2 - 48, 56);
+  const fam = st.font === "playfair" ? "Playfair" : "Poppins";
+  const fontStr = (px2) => `600 ${px2}px "${fam}", sans-serif`;
+  const cx = z.tx + z.tw / 2;
+  let px = TEXT_PX[st.size];
+  let lines = [];
+  const maxTextH = H2 - 240;
+  for (; ; ) {
+    ctx.font = fontStr(px);
+    lines = wrapText(ctx, st.text, z.tw);
+    if (lines.length * px * 1.3 <= maxTextH || px <= 20) break;
+    px -= 2;
+  }
+  const lh = px * 1.3;
+  let y = H2 / 2 - lines.length * lh / 2 + px;
+  ctx.save();
+  ctx.globalAlpha = 0.22;
+  ctx.fillStyle = "#818cf8";
+  ctx.font = fontStr(Math.round(px * 2.2));
+  ctx.textAlign = z.align;
+  ctx.fillText("\u201C", z.align === "center" ? cx : z.tx, y - px * 1.2);
+  ctx.restore();
+  ctx.textAlign = z.align;
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = fontStr(px);
+  for (const line2 of lines) {
+    ctx.fillText(line2, z.align === "center" ? cx : z.tx, y);
+    y += lh;
+  }
+  if (st.author) {
+    ctx.font = `600 ${Math.round(px * 0.46)}px "Poppins", sans-serif`;
+    ctx.fillStyle = "rgba(165,180,252,0.95)";
+    ctx.fillText(`\u2014 ${st.author}`, z.align === "center" ? cx : z.tx, y + px * 0.45);
+  }
+  ctx.textAlign = "right";
+  ctx.font = '600 22px "Poppins", sans-serif';
+  ctx.fillStyle = "rgba(148,163,184,0.75)";
+  ctx.fillText(cfg5.watermark, W2 - 48, H2 - 40);
+  return canvas.toBuffer("image/png");
+}
+function buttons(st) {
+  const row1 = new import_discord8.ActionRowBuilder().addComponents(
+    new import_discord8.ButtonBuilder().setCustomId("q:pos").setStyle(import_discord8.ButtonStyle.Secondary).setLabel(`Posisi Foto: ${cap(st.pos)}`),
+    new import_discord8.ButtonBuilder().setCustomId("q:size").setStyle(import_discord8.ButtonStyle.Secondary).setLabel(`Ukuran Teks: ${cap(st.size)}`),
+    new import_discord8.ButtonBuilder().setCustomId("q:font").setStyle(import_discord8.ButtonStyle.Secondary).setLabel(`Font: ${st.font === "playfair" ? "Playfair" : "Poppins"}`)
+  );
+  const row2 = new import_discord8.ActionRowBuilder().addComponents(
+    new import_discord8.ButtonBuilder().setCustomId("q:rev").setStyle(import_discord8.ButtonStyle.Primary).setLabel("Revisi Tulisan"),
+    new import_discord8.ButtonBuilder().setCustomId("q:reset").setStyle(import_discord8.ButtonStyle.Secondary).setLabel("Reset Tampilan")
+  );
+  return [row1, row2];
+}
+async function cardPayload(botName, cfg5, st) {
+  const png = await renderCard(botName, cfg5, st);
+  return { files: [new import_discord8.AttachmentBuilder(png, { name: "quote.png" })], components: buttons(st) };
+}
+function stateFrom(cfg5, q) {
+  return { text: q.text, author: q.author, imageUrl: q.imageUrl, pos: cfg5.photoPosition, size: cfg5.textSize, font: cfg5.font };
+}
+var stateKey = (botId, msgId) => `qmsg:${botId}:${msgId}`;
+async function loadState(botId, msgId) {
+  const raw = await redis.get(stateKey(botId, msgId)).catch(() => null);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+async function saveState(botId, msgId, st) {
+  await redis.set(stateKey(botId, msgId), JSON.stringify(st), "EX", 7 * 86400).catch(() => {
+  });
+}
+async function loadCfg(botId, guildId) {
+  const [row] = await db.select({ cfg: sql`${botConfigs.data} -> 'quotes'` }).from(botConfigs).where(and(eq(botConfigs.botId, botId), eq(botConfigs.discordGuildId, guildId)));
+  return quotesConfigSchema.parse(row?.cfg ?? {});
+}
+function stateFor(botId, msg, cfg5) {
+  return loadState(botId, msg.id).then((st) => st ?? stateFrom(cfg5, cfg5.quotes[0] ?? {
+    text: "Kutipan hari ini",
+    author: "",
+    imageUrl: ""
+  }));
+}
+var quoteCommand = {
+  name: "quote",
+  description: "Kirim kartu kutipan (kosongkan teks = pilih dari bank kutipan)",
+  defer: true,
+  args: [{ name: "teks", type: "string", rest: true }],
+  buildSlash: () => new import_discord8.SlashCommandBuilder().setName("quote").setDescription("Kirim kartu kutipan").addStringOption((o) => o.setName("teks").setDescription('Teks kutipan \u2014 pisahkan penulis dengan " | "').setMaxLength(300)).toJSON(),
+  async execute(ctx, args) {
+    if (!ctx.guild) return ctx.reply("\u274C Hanya di server.");
+    if (!await getCanvas()) return ctx.reply("\u274C Render gambar tidak tersedia di server ini.");
+    const cfg5 = ctx.config;
+    const raw = String(args.teks ?? "").trim();
+    const [teks, penulis] = raw.split("|").map((s) => s.trim());
+    const q = teks ? { text: teks.slice(0, 300), author: (penulis || "").slice(0, 64), imageUrl: "" } : cfg5.quotes.length ? cfg5.quotes[Math.floor(Math.random() * cfg5.quotes.length)] : null;
+    if (!q) return ctx.reply("\u274C Belum ada kutipan di bank. Tambahkan di dashboard \u2192 Quotes, atau `/quote teks:...`.");
+    const ch = ctx.channel;
+    if (!ch || !ch.isTextBased() || !("send" in ch)) return ctx.reply("\u274C Kanal ini tidak bisa dikirimi pesan.");
+    const st = stateFrom(cfg5, q);
+    const msg = await ch.send(await cardPayload(ctx.client.user?.username ?? "Bot", cfg5, st));
+    await saveState(ctx.botId, msg.id, st);
+    if (ctx.sourceMessage) {
+      await ctx.sourceMessage.delete().catch(() => {
+      });
+      return;
+    }
+    return ctx.reply("\u2705 Kartu kutipan dikirim.");
+  }
+};
+async function tick(client, botId) {
+  const now = wibNow();
+  const hour = now.getUTCHours();
+  const dateKey = now.toISOString().slice(0, 10);
+  for (const guild of client.guilds.cache.values()) {
+    try {
+      const cfg5 = await loadCfg(botId, guild.id);
+      if (!cfg5.enabled || !cfg5.daily || !cfg5.channelId || cfg5.quotes.length === 0) continue;
+      if (cfg5.scheduleHour !== hour) continue;
+      const once = await redis.set(`qsent:${botId}:${guild.id}:${dateKey}`, "1", "EX", 129600, "NX");
+      if (once !== "OK") continue;
+      const ch = await guild.channels.fetch(cfg5.channelId).catch(() => null);
+      if (!ch || !ch.isTextBased() || !("send" in ch)) continue;
+      const st = stateFrom(cfg5, cfg5.quotes[wibDayIndex() % cfg5.quotes.length]);
+      const msg = await ch.send(await cardPayload(client.user?.username ?? "Bot", cfg5, st));
+      await saveState(botId, msg.id, st);
+      logger.info({ botId, guildId: guild.id, messageId: msg.id }, "quotes: kutipan harian terkirim");
+    } catch (e) {
+      await recordError(botId, e);
+    }
+  }
+}
+var timers = /* @__PURE__ */ new Map();
+async function handleInteraction(ctx, interaction) {
+  const isQuoteButton = interaction.isButton() && interaction.customId.startsWith("q:");
+  const isModal = interaction.isModalSubmit() && interaction.customId === "q:revmodal";
+  if (!isQuoteButton && !isModal) return;
+  if (!interaction.memberPermissions?.has(import_discord8.PermissionFlagsBits.ManageMessages)) {
+    if (interaction.isRepliable()) await interaction.reply({ content: "\u274C Butuh izin **Manage Messages**.", ephemeral: true }).catch(() => {
+    });
+    return;
+  }
+  const cfg5 = ctx.config;
+  const msg = interaction.message;
+  if (!msg) return;
+  const st = await stateFor(ctx.botId, msg, cfg5);
+  const botName = interaction.client.user?.username ?? "Bot";
+  if (isModal) {
+    if (!interaction.isFromMessage()) return;
+    const text2 = interaction.fields.getTextInputValue("quote_text").trim().slice(0, 300);
+    st.text = text2 || st.text;
+    st.author = interaction.fields.getTextInputValue("quote_author").trim().slice(0, 64);
+    await interaction.update(await cardPayload(botName, cfg5, st));
+    await saveState(ctx.botId, msg.id, st);
+    return;
+  }
+  if (!interaction.isButton()) return;
+  const action = interaction.customId.slice(2);
+  if (action === "pos") st.pos = nextOf(ORDER.pos, st.pos);
+  else if (action === "size") st.size = nextOf(ORDER.size, st.size);
+  else if (action === "font") st.font = nextOf(ORDER.font, st.font);
+  else if (action === "reset") Object.assign(st, stateFrom(cfg5, { text: st.text, author: st.author, imageUrl: st.imageUrl }));
+  else if (action === "rev") {
+    const modal = new import_discord8.ModalBuilder().setCustomId("q:revmodal").setTitle("Revisi Tulisan").addComponents(
+      new import_discord8.ActionRowBuilder().addComponents(
+        new import_discord8.TextInputBuilder().setCustomId("quote_text").setLabel("Teks kutipan").setStyle(import_discord8.TextInputStyle.Paragraph).setMaxLength(300).setRequired(true).setValue(st.text)
+      ),
+      new import_discord8.ActionRowBuilder().addComponents(
+        new import_discord8.TextInputBuilder().setCustomId("quote_author").setLabel("Sumber / penulis (opsional)").setStyle(import_discord8.TextInputStyle.Short).setMaxLength(64).setRequired(false).setValue(st.author)
+      )
+    );
+    return void interaction.showModal(modal);
+  } else return;
+  await interaction.update(await cardPayload(botName, cfg5, st));
+  await saveState(ctx.botId, msg.id, st);
+}
+var quotesModule = {
+  name: "quotes",
+  intents: [import_discord8.GatewayIntentBits.Guilds],
+  commands: [quoteCommand],
+  onInteraction: handleInteraction,
+  start(client, botId) {
+    if (timers.has(botId)) return;
+    timers.set(botId, setInterval(() => {
+      void tick(client, botId).catch((e) => recordError(botId, e));
+    }, 15 * 6e4));
+  },
+  stop(botId) {
+    if (botId == null) {
+      for (const t2 of timers.values()) clearInterval(t2);
+      timers.clear();
+      return;
+    }
+    const t = timers.get(botId);
+    if (t) {
+      clearInterval(t);
+      timers.delete(botId);
+    }
+  }
+};
+
+// apps/worker/src/modules/tickets.ts
+var import_discord9 = __toESM(require_src2(), 1);
 var cfg4 = (c) => c;
 var isGuildText = (ch) => Boolean(ch) && typeof ch === "object" && "permissionOverwrites" in ch;
 function isStaff(member, config2) {
   if (!member) return false;
-  if (member.permissions.has(import_discord8.PermissionFlagsBits.ManageGuild)) return true;
+  if (member.permissions.has(import_discord9.PermissionFlagsBits.ManageGuild)) return true;
   return Boolean(config2.staffRoleId && member.roles.cache.has(config2.staffRoleId));
 }
 async function openCount(botId, guildId, userId) {
@@ -109032,8 +109370,8 @@ async function findOpenByChannel(botId, guildId, channelId) {
   ));
   return row ?? null;
 }
-var closeRow = () => new import_discord8.ActionRowBuilder().addComponents(
-  new import_discord8.ButtonBuilder().setCustomId("ticket:close").setLabel("Tutup Tiket").setStyle(import_discord8.ButtonStyle.Danger).setEmoji("\u{1F512}")
+var closeRow = () => new import_discord9.ActionRowBuilder().addComponents(
+  new import_discord9.ButtonBuilder().setCustomId("ticket:close").setLabel("Tutup Tiket").setStyle(import_discord9.ButtonStyle.Danger).setEmoji("\u{1F512}")
 );
 async function createTicket(ctx, member, subject, reply) {
   const config2 = cfg4(ctx.config);
@@ -109043,16 +109381,16 @@ async function createTicket(ctx, member, subject, reply) {
   }
   const me = ctx.guild.members.me;
   if (!me) return void reply("\u274C Bot belum siap, coba lagi sebentar.");
-  const allow = [import_discord8.PermissionFlagsBits.ViewChannel, import_discord8.PermissionFlagsBits.SendMessages, import_discord8.PermissionFlagsBits.AttachFiles];
+  const allow = [import_discord9.PermissionFlagsBits.ViewChannel, import_discord9.PermissionFlagsBits.SendMessages, import_discord9.PermissionFlagsBits.AttachFiles];
   const channel = await ctx.guild.channels.create({
     name: `ticket-${member.user.username}`.toLowerCase().slice(0, 100),
-    type: import_discord8.ChannelType.GuildText,
+    type: import_discord9.ChannelType.GuildText,
     parent: config2.categoryId || null,
     permissionOverwrites: [
-      { id: ctx.guild.roles.everyone.id, deny: [import_discord8.PermissionFlagsBits.ViewChannel] },
+      { id: ctx.guild.roles.everyone.id, deny: [import_discord9.PermissionFlagsBits.ViewChannel] },
       { id: member.id, allow },
       ...config2.staffRoleId ? [{ id: config2.staffRoleId, allow }] : [],
-      { id: me.id, allow: [import_discord8.PermissionFlagsBits.ViewChannel, import_discord8.PermissionFlagsBits.SendMessages, import_discord8.PermissionFlagsBits.ManageChannels, import_discord8.PermissionFlagsBits.ReadMessageHistory] }
+      { id: me.id, allow: [import_discord9.PermissionFlagsBits.ViewChannel, import_discord9.PermissionFlagsBits.SendMessages, import_discord9.PermissionFlagsBits.ManageChannels, import_discord9.PermissionFlagsBits.ReadMessageHistory] }
     ]
   }).catch((e) => {
     recordError(ctx.botId, e);
@@ -109088,7 +109426,7 @@ async function closeTicket(ctx, channel, closedByTag, reply) {
     }
     const tch = await ctx.client.channels.fetch(config2.transcriptChannelId).catch(() => null);
     if (tch?.isTextBased() && "send" in tch) {
-      const file = new import_discord8.AttachmentBuilder(Buffer.from(lines.reverse().join("\n"), "utf8"), { name: `transkrip-${channel.name}.txt` });
+      const file = new import_discord9.AttachmentBuilder(Buffer.from(lines.reverse().join("\n"), "utf8"), { name: `transkrip-${channel.name}.txt` });
       await tch.send({ content: `\u{1F4C4} Transkrip tiket ${channel.name} (ditutup oleh ${closedByTag})`, files: [file] }).catch(() => {
       });
     }
@@ -109108,7 +109446,7 @@ var ticketCmd = {
     { name: "user", type: "user" },
     { name: "subject", type: "string", rest: true }
   ],
-  buildSlash: () => new import_discord8.SlashCommandBuilder().setName("ticket").setDescription("Kelola tiket support").addSubcommand((s) => s.setName("open").setDescription("Buka tiket baru").addStringOption((o) => o.setName("subject").setDescription("Subjek (kosong = isi lewat form)").setMaxLength(200))).addSubcommand((s) => s.setName("close").setDescription("Tutup tiket (di dalam kanal tiket)")).addSubcommand((s) => s.setName("add").setDescription("Tambahkan user ke tiket (staf)").addUserOption((o) => o.setName("user").setDescription("User yang ditambahkan").setRequired(true))).toJSON(),
+  buildSlash: () => new import_discord9.SlashCommandBuilder().setName("ticket").setDescription("Kelola tiket support").addSubcommand((s) => s.setName("open").setDescription("Buka tiket baru").addStringOption((o) => o.setName("subject").setDescription("Subjek (kosong = isi lewat form)").setMaxLength(200))).addSubcommand((s) => s.setName("close").setDescription("Tutup tiket (di dalam kanal tiket)")).addSubcommand((s) => s.setName("add").setDescription("Tambahkan user ke tiket (staf)").addUserOption((o) => o.setName("user").setDescription("User yang ditambahkan").setRequired(true))).toJSON(),
   async execute(ctx, args) {
     if (!ctx.guild || !ctx.member) return ctx.reply("\u274C Command ini hanya untuk server.");
     const config2 = cfg4(ctx.config);
@@ -109117,8 +109455,8 @@ var ticketCmd = {
       const subject = String(args.subject ?? "").trim();
       if (!subject) {
         if (!ctx.showModal) return ctx.reply("\u274C Tulis subjek: `!ticket open <subjek>`.");
-        const modal = new import_discord8.ModalBuilder().setCustomId("ticket:modal").setTitle("Tiket Baru").addComponents(new import_discord8.ActionRowBuilder().addComponents(
-          new import_discord8.TextInputBuilder().setCustomId("subject").setLabel("Subjek tiket").setStyle(import_discord8.TextInputStyle.Short).setRequired(true).setMaxLength(200)
+        const modal = new import_discord9.ModalBuilder().setCustomId("ticket:modal").setTitle("Tiket Baru").addComponents(new import_discord9.ActionRowBuilder().addComponents(
+          new import_discord9.TextInputBuilder().setCustomId("subject").setLabel("Subjek tiket").setStyle(import_discord9.TextInputStyle.Short).setRequired(true).setMaxLength(200)
         ));
         return void await ctx.showModal(modal);
       }
@@ -109158,7 +109496,7 @@ var ticketCmd = {
 };
 var ticketsModule = {
   name: "tickets",
-  intents: [import_discord8.GatewayIntentBits.Guilds, import_discord8.GatewayIntentBits.GuildMessages],
+  intents: [import_discord9.GatewayIntentBits.Guilds, import_discord9.GatewayIntentBits.GuildMessages],
   commands: [ticketCmd],
   async onInteraction(ctx, interaction) {
     if (interaction.isButton() && interaction.customId === "ticket:close") {
@@ -109194,14 +109532,14 @@ var ticketsModule = {
 };
 
 // apps/worker/src/modules/utilities.ts
-var import_discord9 = __toESM(require_src2(), 1);
+var import_discord10 = __toESM(require_src2(), 1);
 var ACCENT4 = 5793266;
 var optUser = (cmd) => cmd.addUserOption((o) => o.setName("user").setDescription("User (kosong = dirimu)"));
 var ping = {
   name: "ping",
   description: "Cek latensi bot",
   args: [],
-  buildSlash: () => new import_discord9.SlashCommandBuilder().setName("ping").setDescription("Cek latensi bot").toJSON(),
+  buildSlash: () => new import_discord10.SlashCommandBuilder().setName("ping").setDescription("Cek latensi bot").toJSON(),
   async execute(ctx) {
     await ctx.reply(`\u{1F3D3} Pong! Latensi gateway: \`${Math.max(0, ctx.client.ws.ping)}\` ms`);
   }
@@ -109210,7 +109548,7 @@ var avatar = {
   name: "avatar",
   description: "Tampilkan avatar user",
   args: [{ name: "user", type: "user" }],
-  buildSlash: () => optUser(new import_discord9.SlashCommandBuilder().setName("avatar").setDescription("Tampilkan avatar user")).toJSON(),
+  buildSlash: () => optUser(new import_discord10.SlashCommandBuilder().setName("avatar").setDescription("Tampilkan avatar user")).toJSON(),
   async execute(ctx, args) {
     const user = args.user?.user ?? ctx.user;
     await ctx.reply({
@@ -109226,7 +109564,7 @@ var userinfo = {
   name: "userinfo",
   description: "Info user",
   args: [{ name: "user", type: "user" }],
-  buildSlash: () => optUser(new import_discord9.SlashCommandBuilder().setName("userinfo").setDescription("Info user")).toJSON(),
+  buildSlash: () => optUser(new import_discord10.SlashCommandBuilder().setName("userinfo").setDescription("Info user")).toJSON(),
   async execute(ctx, args) {
     const member = args.user ?? ctx.member;
     const user = member?.user ?? ctx.user;
@@ -109252,7 +109590,7 @@ var serverinfo = {
   name: "serverinfo",
   description: "Info server",
   args: [],
-  buildSlash: () => new import_discord9.SlashCommandBuilder().setName("serverinfo").setDescription("Info server").toJSON(),
+  buildSlash: () => new import_discord10.SlashCommandBuilder().setName("serverinfo").setDescription("Info server").toJSON(),
   async execute(ctx) {
     if (!ctx.guild) return ctx.reply("\u274C Hanya di server.");
     const g = ctx.guild;
@@ -109278,7 +109616,7 @@ var calc = {
   name: "calc",
   description: "Kalkulator: + - * / ( ) %",
   args: [{ name: "expression", type: "string", rest: true }],
-  buildSlash: () => new import_discord9.SlashCommandBuilder().setName("calc").setDescription("Kalkulator").addStringOption((o) => o.setName("expression").setDescription("Contoh: (2+3)*4").setRequired(true).setMaxLength(100)).toJSON(),
+  buildSlash: () => new import_discord10.SlashCommandBuilder().setName("calc").setDescription("Kalkulator").addStringOption((o) => o.setName("expression").setDescription("Contoh: (2+3)*4").setRequired(true).setMaxLength(100)).toJSON(),
   async execute(ctx, args) {
     const expr = String(args.expression ?? "").trim().slice(0, 100);
     if (!expr) return ctx.reply("Contoh: `!calc (2+3)*4`");
@@ -109296,7 +109634,7 @@ var weather = {
   name: "weather",
   description: "Cuaca kota (sumber: wttr.in)",
   args: [{ name: "city", type: "string", rest: true }],
-  buildSlash: () => new import_discord9.SlashCommandBuilder().setName("weather").setDescription("Cuaca kota").addStringOption((o) => o.setName("city").setDescription("Nama kota, contoh: Jakarta").setRequired(true).setMaxLength(64)).toJSON(),
+  buildSlash: () => new import_discord10.SlashCommandBuilder().setName("weather").setDescription("Cuaca kota").addStringOption((o) => o.setName("city").setDescription("Nama kota, contoh: Jakarta").setRequired(true).setMaxLength(64)).toJSON(),
   async execute(ctx, args) {
     const city = sanitizeText(String(args.city ?? "").trim().slice(0, 64));
     if (!city || !/^[\p{L}\p{N}\s.,-]+$/u.test(city)) return ctx.reply("\u274C Sebutkan nama kota, contoh: `!weather Jakarta`");
@@ -109326,15 +109664,15 @@ var weather = {
 };
 var utilitiesModule = {
   name: "utilities",
-  intents: [import_discord9.GatewayIntentBits.Guilds, import_discord9.GatewayIntentBits.GuildMessages],
+  intents: [import_discord10.GatewayIntentBits.Guilds, import_discord10.GatewayIntentBits.GuildMessages],
   commands: [ping, avatar, userinfo, serverinfo, calc, weather]
 };
 
 // apps/worker/src/modules/welcome.ts
-var import_discord10 = __toESM(require_src2(), 1);
+var import_discord11 = __toESM(require_src2(), 1);
 var welcomeModule = {
   name: "welcome",
-  intents: [import_discord10.GatewayIntentBits.Guilds, import_discord10.GatewayIntentBits.GuildMembers],
+  intents: [import_discord11.GatewayIntentBits.Guilds, import_discord11.GatewayIntentBits.GuildMembers],
   commands: [],
   async onMemberAdd({ client, botId, guild, config: config2 }, member) {
     if (config2.enabled === false) return;
@@ -109372,15 +109710,16 @@ var MODULES = [
   levelingModule,
   economyModule,
   quizModule,
+  quotesModule,
   ktpModule
 ];
 
 // apps/worker/src/runner.ts
 var ALL_INTENTS = [
-  import_discord11.GatewayIntentBits.Guilds,
-  import_discord11.GatewayIntentBits.GuildMessages,
-  import_discord11.GatewayIntentBits.MessageContent,
-  import_discord11.GatewayIntentBits.GuildMembers
+  import_discord12.GatewayIntentBits.Guilds,
+  import_discord12.GatewayIntentBits.GuildMessages,
+  import_discord12.GatewayIntentBits.MessageContent,
+  import_discord12.GatewayIntentBits.GuildMembers
 ];
 async function upsertGuild(botId, g) {
   await db.insert(botGuilds).values({ botId, discordGuildId: g.id, name: g.name }).onConflictDoUpdate({ target: [botGuilds.botId, botGuilds.discordGuildId], set: { name: g.name } }).catch((e) => logger.error({ err: e, botId }, "upsert guild gagal"));
@@ -109423,72 +109762,85 @@ var BotRunner = class {
     const enabled = botLevelConfigSchema.parse(cfgRow?.data ?? {}).modules;
     this.mods = MODULES.filter((m) => enabled.includes(m.name));
     const mods = this.mods;
-    const client = new import_discord11.Client({ intents: ALL_INTENTS });
+    const client = new import_discord12.Client({ intents: ALL_INTENTS });
     this.client = client;
-    client.once(import_discord11.Events.ClientReady, async (c) => {
+    client.once(import_discord12.Events.ClientReady, async (c) => {
       logger.info({ botId: bot.id, bot: c.user?.tag, guilds: c.guilds.cache.size, modules: mods.map((m) => m.name) }, "bot online");
       for (const g of c.guilds.cache.values()) await upsertGuild(bot.id, g);
       const body = mods.flatMap((m) => m.commands.map((cmd) => cmd.buildSlash()));
       try {
-        await c.rest.put(import_discord11.Routes.applicationCommands(bot.applicationId), { body: [] });
+        await c.rest.put(import_discord12.Routes.applicationCommands(bot.applicationId), { body: [] });
         for (const g of c.guilds.cache.values()) {
-          await c.rest.put(import_discord11.Routes.applicationGuildCommands(bot.applicationId, g.id), { body });
+          await c.rest.put(import_discord12.Routes.applicationGuildCommands(bot.applicationId, g.id), { body });
         }
       } catch (e) {
         await recordError(bot.id, e);
       }
     });
-    client.on(import_discord11.Events.GuildCreate, (g) => {
+    client.on(import_discord12.Events.GuildCreate, (g) => {
       void upsertGuild(bot.id, g);
       const body = mods.flatMap((m) => m.commands.map((cmd) => cmd.buildSlash()));
-      void client.rest.put(import_discord11.Routes.applicationGuildCommands(bot.applicationId, g.id), { body }).catch((e) => recordError(bot.id, e));
+      void client.rest.put(import_discord12.Routes.applicationGuildCommands(bot.applicationId, g.id), { body }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord11.Events.GuildDelete, (g) => {
+    client.on(import_discord12.Events.GuildDelete, (g) => {
       void db.delete(botGuilds).where(and(eq(botGuilds.botId, bot.id), eq(botGuilds.discordGuildId, g.id))).catch((e) => logger.error({ err: e }, "hapus guild gagal"));
     });
-    client.on(import_discord11.Events.InteractionCreate, (i) => {
+    client.on(import_discord12.Events.InteractionCreate, (i) => {
       if (i.isChatInputCommand()) void this.handleSlash(bot, i).catch((e) => recordError(bot.id, e));
       else void this.handleComponent(bot, i).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord11.Events.MessageCreate, (m) => {
+    client.on(import_discord12.Events.MessageCreate, (m) => {
       void this.handleMessage(bot, m).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord11.Events.GuildMemberAdd, (member) => {
+    client.on(import_discord12.Events.GuildMemberAdd, (member) => {
       void this.forModules(bot, member.guild?.id, async (mod, config2) => {
         await mod.onMemberAdd?.({ client: member.client, botId: bot.id, guild: member.guild, config: config2 }, member);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord11.Events.GuildMemberRemove, (member) => {
+    client.on(import_discord12.Events.GuildMemberRemove, (member) => {
       void this.forModules(bot, member.guild?.id, async (mod, config2) => {
         await mod.onMemberRemove?.({ client: member.client, botId: bot.id, guild: member.guild, config: config2 }, member);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord11.Events.GuildMemberUpdate, (oldMember, newMember) => {
+    client.on(import_discord12.Events.GuildMemberUpdate, (oldMember, newMember) => {
       void this.forModules(bot, newMember.guild?.id, async (mod, config2) => {
         await mod.onMemberUpdate?.({ client: newMember.client, botId: bot.id, guild: newMember.guild, config: config2 }, oldMember, newMember);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord11.Events.MessageDelete, (m) => {
+    client.on(import_discord12.Events.MessageDelete, (m) => {
       void this.forModules(bot, m.guild?.id, async (mod, config2) => {
         await mod.onMessageDelete?.({ client: m.client, botId: bot.id, guild: m.guild, config: config2 }, m);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord11.Events.MessageUpdate, (oldM, newM) => {
+    client.on(import_discord12.Events.MessageUpdate, (oldM, newM) => {
       void this.forModules(bot, newM.guild?.id, async (mod, config2) => {
         await mod.onMessageUpdate?.({ client: newM.client, botId: bot.id, guild: newM.guild, config: config2 }, oldM, newM);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord11.Events.Error, (e) => void recordError(bot.id, e));
-    client.on(import_discord11.Events.ShardError, (e) => void recordError(bot.id, e));
-    client.on(import_discord11.Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, "gateway terputus \u2014 discord.js reconnect otomatis"));
+    client.on(import_discord12.Events.Error, (e) => void recordError(bot.id, e));
+    client.on(import_discord12.Events.ShardError, (e) => void recordError(bot.id, e));
+    client.on(import_discord12.Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, "gateway terputus \u2014 discord.js reconnect otomatis"));
     logger.info({ botId: this.botId }, "runner: memanggil client.login");
     await client.login(token);
     logger.info({ botId: this.botId }, "runner: client.login selesai");
+    for (const mod of this.mods) {
+      try {
+        mod.start?.(client, bot.id);
+      } catch (e) {
+        await recordError(bot.id, e);
+      }
+    }
     this.startHeartbeat();
   }
   async stop() {
     if (this.heartbeat) clearInterval(this.heartbeat);
     this.heartbeat = null;
+    for (const mod of this.mods) {
+      try {
+        mod.stop?.(this.botId);
+      } catch {
+      }
+    }
     const client = this.client;
     this.client = null;
     await redis.del(BOT_STATUS_KEY(this.botId)).catch(() => {
@@ -109653,6 +110005,7 @@ var BotRunner = class {
       user: message.author,
       channel: message.channel,
       config: config2,
+      sourceMessage: message,
       reply: (payload) => message.reply({
         ...typeof payload === "string" ? { content: payload } : payload,
         allowedMentions: { parse: [] }
