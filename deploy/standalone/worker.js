@@ -109111,57 +109111,60 @@ async function renderCard(botName, cfg5, st) {
   if (!c) throw new Error("canvas tidak tersedia");
   const canvas = c.createCanvas(W2, H2);
   const ctx = canvas.getContext("2d");
+  const zones = {
+    // ponytail: gambar mengisi sepertiga kartu (400/1200), sisanya teks
+    kiri: { x: 0, w: 400, align: "left", tx: 440, tw: 700 },
+    kanan: { x: 800, w: 400, align: "left", tx: 60, tw: 700 },
+    tengah: { x: 0, w: W2, align: "center", tx: 120, tw: W2 - 240 }
+  };
+  const z = zones[st.pos];
   const bgImg = await getBg(c);
-  if (bgImg) {
-    const s = Math.max(W2 / bgImg.width, H2 / bgImg.height);
-    const dw = bgImg.width * s, dh = bgImg.height * s;
-    ctx.drawImage(bgImg, (W2 - dw) / 2, (H2 - dh) / 2, dw, dh);
-    const veil = ctx.createLinearGradient(0, 0, W2, H2);
-    veil.addColorStop(0, "rgba(6,10,22,0.52)");
-    veil.addColorStop(1, "rgba(6,10,22,0.68)");
-    ctx.fillStyle = veil;
-    ctx.fillRect(0, 0, W2, H2);
-  } else {
+  const gradient = () => {
     const bg = ctx.createLinearGradient(0, 0, W2, H2);
     bg.addColorStop(0, "#0e1424");
     bg.addColorStop(0.55, "#121a2e");
     bg.addColorStop(1, "#1b1030");
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W2, H2);
-  }
-  const zones = {
-    kiri: { x: 0, w: 600, align: "left", tx: 640, tw: 500 },
-    kanan: { x: 600, w: 600, align: "left", tx: 60, tw: 500 },
-    tengah: { x: 0, w: W2, align: "center", tx: 120, tw: W2 - 240 }
   };
-  const z = zones[st.pos];
-  if (st.imageUrl) {
-    try {
-      const img = await c.loadImage(st.imageUrl);
-      const scale = Math.max(z.w / img.width, H2 / img.height);
-      const dw = img.width * scale, dh = img.height * scale;
+  if (st.pos === "tengah") {
+    if (bgImg) {
+      const s = Math.max(W2 / bgImg.width, H2 / bgImg.height);
+      const dw = bgImg.width * s, dh = bgImg.height * s;
+      ctx.drawImage(bgImg, (W2 - dw) / 2, (H2 - dh) / 2, dw, dh);
+      const veil = ctx.createLinearGradient(0, 0, W2, H2);
+      veil.addColorStop(0, "rgba(6,10,22,0.52)");
+      veil.addColorStop(1, "rgba(6,10,22,0.68)");
+      ctx.fillStyle = veil;
+      ctx.fillRect(0, 0, W2, H2);
+    } else gradient();
+  } else {
+    gradient();
+    const photo = st.imageUrl ? await c.loadImage(st.imageUrl).catch((e) => {
+      logger.warn({ err: e }, "quotes: foto gagal dimuat \u2014 pakai latar bawaan");
+      return null;
+    }) ?? bgImg : bgImg;
+    if (photo) {
+      const scale = Math.max(z.w / photo.width, H2 / photo.height);
+      const dw = photo.width * scale, dh = photo.height * scale;
       ctx.save();
       ctx.beginPath();
       ctx.rect(z.x, 0, z.w, H2);
       ctx.clip();
-      ctx.drawImage(img, z.x + (z.w - dw) / 2, (H2 - dh) / 2, dw, dh);
+      ctx.drawImage(photo, z.x + (z.w - dw) / 2, (H2 - dh) / 2, dw, dh);
       ctx.restore();
       const scrim = ctx.createLinearGradient(0, 0, 0, H2);
       scrim.addColorStop(0, "rgba(4,7,16,0.30)");
       scrim.addColorStop(1, "rgba(4,7,16,0.55)");
       ctx.fillStyle = scrim;
       ctx.fillRect(z.x, 0, z.w, H2);
-      if (st.pos !== "tengah") {
-        const edge = st.pos === "kiri" ? z.x + z.w : z.x;
-        const dir = st.pos === "kiri" ? 1 : -1;
-        const fade = ctx.createLinearGradient(edge, 0, edge + dir * 220, 0);
-        fade.addColorStop(0, "rgba(14,20,36,0)");
-        fade.addColorStop(1, "rgba(14,20,36,1)");
-        ctx.fillStyle = fade;
-        ctx.fillRect(Math.min(edge, edge + dir * 220), 0, 220, H2);
-      }
-    } catch (e) {
-      logger.warn({ err: e }, "quotes: foto gagal dimuat \u2014 pakai gradien");
+      const edge = st.pos === "kiri" ? z.x + z.w : z.x;
+      const dir = st.pos === "kiri" ? 1 : -1;
+      const fade = ctx.createLinearGradient(edge, 0, edge + dir * 220, 0);
+      fade.addColorStop(0, "rgba(14,20,36,0)");
+      fade.addColorStop(1, "rgba(14,20,36,1)");
+      ctx.fillStyle = fade;
+      ctx.fillRect(Math.min(edge, edge + dir * 220), 0, 220, H2);
     }
   }
   const now = wibNow();
