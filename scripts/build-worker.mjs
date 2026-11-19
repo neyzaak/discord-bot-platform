@@ -14,6 +14,8 @@ await build({
     js: "import{createRequire}from'node:module';const require=createRequire(import.meta.url);",
   },
   outfile: 'deploy/standalone/worker.js',
+  // Latar quote di-embed base64 supaya tidak bergantung pada folder assets saat upload.
+  loader: { '.png': 'base64' },
   logLevel: 'info',
 });
 

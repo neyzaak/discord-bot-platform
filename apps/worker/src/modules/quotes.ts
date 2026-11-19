@@ -7,6 +7,7 @@ import {
   type Client, type Interaction, type Message,
 } from 'discord.js';
 import { and, eq, sql } from 'drizzle-orm';
+import latarBase64 from '../../assets/latar-quotes.png';
 import { botConfigs, db, logger, quotesConfigSchema, recordError, redis } from '@platform/core';
 import type { BotModule, CommandContext, ModuleCommand, ModuleCtx } from './types';
 
@@ -57,9 +58,8 @@ async function getCanvas() {
 
 async function getBg(c: NonNullable<typeof canvasMod>): Promise<CardImage | null> {
   if (bgImage !== undefined) return bgImage;
-  const p = asset('latar-quotes.png');
-  if (!p) { bgImage = null; return null; }
-  try { bgImage = await c.loadImage(p); } catch (e) { logger.warn({ err: e }, 'latar quotes gagal dimuat — pakai warna solid'); bgImage = null; }
+  try { bgImage = await c.loadImage(Buffer.from(latarBase64, 'base64')); }
+  catch (e) { logger.warn({ err: e }, 'latar quotes gagal dimuat — pakai warna solid'); bgImage = null; }
   return bgImage;
 }
 
@@ -109,8 +109,8 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
     const dw = bgImg.width * s, dh = bgImg.height * s;
     ctx.drawImage(bgImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
     const veil = ctx.createLinearGradient(0, 0, W, H);
-    veil.addColorStop(0, 'rgba(6,10,22,0.55)');
-    veil.addColorStop(1, 'rgba(6,10,22,0.72)');
+    veil.addColorStop(0, 'rgba(6,10,22,0.38)');
+    veil.addColorStop(1, 'rgba(6,10,22,0.58)');
     ctx.fillStyle = veil;
     ctx.fillRect(0, 0, W, H);
   }
