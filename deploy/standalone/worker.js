@@ -109200,10 +109200,11 @@ async function renderCard(botName, cfg5, st) {
     ctx.fillStyle = "rgba(165,180,252,0.95)";
     ctx.fillText(`\u2014 ${st.author}`, z.tx, y + px * 0.45);
   }
+  const wm = cfg5.watermark.replace(/[\u3164\u200B\uFEFF]/g, "").trim() || "Geng Sulawesi Quote";
   ctx.textAlign = st.pos === "kiri" ? "left" : "right";
   ctx.font = '600 22px "Poppins", sans-serif';
   ctx.fillStyle = "rgba(148,163,184,0.75)";
-  ctx.fillText(cfg5.watermark, st.pos === "kiri" ? 48 : W2 - 48, H2 - 40);
+  ctx.fillText(wm, st.pos === "kiri" ? 48 : W2 - 48, H2 - 40);
   return canvas.toBuffer("image/png");
 }
 function buttons(st) {

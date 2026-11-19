@@ -193,10 +193,12 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
   }
 
   // Watermark di sisi berlawanan dengan teks, biar nama penulis tidak menempel padanya.
+  //ponytail: karakter tak terlihat (U+3164/ZWSP/BOM) dianggap kosong — pakai default.
+  const wm = cfg.watermark.replace(/[\u3164\u200B\uFEFF]/g, '').trim() || 'Geng Sulawesi Quote';
   ctx.textAlign = st.pos === 'kiri' ? 'left' : 'right';
   ctx.font = '600 22px "Poppins", sans-serif';
   ctx.fillStyle = 'rgba(148,163,184,0.75)';
-  ctx.fillText(cfg.watermark, st.pos === 'kiri' ? 48 : W - 48, H - 40);
+  ctx.fillText(wm, st.pos === 'kiri' ? 48 : W - 48, H - 40);
 
   return canvas.toBuffer('image/png');
 }
