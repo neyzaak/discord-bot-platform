@@ -147,7 +147,7 @@ export const quotesConfigSchema = z.object({
   watermark: z.string().trim().min(1).max(40).default('Geng Sulawesi Quote'),
   font: z.enum(['poppins', 'playfair']).default('poppins'),
   textSize: z.enum(['kecil', 'sedang', 'besar']).default('sedang'),
-  photoPosition: z.enum(['kiri', 'tengah', 'kanan']).default('kiri'),
+  photoPosition: z.enum(['kiri', 'kanan']).default('kiri'),
   quotes: z.array(z.object({
     text: z.string().trim().min(1).max(300),
     author: z.string().trim().max(64).default(''),

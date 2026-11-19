@@ -18,7 +18,7 @@ interface CardState {
   text: string;
   author: string;
   imageUrl: string;
-  pos: 'kiri' | 'tengah' | 'kanan';
+  pos: 'kiri' | 'kanan';
   size: 'kecil' | 'sedang' | 'besar';
   font: 'poppins' | 'playfair';
 }
@@ -26,14 +26,14 @@ interface CardState {
 const W = 1200, H = 675;
 const TEXT_PX = { kecil: 40, sedang: 52, besar: 64 } as const;
 const ORDER = {
-  pos: ['kiri', 'tengah', 'kanan'] as const,
+  pos: ['kiri', 'kanan'] as const,
   size: ['kecil', 'sedang', 'besar'] as const,
   font: ['poppins', 'playfair'] as const,
 };
 const ASSET_DIRS = ['../../assets/', './assets/'].map((p) => fileURLToPath(new URL(p, import.meta.url)));
 const asset = (name: string) => ASSET_DIRS.map((d) => join(d, name)).find(existsSync) ?? '';
 
-// ponytail: font/latar opsional — kalau file tidak ikut ter-copy ke deploy, canvas pakai sans-serif/gradien
+// ponytail: font/latar opsional — kalau file tidak ikut ter-copy ke deploy, canvas pakai sans-serif/warna solid
 let canvasMod: typeof import('@napi-rs/canvas') | null | undefined;
 type CardImage = Awaited<ReturnType<NonNullable<typeof canvasMod>['loadImage']>>;
 let bgImage: CardImage | null | undefined;
@@ -59,7 +59,7 @@ async function getBg(c: NonNullable<typeof canvasMod>): Promise<CardImage | null
   if (bgImage !== undefined) return bgImage;
   const p = asset('latar-quotes.png');
   if (!p) { bgImage = null; return null; }
-  try { bgImage = await c.loadImage(p); } catch (e) { logger.warn({ err: e }, 'latar quotes gagal dimuat — pakai gradien'); bgImage = null; }
+  try { bgImage = await c.loadImage(p); } catch (e) { logger.warn({ err: e }, 'latar quotes gagal dimuat — pakai warna solid'); bgImage = null; }
   return bgImage;
 }
 
@@ -95,23 +95,15 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
 
   const zones = {
     // ponytail: gambar mengisi sepertiga kartu (400/1200), sisanya teks
-    kiri: { x: 0, w: 400, align: 'left' as const, tx: 440, tw: 700 },
-    kanan: { x: 800, w: 400, align: 'left' as const, tx: 60, tw: 700 },
-    tengah: { x: 0, w: W, align: 'center' as const, tx: 120, tw: W - 240 },
+    kiri: { x: 0, w: 400, tx: 440, tw: 700 },
+    kanan: { x: 800, w: 400, tx: 60, tw: 700 },
   };
   const z = zones[st.pos];
   const bgImg = await getBg(c);
 
-  const gradient = () => {
-    const bg = ctx.createLinearGradient(0, 0, W, H);
-    bg.addColorStop(0, '#0e1424');
-    bg.addColorStop(0.55, '#121a2e');
-    bg.addColorStop(1, '#1b1030');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-  };
-
-  // Latar kiriman dipakai sebagai dasar seluruh kartu — termasuk area teks di semua posisi.
+  // Latar kiriman jadi satu-satunya dasar kartu (fallback solid hanya kalau aset hilang).
+  ctx.fillStyle = '#0e1424';
+  ctx.fillRect(0, 0, W, H);
   if (bgImg) {
     const s = Math.max(W / bgImg.width, H / bgImg.height);
     const dw = bgImg.width * s, dh = bgImg.height * s;
@@ -121,10 +113,10 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
     veil.addColorStop(1, 'rgba(6,10,22,0.72)');
     ctx.fillStyle = veil;
     ctx.fillRect(0, 0, W, H);
-  } else gradient();
+  }
 
   //ponytail: zona sepertiga khusus foto per-quote (imageUrl). Kalau kosong, latar di atas yang tampil.
-  if (st.imageUrl && st.pos !== 'tengah') {
+  if (st.imageUrl) {
     const photo = await c.loadImage(st.imageUrl).catch((e) => { logger.warn({ err: e }, 'quotes: foto gagal dimuat'); return null; });
     if (photo) {
       const scale = Math.max(z.w / photo.width, H / photo.height);
@@ -164,7 +156,6 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
 
   const fam = st.font === 'playfair' ? 'Playfair' : 'Poppins';
   const fontStr = (px: number) => `600 ${px}px "${fam}", sans-serif`;
-  const cx = z.tx + z.tw / 2;
 
   let px = TEXT_PX[st.size];
   let lines: string[] = [];
@@ -183,22 +174,22 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
   ctx.globalAlpha = 0.22;
   ctx.fillStyle = '#818cf8';
   ctx.font = fontStr(Math.round(px * 2.2));
-  ctx.textAlign = z.align;
-  ctx.fillText('“', z.align === 'center' ? cx : z.tx, y - px * 1.2);
+  ctx.textAlign = 'left';
+  ctx.fillText('“', z.tx, y - px * 1.2);
   ctx.restore();
 
-  ctx.textAlign = z.align;
+  ctx.textAlign = 'left';
   ctx.fillStyle = '#f8fafc';
   ctx.font = fontStr(px);
   for (const line of lines) {
-    ctx.fillText(line, z.align === 'center' ? cx : z.tx, y);
+    ctx.fillText(line, z.tx, y);
     y += lh;
   }
 
   if (st.author) {
     ctx.font = `600 ${Math.round(px * 0.46)}px "Poppins", sans-serif`;
     ctx.fillStyle = 'rgba(165,180,252,0.95)';
-    ctx.fillText(`— ${st.author}`, z.align === 'center' ? cx : z.tx, y + px * 0.45);
+    ctx.fillText(`— ${st.author}`, z.tx, y + px * 0.45);
   }
 
   // Watermark di sisi berlawanan dengan teks, biar nama penulis tidak menempel padanya.
@@ -236,7 +227,11 @@ const stateKey = (botId: number, msgId: string) => `qmsg:${botId}:${msgId}`;
 async function loadState(botId: number, msgId: string): Promise<CardState | null> {
   const raw = await redis.get(stateKey(botId, msgId)).catch(() => null);
   if (!raw) return null;
-  try { return JSON.parse(raw) as CardState; } catch { return null; }
+  try {
+    const st = JSON.parse(raw) as CardState;
+    if ((st.pos as string) === 'tengah') st.pos = 'kiri'; // state lama dari mode yang sudah dihapus
+    return st;
+  } catch { return null; }
 }
 async function saveState(botId: number, msgId: string, st: CardState): Promise<void> {
   // ponytail: state kedaluwarsa 7 hari — setelah itu tombol memakai default config lagi

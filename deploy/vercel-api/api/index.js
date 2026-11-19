@@ -51846,11 +51846,11 @@ var quotesConfigSchema = external_exports.object({
   watermark: external_exports.string().trim().min(1).max(40).default("Geng Sulawesi Quote"),
   font: external_exports.enum(["poppins", "playfair"]).default("poppins"),
   textSize: external_exports.enum(["kecil", "sedang", "besar"]).default("sedang"),
-  photoPosition: external_exports.enum(["kiri", "tengah", "kanan"]).default("kiri"),
+  photoPosition: external_exports.enum(["kiri", "kanan"]).default("kiri"),
   quotes: external_exports.array(external_exports.object({
     text: external_exports.string().trim().min(1).max(300),
     author: external_exports.string().trim().max(64).default(""),
-    /** URL foto untuk sisi kiri/kanan kartu (kosong = latar gradien). */
+    /** URL foto untuk sisi kiri/kanan kartu (kosong = latar bawaan). */
     imageUrl: external_exports.string().trim().max(500).default("")
   })).max(500, "maksimal 500 kutipan").default([])
 });

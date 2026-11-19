@@ -21,7 +21,7 @@ export interface GuildConfigData {
   quiz: { enabled: boolean; title: string; pointsName: string; timePerQuestionSec: number; pointsPerQuestion: number; questionsPerSession: number; mentionRoleId: string; questions: QuizQuestion[] };
   quotes: {
     enabled: boolean; channelId: string; daily: boolean; scheduleHour: number; watermark: string;
-    font: 'poppins' | 'playfair'; textSize: 'kecil' | 'sedang' | 'besar'; photoPosition: 'kiri' | 'tengah' | 'kanan';
+    font: 'poppins' | 'playfair'; textSize: 'kecil' | 'sedang' | 'besar'; photoPosition: 'kiri' | 'kanan';
     quotes: QuoteEntry[];
   };
 }
@@ -453,7 +453,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
           <div>
             <label className={labelCls}>{t('mod.quotes.pos')}</label>
             <Dropdown value={cfg.quotes.photoPosition} onChange={(v) => set('quotes', { ...cfg.quotes, photoPosition: v as GuildConfigData['quotes']['photoPosition'] })}
-              options={[{ id: 'kiri', name: 'Kiri' }, { id: 'tengah', name: 'Tengah' }, { id: 'kanan', name: 'Kanan' }]} />
+              options={[{ id: 'kiri', name: 'Kiri' }, { id: 'kanan', name: 'Kanan' }]} />
           </div>
         </div>
 

@@ -104334,7 +104334,7 @@ var quotesConfigSchema = external_exports.object({
   watermark: external_exports.string().trim().min(1).max(40).default("Geng Sulawesi Quote"),
   font: external_exports.enum(["poppins", "playfair"]).default("poppins"),
   textSize: external_exports.enum(["kecil", "sedang", "besar"]).default("sedang"),
-  photoPosition: external_exports.enum(["kiri", "tengah", "kanan"]).default("kiri"),
+  photoPosition: external_exports.enum(["kiri", "kanan"]).default("kiri"),
   quotes: external_exports.array(external_exports.object({
     text: external_exports.string().trim().min(1).max(300),
     author: external_exports.string().trim().max(64).default(""),
@@ -109036,7 +109036,7 @@ var W2 = 1200;
 var H2 = 675;
 var TEXT_PX = { kecil: 40, sedang: 52, besar: 64 };
 var ORDER = {
-  pos: ["kiri", "tengah", "kanan"],
+  pos: ["kiri", "kanan"],
   size: ["kecil", "sedang", "besar"],
   font: ["poppins", "playfair"]
 };
@@ -109076,7 +109076,7 @@ async function getBg(c) {
   try {
     bgImage = await c.loadImage(p);
   } catch (e) {
-    logger.warn({ err: e }, "latar quotes gagal dimuat \u2014 pakai gradien");
+    logger.warn({ err: e }, "latar quotes gagal dimuat \u2014 pakai warna solid");
     bgImage = null;
   }
   return bgImage;
@@ -109113,20 +109113,13 @@ async function renderCard(botName, cfg5, st) {
   const ctx = canvas.getContext("2d");
   const zones = {
     // ponytail: gambar mengisi sepertiga kartu (400/1200), sisanya teks
-    kiri: { x: 0, w: 400, align: "left", tx: 440, tw: 700 },
-    kanan: { x: 800, w: 400, align: "left", tx: 60, tw: 700 },
-    tengah: { x: 0, w: W2, align: "center", tx: 120, tw: W2 - 240 }
+    kiri: { x: 0, w: 400, tx: 440, tw: 700 },
+    kanan: { x: 800, w: 400, tx: 60, tw: 700 }
   };
   const z = zones[st.pos];
   const bgImg = await getBg(c);
-  const gradient = () => {
-    const bg = ctx.createLinearGradient(0, 0, W2, H2);
-    bg.addColorStop(0, "#0e1424");
-    bg.addColorStop(0.55, "#121a2e");
-    bg.addColorStop(1, "#1b1030");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W2, H2);
-  };
+  ctx.fillStyle = "#0e1424";
+  ctx.fillRect(0, 0, W2, H2);
   if (bgImg) {
     const s = Math.max(W2 / bgImg.width, H2 / bgImg.height);
     const dw = bgImg.width * s, dh = bgImg.height * s;
@@ -109136,8 +109129,8 @@ async function renderCard(botName, cfg5, st) {
     veil.addColorStop(1, "rgba(6,10,22,0.72)");
     ctx.fillStyle = veil;
     ctx.fillRect(0, 0, W2, H2);
-  } else gradient();
-  if (st.imageUrl && st.pos !== "tengah") {
+  }
+  if (st.imageUrl) {
     const photo = await c.loadImage(st.imageUrl).catch((e) => {
       logger.warn({ err: e }, "quotes: foto gagal dimuat");
       return null;
@@ -109177,7 +109170,6 @@ async function renderCard(botName, cfg5, st) {
   ctx.fillText(tanggalId(now), W2 - 48, 56);
   const fam = st.font === "playfair" ? "Playfair" : "Poppins";
   const fontStr = (px2) => `600 ${px2}px "${fam}", sans-serif`;
-  const cx = z.tx + z.tw / 2;
   let px = TEXT_PX[st.size];
   let lines = [];
   const maxTextH = H2 - 290;
@@ -109193,20 +109185,20 @@ async function renderCard(botName, cfg5, st) {
   ctx.globalAlpha = 0.22;
   ctx.fillStyle = "#818cf8";
   ctx.font = fontStr(Math.round(px * 2.2));
-  ctx.textAlign = z.align;
-  ctx.fillText("\u201C", z.align === "center" ? cx : z.tx, y - px * 1.2);
+  ctx.textAlign = "left";
+  ctx.fillText("\u201C", z.tx, y - px * 1.2);
   ctx.restore();
-  ctx.textAlign = z.align;
+  ctx.textAlign = "left";
   ctx.fillStyle = "#f8fafc";
   ctx.font = fontStr(px);
   for (const line2 of lines) {
-    ctx.fillText(line2, z.align === "center" ? cx : z.tx, y);
+    ctx.fillText(line2, z.tx, y);
     y += lh;
   }
   if (st.author) {
     ctx.font = `600 ${Math.round(px * 0.46)}px "Poppins", sans-serif`;
     ctx.fillStyle = "rgba(165,180,252,0.95)";
-    ctx.fillText(`\u2014 ${st.author}`, z.align === "center" ? cx : z.tx, y + px * 0.45);
+    ctx.fillText(`\u2014 ${st.author}`, z.tx, y + px * 0.45);
   }
   ctx.textAlign = st.pos === "kiri" ? "left" : "right";
   ctx.font = '600 22px "Poppins", sans-serif';
@@ -109238,7 +109230,9 @@ async function loadState(botId, msgId) {
   const raw = await redis.get(stateKey(botId, msgId)).catch(() => null);
   if (!raw) return null;
   try {
-    return JSON.parse(raw);
+    const st = JSON.parse(raw);
+    if (st.pos === "tengah") st.pos = "kiri";
+    return st;
   } catch {
     return null;
   }
