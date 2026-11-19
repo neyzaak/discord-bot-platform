@@ -30,21 +30,22 @@ const ORDER = {
   size: ['kecil', 'sedang', 'besar'] as const,
   font: ['poppins', 'playfair'] as const,
 };
-const FONT_DIR = ['../../assets/fonts/', './assets/fonts/']
-  .map((p) => fileURLToPath(new URL(p, import.meta.url)))
-  .find((p) => existsSync(p)) ?? '';
+const ASSET_DIRS = ['../../assets/', './assets/'].map((p) => fileURLToPath(new URL(p, import.meta.url)));
+const asset = (name: string) => ASSET_DIRS.map((d) => join(d, name)).find(existsSync) ?? '';
 
-// ponytail: font opsional — kalau file TTF tidak ikut ter-copy ke deploy, canvas pakai sans-serif
+// ponytail: font/latar opsional — kalau file tidak ikut ter-copy ke deploy, canvas pakai sans-serif/gradien
 let canvasMod: typeof import('@napi-rs/canvas') | null | undefined;
+type CardImage = Awaited<ReturnType<NonNullable<typeof canvasMod>['loadImage']>>;
+let bgImage: CardImage | null | undefined;
 async function getCanvas() {
   if (canvasMod !== undefined) return canvasMod;
   try {
     canvasMod = await import('@napi-rs/canvas');
-    for (const [file, family] of [['Poppins-SemiBold.ttf', 'Poppins'], ['PlayfairDisplay-SemiBold.ttf', 'Playfair']] as const) {
-      const p = join(FONT_DIR, file);
+    for (const [file, family] of [['fonts/Poppins-SemiBold.ttf', 'Poppins'], ['fonts/PlayfairDisplay-SemiBold.ttf', 'Playfair']] as const) {
+      const p = asset(file);
+      if (!p) { logger.warn({ file }, 'font quotes tidak ditemukan — pakai sans-serif'); continue; }
       try {
-        if (existsSync(p)) canvasMod.GlobalFonts.registerFromPath(p, family);
-        else logger.warn({ p }, 'font quotes tidak ditemukan — pakai sans-serif');
+        canvasMod.GlobalFonts.registerFromPath(p, family);
       } catch (e) { logger.warn({ err: e, file }, 'gagal daftar font'); }
     }
   } catch (e) {
@@ -52,6 +53,14 @@ async function getCanvas() {
     canvasMod = null;
   }
   return canvasMod;
+}
+
+async function getBg(c: NonNullable<typeof canvasMod>): Promise<CardImage | null> {
+  if (bgImage !== undefined) return bgImage;
+  const p = asset('latar-quotes.png');
+  if (!p) { bgImage = null; return null; }
+  try { bgImage = await c.loadImage(p); } catch (e) { logger.warn({ err: e }, 'latar quotes gagal dimuat — pakai gradien'); bgImage = null; }
+  return bgImage;
 }
 
 const cap = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
@@ -84,12 +93,25 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
   const canvas = c.createCanvas(W, H);
   const ctx = canvas.getContext('2d');
 
-  const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, '#0e1424');
-  bg.addColorStop(0.55, '#121a2e');
-  bg.addColorStop(1, '#1b1030');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
+  const bgImg = await getBg(c);
+  if (bgImg) {
+    const s = Math.max(W / bgImg.width, H / bgImg.height);
+    const dw = bgImg.width * s, dh = bgImg.height * s;
+    ctx.drawImage(bgImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    // ponytail: veil gelap biar teks tetap terbaca di atas foto/latar apa pun
+    const veil = ctx.createLinearGradient(0, 0, W, H);
+    veil.addColorStop(0, 'rgba(6,10,22,0.52)');
+    veil.addColorStop(1, 'rgba(6,10,22,0.68)');
+    ctx.fillStyle = veil;
+    ctx.fillRect(0, 0, W, H);
+  } else {
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#0e1424');
+    bg.addColorStop(0.55, '#121a2e');
+    bg.addColorStop(1, '#1b1030');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+  }
 
   const zones = {
     kiri: { x: 0, w: 660, align: 'left' as const, tx: 720, tw: 420 },

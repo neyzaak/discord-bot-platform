@@ -17,5 +17,5 @@ await build({
   logLevel: 'info',
 });
 
-// Font kartu quote dibaca relatif ke worker.js (./assets/fonts).
-cpSync('apps/worker/assets/fonts', 'deploy/standalone/assets/fonts', { recursive: true });
+// Aset kartu quote (font + latar) dibaca relatif ke worker.js (./assets).
+cpSync('apps/worker/assets', 'deploy/standalone/assets', { recursive: true });

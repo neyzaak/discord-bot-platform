@@ -151,7 +151,7 @@ export const quotesConfigSchema = z.object({
   quotes: z.array(z.object({
     text: z.string().trim().min(1).max(300),
     author: z.string().trim().max(64).default(''),
-    /** URL foto untuk sisi kiri/kanan kartu (kosong = latar gradien). */
+    /** URL foto untuk sisi kiri/kanan kartu (kosong = latar bawaan). */
     imageUrl: z.string().trim().max(500).default(''),
   })).max(500, 'maksimal 500 kutipan').default([]),
 });
