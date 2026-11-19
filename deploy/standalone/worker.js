@@ -109130,8 +109130,8 @@ async function renderCard(botName, cfg5, st) {
     ctx.fillRect(0, 0, W2, H2);
   }
   const zones = {
-    kiri: { x: 0, w: 660, align: "left", tx: 720, tw: 420 },
-    kanan: { x: 540, w: 660, align: "left", tx: 60, tw: 420 },
+    kiri: { x: 0, w: 600, align: "left", tx: 640, tw: 500 },
+    kanan: { x: 600, w: 600, align: "left", tx: 60, tw: 500 },
     tengah: { x: 0, w: W2, align: "center", tx: 120, tw: W2 - 240 }
   };
   const z = zones[st.pos];
@@ -109179,7 +109179,7 @@ async function renderCard(botName, cfg5, st) {
   const cx = z.tx + z.tw / 2;
   let px = TEXT_PX[st.size];
   let lines = [];
-  const maxTextH = H2 - 240;
+  const maxTextH = H2 - 290;
   for (; ; ) {
     ctx.font = fontStr(px);
     lines = wrapText(ctx, st.text, z.tw);
@@ -109207,10 +109207,10 @@ async function renderCard(botName, cfg5, st) {
     ctx.fillStyle = "rgba(165,180,252,0.95)";
     ctx.fillText(`\u2014 ${st.author}`, z.align === "center" ? cx : z.tx, y + px * 0.45);
   }
-  ctx.textAlign = "right";
+  ctx.textAlign = st.pos === "kiri" ? "left" : "right";
   ctx.font = '600 22px "Poppins", sans-serif';
   ctx.fillStyle = "rgba(148,163,184,0.75)";
-  ctx.fillText(cfg5.watermark, W2 - 48, H2 - 40);
+  ctx.fillText(cfg5.watermark, st.pos === "kiri" ? 48 : W2 - 48, H2 - 40);
   return canvas.toBuffer("image/png");
 }
 function buttons(st) {

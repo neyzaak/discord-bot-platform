@@ -114,8 +114,8 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
   }
 
   const zones = {
-    kiri: { x: 0, w: 660, align: 'left' as const, tx: 720, tw: 420 },
-    kanan: { x: 540, w: 660, align: 'left' as const, tx: 60, tw: 420 },
+    kiri: { x: 0, w: 600, align: 'left' as const, tx: 640, tw: 500 },
+    kanan: { x: 600, w: 600, align: 'left' as const, tx: 60, tw: 500 },
     tengah: { x: 0, w: W, align: 'center' as const, tx: 120, tw: W - 240 },
   };
   const z = zones[st.pos];
@@ -167,7 +167,7 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
 
   let px = TEXT_PX[st.size];
   let lines: string[] = [];
-  const maxTextH = H - 240;
+  const maxTextH = H - 290;
   for (;;) {
     ctx.font = fontStr(px);
     lines = wrapText(ctx, st.text, z.tw);
@@ -200,10 +200,11 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
     ctx.fillText(`— ${st.author}`, z.align === 'center' ? cx : z.tx, y + px * 0.45);
   }
 
-  ctx.textAlign = 'right';
+  // Watermark di sisi berlawanan dengan teks, biar nama penulis tidak menempel padanya.
+  ctx.textAlign = st.pos === 'kiri' ? 'left' : 'right';
   ctx.font = '600 22px "Poppins", sans-serif';
   ctx.fillStyle = 'rgba(148,163,184,0.75)';
-  ctx.fillText(cfg.watermark, W - 48, H - 40);
+  ctx.fillText(cfg.watermark, st.pos === 'kiri' ? 48 : W - 48, H - 40);
 
   return canvas.toBuffer('image/png');
 }
