@@ -109127,23 +109127,21 @@ async function renderCard(botName, cfg5, st) {
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W2, H2);
   };
-  if (st.pos === "tengah") {
-    if (bgImg) {
-      const s = Math.max(W2 / bgImg.width, H2 / bgImg.height);
-      const dw = bgImg.width * s, dh = bgImg.height * s;
-      ctx.drawImage(bgImg, (W2 - dw) / 2, (H2 - dh) / 2, dw, dh);
-      const veil = ctx.createLinearGradient(0, 0, W2, H2);
-      veil.addColorStop(0, "rgba(6,10,22,0.52)");
-      veil.addColorStop(1, "rgba(6,10,22,0.68)");
-      ctx.fillStyle = veil;
-      ctx.fillRect(0, 0, W2, H2);
-    } else gradient();
-  } else {
-    gradient();
-    const photo = st.imageUrl ? await c.loadImage(st.imageUrl).catch((e) => {
-      logger.warn({ err: e }, "quotes: foto gagal dimuat \u2014 pakai latar bawaan");
+  if (bgImg) {
+    const s = Math.max(W2 / bgImg.width, H2 / bgImg.height);
+    const dw = bgImg.width * s, dh = bgImg.height * s;
+    ctx.drawImage(bgImg, (W2 - dw) / 2, (H2 - dh) / 2, dw, dh);
+    const veil = ctx.createLinearGradient(0, 0, W2, H2);
+    veil.addColorStop(0, "rgba(6,10,22,0.55)");
+    veil.addColorStop(1, "rgba(6,10,22,0.72)");
+    ctx.fillStyle = veil;
+    ctx.fillRect(0, 0, W2, H2);
+  } else gradient();
+  if (st.imageUrl && st.pos !== "tengah") {
+    const photo = await c.loadImage(st.imageUrl).catch((e) => {
+      logger.warn({ err: e }, "quotes: foto gagal dimuat");
       return null;
-    }) ?? bgImg : bgImg;
+    });
     if (photo) {
       const scale = Math.max(z.w / photo.width, H2 / photo.height);
       const dw = photo.width * scale, dh = photo.height * scale;

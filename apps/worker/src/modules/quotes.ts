@@ -111,23 +111,21 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
     ctx.fillRect(0, 0, W, H);
   };
 
-  if (st.pos === 'tengah') {
-    // Latar penuh hanya untuk posisi tengah.
-    if (bgImg) {
-      const s = Math.max(W / bgImg.width, H / bgImg.height);
-      const dw = bgImg.width * s, dh = bgImg.height * s;
-      ctx.drawImage(bgImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
-      const veil = ctx.createLinearGradient(0, 0, W, H);
-      veil.addColorStop(0, 'rgba(6,10,22,0.52)');
-      veil.addColorStop(1, 'rgba(6,10,22,0.68)');
-      ctx.fillStyle = veil;
-      ctx.fillRect(0, 0, W, H);
-    } else gradient();
-  } else {
-    gradient();
-    const photo = st.imageUrl
-      ? await c.loadImage(st.imageUrl).catch((e) => { logger.warn({ err: e }, 'quotes: foto gagal dimuat — pakai latar bawaan'); return null; }) ?? bgImg
-      : bgImg;
+  // Latar kiriman dipakai sebagai dasar seluruh kartu — termasuk area teks di semua posisi.
+  if (bgImg) {
+    const s = Math.max(W / bgImg.width, H / bgImg.height);
+    const dw = bgImg.width * s, dh = bgImg.height * s;
+    ctx.drawImage(bgImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    const veil = ctx.createLinearGradient(0, 0, W, H);
+    veil.addColorStop(0, 'rgba(6,10,22,0.55)');
+    veil.addColorStop(1, 'rgba(6,10,22,0.72)');
+    ctx.fillStyle = veil;
+    ctx.fillRect(0, 0, W, H);
+  } else gradient();
+
+  //ponytail: zona sepertiga khusus foto per-quote (imageUrl). Kalau kosong, latar di atas yang tampil.
+  if (st.imageUrl && st.pos !== 'tengah') {
+    const photo = await c.loadImage(st.imageUrl).catch((e) => { logger.warn({ err: e }, 'quotes: foto gagal dimuat'); return null; });
     if (photo) {
       const scale = Math.max(z.w / photo.width, H / photo.height);
       const dw = photo.width * scale, dh = photo.height * scale;
@@ -142,7 +140,6 @@ async function renderCard(botName: string, cfg: QuotesCfg, st: CardState): Promi
       ctx.fillStyle = scrim;
       ctx.fillRect(z.x, 0, z.w, H);
 
-      // leburkan tepi foto ke latar supaya tidak terlihat "tempelan"
       const edge = st.pos === 'kiri' ? z.x + z.w : z.x;
       const dir = st.pos === 'kiri' ? 1 : -1;
       const fade = ctx.createLinearGradient(edge, 0, edge + dir * 220, 0);
