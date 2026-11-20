@@ -283,20 +283,20 @@ export class BotRunner {
     const cmd = mod?.commands.find((c) => c.name === name);
 
     if (!mod || !cmd) {
-      // Custom command (prefix-only): nama bawaan selalu menang.
-      const customMod = this.mods.find((m) => m.onPrefixCommand);
-      if (!customMod) return;
-      const config = await this.guildConfig(bot, customMod.name, message.guild.id);
-      if (config.enabled === false) return;
-      if (!(await this.notRateLimited(bot.id, message.guild.id, message.author.id, name))) {
-        return void message.reply({ content: '⏳ Terlalu cepat — coba lagi beberapa detik.', allowedMentions: { parse: [] } });
-      }
-      const ctx = this.prefixContext(bot, message, config);
-      const handled = await customMod.onPrefixCommand!(ctx, name, rest);
-      if (handled) {
+      // Prefix-only: coba tiap modul yang punya handler (custom command, alias Wizzy, ...).
+      for (const customMod of this.mods) {
+        if (!customMod.onPrefixCommand) continue;
+        const config = await this.guildConfig(bot, customMod.name, message.guild.id);
+        if (config.enabled === false) continue;
+        if (!(await this.notRateLimited(bot.id, message.guild.id, message.author.id, name))) {
+          return void message.reply({ content: '⏳ Terlalu cepat — coba lagi beberapa detik.', allowedMentions: { parse: [] } });
+        }
+        const ctx = this.prefixContext(bot, message, config);
+        if (!(await customMod.onPrefixCommand(ctx, name, rest))) continue;
         await db.insert(commandLogs).values({
           botId: bot.id, discordGuildId: message.guild.id, discordUserId: message.author.id, commandName: name,
         }).catch((e) => recordError(bot.id, e));
+        return;
       }
       return;
     }

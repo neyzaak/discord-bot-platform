@@ -9,10 +9,11 @@ import { quotesModule } from './quotes';
 import { ticketsModule } from './tickets';
 import { utilitiesModule } from './utilities';
 import { welcomeModule } from './welcome';
+import { wizzyModule } from './wizzy';
 import type { BotModule } from './types';
 
 export const MODULES: BotModule[] = [
   welcomeModule, moderationModule, ticketsModule, loggingModule,
-  utilitiesModule, customcmdModule, levelingModule, economyModule, quizModule, quotesModule, ktpModule,
+  utilitiesModule, customcmdModule, levelingModule, economyModule, quizModule, quotesModule, ktpModule, wizzyModule,
 ];
 export type { BotModule, CommandContext, ModuleCommand, ModuleCtx } from './types';
