@@ -1336,8 +1336,8 @@ var require_redaction = __commonJS({
         if (o[ns] === null) {
           return o;
         }
-        const { index } = next;
-        const nextPath = `${str.substr(index, str.length - 1)}`;
+        const { index: index2 } = next;
+        const nextPath = `${str.substr(index2, str.length - 1)}`;
         o[ns] = o[ns] || [];
         if (ns !== wildcardFirstSym && o[ns].length === 0) {
           o[ns].push(...o[wildcardFirstSym] || []);
@@ -1443,8 +1443,8 @@ var require_quick_format_unescaped = __commonJS({
         if (len === 1) return f;
         var objects = new Array(len);
         objects[0] = ss(f);
-        for (var index = 1; index < len; index++) {
-          objects[index] = ss(args[index]);
+        for (var index2 = 1; index2 < len; index2++) {
+          objects[index2] = ss(args[index2]);
         }
         return objects.join(" ");
       }
@@ -2215,8 +2215,8 @@ var require_on_exit_leak_free = __commonJS({
     }
     function clear2(ref) {
       for (const event of ["exit", "beforeExit"]) {
-        const index = refs[event].indexOf(ref);
-        refs[event].splice(index, index + 1);
+        const index2 = refs[event].indexOf(ref);
+        refs[event].splice(index2, index2 + 1);
         uninstall(event);
       }
     }
@@ -2326,9 +2326,9 @@ var require_wait = __commonJS({
   "node_modules/.pnpm/thread-stream@3.2.0/node_modules/thread-stream/lib/wait.js"(exports2, module2) {
     "use strict";
     var MAX_TIMEOUT = 1e3;
-    function wait(state, index, expected, timeout2, done) {
+    function wait(state, index2, expected, timeout2, done) {
       const max = Date.now() + timeout2;
-      let current = Atomics.load(state, index);
+      let current = Atomics.load(state, index2);
       if (current === expected) {
         done(null, "ok");
         return;
@@ -2340,7 +2340,7 @@ var require_wait = __commonJS({
         } else {
           setTimeout(() => {
             prior = current;
-            current = Atomics.load(state, index);
+            current = Atomics.load(state, index2);
             if (current === prior) {
               check(backoff >= MAX_TIMEOUT ? MAX_TIMEOUT : backoff * 2);
             } else {
@@ -2352,9 +2352,9 @@ var require_wait = __commonJS({
       };
       check(1);
     }
-    function waitDiff(state, index, expected, timeout2, done) {
+    function waitDiff(state, index2, expected, timeout2, done) {
       const max = Date.now() + timeout2;
-      let current = Atomics.load(state, index);
+      let current = Atomics.load(state, index2);
       if (current !== expected) {
         done(null, "ok");
         return;
@@ -2364,7 +2364,7 @@ var require_wait = __commonJS({
           done(null, "timed-out");
         } else {
           setTimeout(() => {
-            current = Atomics.load(state, index);
+            current = Atomics.load(state, index2);
             if (current !== expected) {
               done(null, "ok");
             } else {
@@ -4474,9 +4474,9 @@ var require_multistream = __commonJS({
       }
       function remove(id) {
         const { streams } = this;
-        const index = streams.findIndex((s) => s.id === id);
-        if (index >= 0) {
-          streams.splice(index, 1);
+        const index2 = streams.findIndex((s) => s.id === id);
+        if (index2 >= 0) {
+          streams.splice(index2, 1);
           streams.sort(compareByLevel);
           this.minLevel = streams.length > 0 ? streams[0].level : -1;
         }
@@ -8442,12 +8442,12 @@ var require_defaults = __commonJS({
           return IS_UNSIGNED_INTEGER.test(value);
       }
     }
-    function isIterateeCall(value, index, object) {
+    function isIterateeCall(value, index2, object) {
       if (!isObject(object)) {
         return false;
       }
-      if (typeof index === "number" && isArrayLike(object) && isIndex(index) && index < object.length || typeof index === "string" && index in object) {
-        return eq2(object[index], value);
+      if (typeof index2 === "number" && isArrayLike(object) && isIndex(index2) && index2 < object.length || typeof index2 === "string" && index2 in object) {
+        return eq2(object[index2], value);
       }
       return false;
     }
@@ -8685,18 +8685,18 @@ var require_common = __commonJS({
           if (typeof args[0] !== "string") {
             args.unshift("%O");
           }
-          let index = 0;
+          let index2 = 0;
           args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
             if (match === "%%") {
               return "%";
             }
-            index++;
+            index2++;
             const formatter = createDebug.formatters[format];
             if (typeof formatter === "function") {
-              const val = args[index];
+              const val = args[index2];
               match = formatter.call(self2, val);
-              args.splice(index, 1);
-              index--;
+              args.splice(index2, 1);
+              index2--;
             }
             return match;
           });
@@ -8931,15 +8931,15 @@ var require_browser = __commonJS({
       }
       const c = "color: " + this.color;
       args.splice(1, 0, c, "color: inherit");
-      let index = 0;
+      let index2 = 0;
       let lastC = 0;
       args[0].replace(/%[a-zA-Z%]/g, (match) => {
         if (match === "%%") {
           return;
         }
-        index++;
+        index2++;
         if (match === "%c") {
-          lastC = index;
+          lastC = index2;
         }
       });
       args.splice(lastC, 0, c);
@@ -9625,9 +9625,9 @@ var require_utils2 = __commonJS({
     function shuffle(array) {
       let counter = array.length;
       while (counter > 0) {
-        const index = Math.floor(Math.random() * counter);
+        const index2 = Math.floor(Math.random() * counter);
         counter--;
-        [array[counter], array[index]] = [array[index], array[counter]];
+        [array[counter], array[index2]] = [array[index2], array[counter]];
       }
       return array;
     }
@@ -9635,8 +9635,8 @@ var require_utils2 = __commonJS({
     exports2.CONNECTION_CLOSED_ERROR_MSG = "Connection is closed.";
     function zipMap(keys, values) {
       const map = /* @__PURE__ */ new Map();
-      keys.forEach((key2, index) => {
-        map.set(key2, values[index]);
+      keys.forEach((key2, index2) => {
+        map.set(key2, values[index2]);
       });
       return map;
     }
@@ -9981,9 +9981,9 @@ var require_Command = __commonJS({
             const keyIndexes = (0, commands_1.getKeyIndexes)(this.name, this.args, {
               nameCaseInsensitive: true
             });
-            for (const index of keyIndexes) {
-              this.args[index] = transform(this.args[index]);
-              this.keys.push(this.args[index]);
+            for (const index2 of keyIndexes) {
+              this.args[index2] = transform(this.args[index2]);
+              this.keys.push(this.args[index2]);
             }
           }
         }
@@ -10419,7 +10419,7 @@ var require_Commander = __commonJS({
        * Return supported builtin commands
        */
       getBuiltinCommands() {
-        return commands.slice(0);
+        return commands2.slice(0);
       }
       /**
        * Create a builtin command
@@ -10454,9 +10454,9 @@ var require_Commander = __commonJS({
         throw new Error('"sendCommand" is not implemented');
       }
     };
-    var commands = commands_1.list.filter((command) => command !== "monitor");
-    commands.push("sentinel");
-    commands.forEach(function(commandName) {
+    var commands2 = commands_1.list.filter((command) => command !== "monitor");
+    commands2.push("sentinel");
+    commands2.forEach(function(commandName) {
       Commander.prototype[commandName] = generateFunction(commandName, commandName, "utf8");
       Commander.prototype[commandName + "Buffer"] = generateFunction(commandName + "Buffer", commandName, null);
     });
@@ -10579,9 +10579,9 @@ var require_Pipeline = __commonJS({
             if (value[1][i] instanceof Error) {
               continue;
             }
-            const cmd = this._queue[position - (execLength - i)];
+            const cmd2 = this._queue[position - (execLength - i)];
             try {
-              value[1][i] = cmd.transformReply(value[1][i]);
+              value[1][i] = cmd2.transformReply(value[1][i]);
             } catch (err) {
               value[1][i] = err;
             }
@@ -10698,10 +10698,10 @@ var require_Pipeline = __commonJS({
         this._queue.push(command);
         return this;
       }
-      addBatch(commands) {
+      addBatch(commands2) {
         let command, commandName, args;
-        for (let i = 0; i < commands.length; ++i) {
-          command = commands[i];
+        for (let i = 0; i < commands2.length; ++i) {
+          command = commands2[i];
           commandName = command[0];
           args = command.slice(1);
           this[commandName].apply(this, args);
@@ -10928,26 +10928,26 @@ var require_transaction = __commonJS({
     var Pipeline_1 = require_Pipeline();
     var tracing_1 = require_tracing();
     function addTransactionSupport(redis2) {
-      redis2.pipeline = function(commands) {
+      redis2.pipeline = function(commands2) {
         const pipeline = new Pipeline_1.default(this);
-        if (Array.isArray(commands)) {
-          pipeline.addBatch(commands);
+        if (Array.isArray(commands2)) {
+          pipeline.addBatch(commands2);
         }
         return pipeline;
       };
       const { multi } = redis2;
-      redis2.multi = function(commands, options) {
-        if (typeof options === "undefined" && !Array.isArray(commands)) {
-          options = commands;
-          commands = null;
+      redis2.multi = function(commands2, options) {
+        if (typeof options === "undefined" && !Array.isArray(commands2)) {
+          options = commands2;
+          commands2 = null;
         }
         if (options && options.pipeline === false) {
           return multi.call(this);
         }
         const pipeline = new Pipeline_1.default(this);
         pipeline.multi();
-        if (Array.isArray(commands)) {
-          pipeline.addBatch(commands);
+        if (Array.isArray(commands2)) {
+          pipeline.addBatch(commands2);
         }
         const exec2 = pipeline.exec;
         pipeline.exec = function(callback) {
@@ -11514,8 +11514,8 @@ var require_denque = __commonJS({
         this._list = new Array(4);
       }
     }
-    Denque.prototype.peekAt = function peekAt(index) {
-      var i = index;
+    Denque.prototype.peekAt = function peekAt(index2) {
+      var i = index2;
       if (i !== (i | 0)) {
         return void 0;
       }
@@ -11591,8 +11591,8 @@ var require_denque = __commonJS({
       if (this._head < 2 && tail > 1e4 && tail <= len >>> 2) this._shrinkArray();
       return item;
     };
-    Denque.prototype.removeOne = function removeOne(index) {
-      var i = index;
+    Denque.prototype.removeOne = function removeOne(index2) {
+      var i = index2;
       if (i !== (i | 0)) {
         return void 0;
       }
@@ -11604,14 +11604,14 @@ var require_denque = __commonJS({
       i = this._head + i & this._capacityMask;
       var item = this._list[i];
       var k;
-      if (index < size / 2) {
-        for (k = index; k > 0; k--) {
+      if (index2 < size / 2) {
+        for (k = index2; k > 0; k--) {
           this._list[i] = this._list[i = i - 1 + len & this._capacityMask];
         }
         this._list[i] = void 0;
         this._head = this._head + 1 + len & this._capacityMask;
       } else {
-        for (k = size - 1 - index; k > 0; k--) {
+        for (k = size - 1 - index2; k > 0; k--) {
           this._list[i] = this._list[i = i + 1 + len & this._capacityMask];
         }
         this._list[i] = void 0;
@@ -11619,8 +11619,8 @@ var require_denque = __commonJS({
       }
       return item;
     };
-    Denque.prototype.remove = function remove(index, count) {
-      var i = index;
+    Denque.prototype.remove = function remove(index2, count) {
+      var i = index2;
       var removed;
       var del_count = count;
       if (i !== (i | 0)) {
@@ -11648,14 +11648,14 @@ var require_denque = __commonJS({
         removed[k] = this._list[this._head + i + k & this._capacityMask];
       }
       i = this._head + i & this._capacityMask;
-      if (index + count === size) {
+      if (index2 + count === size) {
         this._tail = this._tail - count + len & this._capacityMask;
         for (k = count; k > 0; k--) {
           this._list[i = i + 1 + len & this._capacityMask] = void 0;
         }
         return removed;
       }
-      if (index === 0) {
+      if (index2 === 0) {
         this._head = this._head + count + len & this._capacityMask;
         for (k = count - 1; k > 0; k--) {
           this._list[i = i + 1 + len & this._capacityMask] = void 0;
@@ -11663,8 +11663,8 @@ var require_denque = __commonJS({
         return removed;
       }
       if (i < size / 2) {
-        this._head = this._head + index + count + len & this._capacityMask;
-        for (k = index; k > 0; k--) {
+        this._head = this._head + index2 + count + len & this._capacityMask;
+        for (k = index2; k > 0; k--) {
           this.unshift(this._list[i = i - 1 + len & this._capacityMask]);
         }
         i = this._head - 1 + len & this._capacityMask;
@@ -11672,11 +11672,11 @@ var require_denque = __commonJS({
           this._list[i = i - 1 + len & this._capacityMask] = void 0;
           del_count--;
         }
-        if (index < 0) this._tail = i;
+        if (index2 < 0) this._tail = i;
       } else {
         this._tail = i;
         i = i + count + len & this._capacityMask;
-        for (k = size - (count + index); k > 0; k--) {
+        for (k = size - (count + index2); k > 0; k--) {
           this.push(this._list[i++]);
         }
         i = this._tail;
@@ -11688,8 +11688,8 @@ var require_denque = __commonJS({
       if (this._head < 2 && this._tail > 1e4 && this._tail <= len >>> 2) this._shrinkArray();
       return removed;
     };
-    Denque.prototype.splice = function splice(index, count) {
-      var i = index;
+    Denque.prototype.splice = function splice(index2, count) {
+      var i = index2;
       if (i !== (i | 0)) {
         return void 0;
       }
@@ -12624,12 +12624,12 @@ var require_cluster = __commonJS({
         };
         const nodes = (0, utils_1.shuffle)(this.connectionPool.getNodes());
         let lastNodeError = null;
-        function tryNode(index) {
-          if (index === nodes.length) {
+        function tryNode(index2) {
+          if (index2 === nodes.length) {
             const error = new ClusterAllFailedError_1.default(ClusterAllFailedError_1.default.defaultMessage, lastNodeError);
             return wrapper(error);
           }
-          const node = nodes[index];
+          const node = nodes[index2];
           const key2 = `${node.options.host}:${node.options.port}`;
           debug("getting slot cache from %s", key2);
           _this.getInfoFromNode(node, function(err) {
@@ -12643,7 +12643,7 @@ var require_cluster = __commonJS({
             if (err) {
               _this.emit("node error", err, key2);
               lastNodeError = err;
-              tryNode(index + 1);
+              tryNode(index2 + 1);
             } else {
               _this.emit("refresh");
               wrapper();
@@ -16659,46 +16659,46 @@ var require_cert_signatures = __commonJS({
     function x509Error(msg, cert) {
       return new Error("SASL channel binding: " + msg + " when parsing public certificate " + cert.toString("base64"));
     }
-    function readASN1Length(data, index) {
-      let length = data[index++];
-      if (length < 128) return { length, index };
+    function readASN1Length(data, index2) {
+      let length = data[index2++];
+      if (length < 128) return { length, index: index2 };
       const lengthBytes = length & 127;
       if (lengthBytes > 4) throw x509Error("bad length", data);
       length = 0;
       for (let i = 0; i < lengthBytes; i++) {
-        length = length << 8 | data[index++];
+        length = length << 8 | data[index2++];
       }
-      return { length, index };
+      return { length, index: index2 };
     }
-    function readASN1OID(data, index) {
-      if (data[index++] !== 6) throw x509Error("non-OID data", data);
-      const { length: OIDLength, index: indexAfterOIDLength } = readASN1Length(data, index);
-      index = indexAfterOIDLength;
-      const lastIndex = index + OIDLength;
-      const byte1 = data[index++];
+    function readASN1OID(data, index2) {
+      if (data[index2++] !== 6) throw x509Error("non-OID data", data);
+      const { length: OIDLength, index: indexAfterOIDLength } = readASN1Length(data, index2);
+      index2 = indexAfterOIDLength;
+      const lastIndex = index2 + OIDLength;
+      const byte1 = data[index2++];
       let oid = (byte1 / 40 >> 0) + "." + byte1 % 40;
-      while (index < lastIndex) {
+      while (index2 < lastIndex) {
         let value = 0;
-        while (index < lastIndex) {
-          const nextByte = data[index++];
+        while (index2 < lastIndex) {
+          const nextByte = data[index2++];
           value = value << 7 | nextByte & 127;
           if (nextByte < 128) break;
         }
         oid += "." + value;
       }
-      return { oid, index };
+      return { oid, index: index2 };
     }
-    function expectASN1Seq(data, index) {
-      if (data[index++] !== 48) throw x509Error("non-sequence data", data);
-      return readASN1Length(data, index);
+    function expectASN1Seq(data, index2) {
+      if (data[index2++] !== 48) throw x509Error("non-sequence data", data);
+      return readASN1Length(data, index2);
     }
-    function signatureAlgorithmHashFromCertificate(data, index) {
-      if (index === void 0) index = 0;
-      index = expectASN1Seq(data, index).index;
-      const { length: certInfoLength, index: indexAfterCertInfoLength } = expectASN1Seq(data, index);
-      index = indexAfterCertInfoLength + certInfoLength;
-      index = expectASN1Seq(data, index).index;
-      const { oid, index: indexAfterOID } = readASN1OID(data, index);
+    function signatureAlgorithmHashFromCertificate(data, index2) {
+      if (index2 === void 0) index2 = 0;
+      index2 = expectASN1Seq(data, index2).index;
+      const { length: certInfoLength, index: indexAfterCertInfoLength } = expectASN1Seq(data, index2);
+      index2 = indexAfterCertInfoLength + certInfoLength;
+      index2 = expectASN1Seq(data, index2).index;
+      const { oid, index: indexAfterOID } = readASN1OID(data, index2);
       switch (oid) {
         // RSA
         case "1.2.840.113549.1.1.4":
@@ -16730,12 +16730,12 @@ var require_cert_signatures = __commonJS({
           return "SHA-512";
         // RSASSA-PSS: hash is indicated separately
         case "1.2.840.113549.1.1.10": {
-          index = indexAfterOID;
-          index = expectASN1Seq(data, index).index;
-          if (data[index++] !== 160) throw x509Error("non-tag data", data);
-          index = readASN1Length(data, index).index;
-          index = expectASN1Seq(data, index).index;
-          const { oid: hashOID } = readASN1OID(data, index);
+          index2 = indexAfterOID;
+          index2 = expectASN1Seq(data, index2).index;
+          if (data[index2++] !== 160) throw x509Error("non-tag data", data);
+          index2 = readASN1Length(data, index2).index;
+          index2 = expectASN1Seq(data, index2).index;
+          const { oid: hashOID } = readASN1OID(data, index2);
           switch (hashOID) {
             // standalone hash OIDs
             case "1.2.840.113549.2.5":
@@ -19673,9 +19673,9 @@ var require_client = __commonJS({
             queryCallback(error);
             query.callback = () => {
             };
-            const index = this._queryQueue.indexOf(query);
-            if (index > -1) {
-              this._queryQueue.splice(index, 1);
+            const index2 = this._queryQueue.indexOf(query);
+            if (index2 > -1) {
+              this._queryQueue.splice(index2, 1);
             } else if (this.pipeline) {
               this.connection.stream.destroy();
               return;
@@ -20489,9 +20489,9 @@ var require_client2 = __commonJS({
           queryCallback(error);
           query.callback = () => {
           };
-          const index = this._queryQueue.indexOf(query);
-          if (index > -1) {
-            this._queryQueue.splice(index, 1);
+          const index2 = this._queryQueue.indexOf(query);
+          if (index2 > -1) {
+            this._queryQueue.splice(index2, 1);
           }
           this._pulseQueryQueue();
         }, readTimeout);
@@ -20800,8 +20800,8 @@ var require_dist2 = __commonJS({
         rangeEnd = range2.end;
         step = range2.step ?? 1;
       }
-      for (let index = start; index < rangeEnd; index += step) {
-        yield index;
+      for (let index2 = start; index2 < rangeEnd; index2 += step) {
+        yield index2;
       }
     }
     __name(range, "range");
@@ -21981,16 +21981,16 @@ var require_tree = __commonJS({
        * @param {any} value
        * @param {number} index
        */
-      constructor(key2, value, index) {
-        if (index === void 0 || index >= key2.length) {
+      constructor(key2, value, index2) {
+        if (index2 === void 0 || index2 >= key2.length) {
           throw new TypeError("Unreachable");
         }
-        const code = this.code = key2.charCodeAt(index);
+        const code = this.code = key2.charCodeAt(index2);
         if (code > 127) {
           throw new TypeError("key must be ascii string");
         }
-        if (key2.length !== ++index) {
-          this.middle = new _TstNode(key2, value, index);
+        if (key2.length !== ++index2) {
+          this.middle = new _TstNode(key2, value, index2);
         } else {
           this.value = value;
         }
@@ -22004,34 +22004,34 @@ var require_tree = __commonJS({
         if (length === 0) {
           throw new TypeError("Unreachable");
         }
-        let index = 0;
+        let index2 = 0;
         let node = this;
         while (true) {
-          const code = key2.charCodeAt(index);
+          const code = key2.charCodeAt(index2);
           if (code > 127) {
             throw new TypeError("key must be ascii string");
           }
           if (node.code === code) {
-            if (length === ++index) {
+            if (length === ++index2) {
               node.value = value;
               break;
             } else if (node.middle !== null) {
               node = node.middle;
             } else {
-              node.middle = new _TstNode(key2, value, index);
+              node.middle = new _TstNode(key2, value, index2);
               break;
             }
           } else if (node.code < code) {
             if (node.left !== null) {
               node = node.left;
             } else {
-              node.left = new _TstNode(key2, value, index);
+              node.left = new _TstNode(key2, value, index2);
               break;
             }
           } else if (node.right !== null) {
             node = node.right;
           } else {
-            node.right = new _TstNode(key2, value, index);
+            node.right = new _TstNode(key2, value, index2);
             break;
           }
         }
@@ -22042,16 +22042,16 @@ var require_tree = __commonJS({
        */
       search(key2) {
         const keylength = key2.length;
-        let index = 0;
+        let index2 = 0;
         let node = this;
-        while (node !== null && index < keylength) {
-          let code = key2[index];
+        while (node !== null && index2 < keylength) {
+          let code = key2[index2];
           if (code <= 90 && code >= 65) {
             code |= 32;
           }
           while (node !== null) {
             if (code === node.code) {
-              if (keylength === ++index) {
+              if (keylength === ++index2) {
                 return node;
               }
               node = node.middle;
@@ -24960,7 +24960,7 @@ var require_webidl = __commonJS({
         }
         const method = typeof Iterable === "function" ? Iterable() : V?.[Symbol.iterator]?.();
         const seq = [];
-        let index = 0;
+        let index2 = 0;
         if (method === void 0 || typeof method.next !== "function") {
           throw webidl.errors.exception({
             header: prefix,
@@ -24972,7 +24972,7 @@ var require_webidl = __commonJS({
           if (done) {
             break;
           }
-          seq.push(converter(value, prefix, `${argument}[${index++}]`));
+          seq.push(converter(value, prefix, `${argument}[${index2++}]`));
         }
         return seq;
       };
@@ -25081,10 +25081,10 @@ var require_webidl = __commonJS({
     };
     webidl.converters.ByteString = function(V, prefix, argument) {
       const x = webidl.converters.DOMString(V, prefix, argument);
-      for (let index = 0; index < x.length; index++) {
-        if (x.charCodeAt(index) > 255) {
+      for (let index2 = 0; index2 < x.length; index2++) {
+        if (x.charCodeAt(index2) > 255) {
           throw new TypeError(
-            `Cannot convert argument to a ByteString because the character at index ${index} has a value of ${x.charCodeAt(index)} which is greater than 255.`
+            `Cannot convert argument to a ByteString because the character at index ${index2} has a value of ${x.charCodeAt(index2)} which is greater than 255.`
           );
         }
       }
@@ -25659,17 +25659,17 @@ var require_util3 = __commonJS({
               `'next' called on an object that does not implement interface ${name} Iterator.`
             );
           }
-          const index = this.#index;
+          const index2 = this.#index;
           const values = this.#target[kInternalIterator];
           const len = values.length;
-          if (index >= len) {
+          if (index2 >= len) {
             return {
               value: void 0,
               done: true
             };
           }
-          const { [keyIndex]: key2, [valueIndex]: value } = values[index];
-          this.#index = index + 1;
+          const { [keyIndex]: key2, [valueIndex]: value } = values[index2];
+          this.#index = index2 + 1;
           let result;
           switch (this.#kind) {
             case "key":
@@ -31845,8 +31845,8 @@ var require_mock_utils = __commonJS({
     function buildHeadersFromArray(headers) {
       const clone = headers.slice();
       const entries = [];
-      for (let index = 0; index < clone.length; index += 2) {
-        entries.push([clone[index], clone[index + 1]]);
+      for (let index2 = 0; index2 < clone.length; index2 += 2) {
+        entries.push([clone[index2], clone[index2 + 1]]);
       }
       return Object.fromEntries(entries);
     }
@@ -31933,14 +31933,14 @@ var require_mock_utils = __commonJS({
       return newMockDispatch;
     }
     function deleteMockDispatch(mockDispatches, key2) {
-      const index = mockDispatches.findIndex((dispatch) => {
+      const index2 = mockDispatches.findIndex((dispatch) => {
         if (!dispatch.consumed) {
           return false;
         }
         return matchKey(dispatch, key2);
       });
-      if (index !== -1) {
-        mockDispatches.splice(index, 1);
+      if (index2 !== -1) {
+        mockDispatches.splice(index2, 1);
       }
     }
     function buildKey(opts) {
@@ -36693,18 +36693,18 @@ var require_cache = __commonJS({
         const p = Promise.all(responsePromises);
         const responses = await p;
         const operations = [];
-        let index = 0;
+        let index2 = 0;
         for (const response of responses) {
           const operation = {
             type: "put",
             // 7.3.2
-            request: requestList[index],
+            request: requestList[index2],
             // 7.3.3
             response
             // 7.3.4
           };
           operations.push(operation);
-          index++;
+          index2++;
         }
         const cacheJobPromise = createDeferredPromise();
         let errorData = null;
@@ -40328,32 +40328,32 @@ var require_v10 = __commonJS({
       GatewayCloseCodes2[GatewayCloseCodes2["InvalidIntents"] = 4013] = "InvalidIntents";
       GatewayCloseCodes2[GatewayCloseCodes2["DisallowedIntents"] = 4014] = "DisallowedIntents";
     })(GatewayCloseCodes || (exports2.GatewayCloseCodes = GatewayCloseCodes = {}));
-    var GatewayIntentBits13;
-    (function(GatewayIntentBits14) {
-      GatewayIntentBits14[GatewayIntentBits14["Guilds"] = 1] = "Guilds";
-      GatewayIntentBits14[GatewayIntentBits14["GuildMembers"] = 2] = "GuildMembers";
-      GatewayIntentBits14[GatewayIntentBits14["GuildModeration"] = 4] = "GuildModeration";
-      GatewayIntentBits14[GatewayIntentBits14["GuildBans"] = 4] = "GuildBans";
-      GatewayIntentBits14[GatewayIntentBits14["GuildExpressions"] = 8] = "GuildExpressions";
-      GatewayIntentBits14[GatewayIntentBits14["GuildEmojisAndStickers"] = 8] = "GuildEmojisAndStickers";
-      GatewayIntentBits14[GatewayIntentBits14["GuildIntegrations"] = 16] = "GuildIntegrations";
-      GatewayIntentBits14[GatewayIntentBits14["GuildWebhooks"] = 32] = "GuildWebhooks";
-      GatewayIntentBits14[GatewayIntentBits14["GuildInvites"] = 64] = "GuildInvites";
-      GatewayIntentBits14[GatewayIntentBits14["GuildVoiceStates"] = 128] = "GuildVoiceStates";
-      GatewayIntentBits14[GatewayIntentBits14["GuildPresences"] = 256] = "GuildPresences";
-      GatewayIntentBits14[GatewayIntentBits14["GuildMessages"] = 512] = "GuildMessages";
-      GatewayIntentBits14[GatewayIntentBits14["GuildMessageReactions"] = 1024] = "GuildMessageReactions";
-      GatewayIntentBits14[GatewayIntentBits14["GuildMessageTyping"] = 2048] = "GuildMessageTyping";
-      GatewayIntentBits14[GatewayIntentBits14["DirectMessages"] = 4096] = "DirectMessages";
-      GatewayIntentBits14[GatewayIntentBits14["DirectMessageReactions"] = 8192] = "DirectMessageReactions";
-      GatewayIntentBits14[GatewayIntentBits14["DirectMessageTyping"] = 16384] = "DirectMessageTyping";
-      GatewayIntentBits14[GatewayIntentBits14["MessageContent"] = 32768] = "MessageContent";
-      GatewayIntentBits14[GatewayIntentBits14["GuildScheduledEvents"] = 65536] = "GuildScheduledEvents";
-      GatewayIntentBits14[GatewayIntentBits14["AutoModerationConfiguration"] = 1048576] = "AutoModerationConfiguration";
-      GatewayIntentBits14[GatewayIntentBits14["AutoModerationExecution"] = 2097152] = "AutoModerationExecution";
-      GatewayIntentBits14[GatewayIntentBits14["GuildMessagePolls"] = 16777216] = "GuildMessagePolls";
-      GatewayIntentBits14[GatewayIntentBits14["DirectMessagePolls"] = 33554432] = "DirectMessagePolls";
-    })(GatewayIntentBits13 || (exports2.GatewayIntentBits = GatewayIntentBits13 = {}));
+    var GatewayIntentBits14;
+    (function(GatewayIntentBits15) {
+      GatewayIntentBits15[GatewayIntentBits15["Guilds"] = 1] = "Guilds";
+      GatewayIntentBits15[GatewayIntentBits15["GuildMembers"] = 2] = "GuildMembers";
+      GatewayIntentBits15[GatewayIntentBits15["GuildModeration"] = 4] = "GuildModeration";
+      GatewayIntentBits15[GatewayIntentBits15["GuildBans"] = 4] = "GuildBans";
+      GatewayIntentBits15[GatewayIntentBits15["GuildExpressions"] = 8] = "GuildExpressions";
+      GatewayIntentBits15[GatewayIntentBits15["GuildEmojisAndStickers"] = 8] = "GuildEmojisAndStickers";
+      GatewayIntentBits15[GatewayIntentBits15["GuildIntegrations"] = 16] = "GuildIntegrations";
+      GatewayIntentBits15[GatewayIntentBits15["GuildWebhooks"] = 32] = "GuildWebhooks";
+      GatewayIntentBits15[GatewayIntentBits15["GuildInvites"] = 64] = "GuildInvites";
+      GatewayIntentBits15[GatewayIntentBits15["GuildVoiceStates"] = 128] = "GuildVoiceStates";
+      GatewayIntentBits15[GatewayIntentBits15["GuildPresences"] = 256] = "GuildPresences";
+      GatewayIntentBits15[GatewayIntentBits15["GuildMessages"] = 512] = "GuildMessages";
+      GatewayIntentBits15[GatewayIntentBits15["GuildMessageReactions"] = 1024] = "GuildMessageReactions";
+      GatewayIntentBits15[GatewayIntentBits15["GuildMessageTyping"] = 2048] = "GuildMessageTyping";
+      GatewayIntentBits15[GatewayIntentBits15["DirectMessages"] = 4096] = "DirectMessages";
+      GatewayIntentBits15[GatewayIntentBits15["DirectMessageReactions"] = 8192] = "DirectMessageReactions";
+      GatewayIntentBits15[GatewayIntentBits15["DirectMessageTyping"] = 16384] = "DirectMessageTyping";
+      GatewayIntentBits15[GatewayIntentBits15["MessageContent"] = 32768] = "MessageContent";
+      GatewayIntentBits15[GatewayIntentBits15["GuildScheduledEvents"] = 65536] = "GuildScheduledEvents";
+      GatewayIntentBits15[GatewayIntentBits15["AutoModerationConfiguration"] = 1048576] = "AutoModerationConfiguration";
+      GatewayIntentBits15[GatewayIntentBits15["AutoModerationExecution"] = 2097152] = "AutoModerationExecution";
+      GatewayIntentBits15[GatewayIntentBits15["GuildMessagePolls"] = 16777216] = "GuildMessagePolls";
+      GatewayIntentBits15[GatewayIntentBits15["DirectMessagePolls"] = 33554432] = "DirectMessagePolls";
+    })(GatewayIntentBits14 || (exports2.GatewayIntentBits = GatewayIntentBits14 = {}));
     var GatewayCapabilityBits;
     (function(GatewayCapabilityBits2) {
       GatewayCapabilityBits2[GatewayCapabilityBits2["ChannelObfuscation"] = 32768] = "ChannelObfuscation";
@@ -43640,8 +43640,8 @@ var require_v103 = __commonJS({
        *
        * This route supports the extension: PNG
        */
-      defaultUserAvatar(index) {
-        return `/embed/avatars/${index}.png`;
+      defaultUserAvatar(index2) {
+        return `/embed/avatars/${index2}.png`;
       },
       /**
        * Route for:
@@ -44279,10 +44279,10 @@ var require_dist3 = __commonJS({
        *
        * @param index - The index of the element to obtain
        */
-      at(index) {
-        index = Math.floor(index);
+      at(index2) {
+        index2 = Math.floor(index2);
         const arr = [...this.values()];
-        return arr.at(index);
+        return arr.at(index2);
       }
       /**
        * Identical to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at | Array.at()}.
@@ -44291,10 +44291,10 @@ var require_dist3 = __commonJS({
        *
        * @param index - The index of the key to obtain
        */
-      keyAt(index) {
-        index = Math.floor(index);
+      keyAt(index2) {
+        index2 = Math.floor(index2);
         const arr = [...this.keys()];
-        return arr.at(index);
+        return arr.at(index2);
       }
       random(amount) {
         const arr = [...this.values()];
@@ -44344,9 +44344,9 @@ var require_dist3 = __commonJS({
         if (typeof fn !== "function") throw new TypeError(`${fn} is not a function`);
         if (thisArg !== void 0) fn = fn.bind(thisArg);
         const entries = [...this.entries()];
-        for (let index = entries.length - 1; index >= 0; index--) {
-          const val = entries[index][1];
-          const key2 = entries[index][0];
+        for (let index2 = entries.length - 1; index2 >= 0; index2--) {
+          const val = entries[index2][1];
+          const key2 = entries[index2][0];
           if (fn(val, key2, this)) return val;
         }
         return void 0;
@@ -44355,9 +44355,9 @@ var require_dist3 = __commonJS({
         if (typeof fn !== "function") throw new TypeError(`${fn} is not a function`);
         if (thisArg !== void 0) fn = fn.bind(thisArg);
         const entries = [...this.entries()];
-        for (let index = entries.length - 1; index >= 0; index--) {
-          const key2 = entries[index][0];
-          const val = entries[index][1];
+        for (let index2 = entries.length - 1; index2 >= 0; index2--) {
+          const key2 = entries[index2][0];
+          const val = entries[index2][1];
           if (fn(val, key2, this)) return key2;
         }
         return void 0;
@@ -44451,18 +44451,18 @@ var require_dist3 = __commonJS({
         if (typeof fn !== "function") throw new TypeError(`${fn} is not a function`);
         const entries = [...this.entries()];
         let accumulator;
-        let index;
+        let index2;
         if (initialValue === void 0) {
           if (entries.length === 0) throw new TypeError("Reduce of empty collection with no initial value");
           accumulator = entries[entries.length - 1][1];
-          index = entries.length - 1;
+          index2 = entries.length - 1;
         } else {
           accumulator = initialValue;
-          index = entries.length;
+          index2 = entries.length;
         }
-        while (--index >= 0) {
-          const key2 = entries[index][0];
-          const val = entries[index][1];
+        while (--index2 >= 0) {
+          const key2 = entries[index2][0];
+          const val = entries[index2][1];
           accumulator = fn(accumulator, val, key2, this);
         }
         return accumulator;
@@ -47158,9 +47158,9 @@ var require_dist4 = __commonJS({
       }
     }
     __name(validateAbortSignal, "validateAbortSignal");
-    function spliceOne(list, index) {
-      for (; index + 1 < list.length; index++) {
-        list[index] = list[index + 1];
+    function spliceOne(list, index2) {
+      for (; index2 + 1 < list.length; index2++) {
+        list[index2] = list[index2 + 1];
       }
       list.pop();
     }
@@ -49015,14 +49015,14 @@ var require_dist5 = __commonJS({
       }
       return result;
     };
-    var walkTree = (index, bytes, node) => {
+    var walkTree = (index2, bytes, node) => {
       let step = node;
       let guessFile = [];
       while (true) {
-        if (index >= bytes.length) {
+        if (index2 >= bytes.length) {
           return guessFile;
         }
-        const currentByte = toHex_1.toHex(bytes[index]);
+        const currentByte = toHex_1.toHex(bytes[index2]);
         if (step.bytes["?"] && !step.bytes[currentByte]) {
           step = step.bytes["?"];
         } else {
@@ -49034,7 +49034,7 @@ var require_dist5 = __commonJS({
         if (step && step.matches) {
           guessFile = step.matches.slice(0);
         }
-        index += 1;
+        index2 += 1;
       }
     };
     exports2.default = exports2.filetypeinfo;
@@ -49077,8 +49077,8 @@ var require_cjs2 = __commonJS({
         if (signal.aborted) return this;
         this.signal = signal;
         this.signalListener = () => {
-          const index = this.queue["promises"].indexOf(this);
-          if (index !== -1) this.queue["promises"].splice(index, 1);
+          const index2 = this.queue["promises"].indexOf(this);
+          if (index2 !== -1) this.queue["promises"].splice(index2, 1);
           this.reject(new Error("Request aborted manually"));
         };
         this.signal.addEventListener("abort", this.signalListener);
@@ -49601,8 +49601,8 @@ var require_dist6 = __commonJS({
        * To calculate the index for a user do `(userId >> 22) % 6`,
        * or `discriminator % 5` if they're using the legacy username system.
        */
-      defaultAvatar(index) {
-        return this.makeURL(`/embed/avatars/${index}`, { extension: "png" });
+      defaultAvatar(index2) {
+        return this.makeURL(`/embed/avatars/${index2}`, { extension: "png" });
       }
       /**
        * Generates a discovery splash URL for a guild's discovery splash.
@@ -50609,8 +50609,8 @@ ${flattened}` : error.message || flattened || "Unknown Error";
         let additionalHeaders = {};
         if (request2.files?.length) {
           const formData = new FormData();
-          for (const [index, file] of request2.files.entries()) {
-            const fileKey = file.key ?? `files[${index}]`;
+          for (const [index2, file] of request2.files.entries()) {
+            const fileKey = file.key ?? `files[${index2}]`;
             if (isBufferLike(file.data)) {
               let contentType = file.contentType;
               if (!contentType) {
@@ -51262,12 +51262,12 @@ var require_lodash2 = __commonJS({
     var freeSelf = typeof self == "object" && self && self.Object === Object && self;
     var root = freeGlobal || freeSelf || Function("return this")();
     function arrayReduce(array, iteratee, accumulator, initAccum) {
-      var index = -1, length = array ? array.length : 0;
+      var index2 = -1, length = array ? array.length : 0;
       if (initAccum && length) {
-        accumulator = array[++index];
+        accumulator = array[++index2];
       }
-      while (++index < length) {
-        accumulator = iteratee(accumulator, array[index], index, array);
+      while (++index2 < length) {
+        accumulator = iteratee(accumulator, array[index2], index2, array);
       }
       return accumulator;
     }
@@ -51319,8 +51319,8 @@ var require_lodash2 = __commonJS({
       string = toString(string);
       return string && string.replace(reLatin, deburrLetter).replace(reComboMark, "");
     }
-    var snakeCase = createCompounder(function(result, word, index) {
-      return result + (index ? "_" : "") + word.toLowerCase();
+    var snakeCase = createCompounder(function(result, word, index2) {
+      return result + (index2 ? "_" : "") + word.toLowerCase();
     });
     function words(string, pattern, guard2) {
       string = toString(string);
@@ -51448,10 +51448,10 @@ var require_dist7 = __commonJS({
        *
        * @param index - The index of the element to obtain
        */
-      at(index) {
-        index = Math.floor(index);
+      at(index2) {
+        index2 = Math.floor(index2);
         const arr = [...this.values()];
-        return arr.at(index);
+        return arr.at(index2);
       }
       /**
        * Identical to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at | Array.at()}.
@@ -51460,10 +51460,10 @@ var require_dist7 = __commonJS({
        *
        * @param index - The index of the key to obtain
        */
-      keyAt(index) {
-        index = Math.floor(index);
+      keyAt(index2) {
+        index2 = Math.floor(index2);
         const arr = [...this.keys()];
-        return arr.at(index);
+        return arr.at(index2);
       }
       random(amount) {
         const arr = [...this.values()];
@@ -52348,8 +52348,8 @@ var require_dist8 = __commonJS({
         maskedLink = false
       } = options;
       if (!codeBlockContent) {
-        return text2.split("```").map((subString, index, array) => {
-          if (index % 2 && index !== array.length - 1) return subString;
+        return text2.split("```").map((subString, index2, array) => {
+          if (index2 % 2 && index2 !== array.length - 1) return subString;
           return escapeMarkdown(subString, {
             inlineCode: inlineCode2,
             bold: bold2,
@@ -52367,8 +52367,8 @@ var require_dist8 = __commonJS({
         }).join(codeBlock2 ? "\\`\\`\\`" : "```");
       }
       if (!inlineCodeContent) {
-        return text2.split(/(?<=^|[^`])`(?=[^`]|$)/g).map((subString, index, array) => {
-          if (index % 2 && index !== array.length - 1) return subString;
+        return text2.split(/(?<=^|[^`])`(?=[^`]|$)/g).map((subString, index2, array) => {
+          if (index2 % 2 && index2 !== array.length - 1) return subString;
           return escapeMarkdown(subString, {
             codeBlock: codeBlock2,
             bold: bold2,
@@ -54360,10 +54360,10 @@ var require_Util = __commonJS({
       }
     }
     function moveElementInArray(array, element, newIndex, offset = false) {
-      const index = array.indexOf(element);
-      newIndex = (offset ? index : 0) + newIndex;
+      const index2 = array.indexOf(element);
+      newIndex = (offset ? index2 : 0) + newIndex;
       if (newIndex > -1 && newIndex < array.length) {
-        const removedElement = array.splice(index, 1)[0];
+        const removedElement = array.splice(index2, 1)[0];
         array.splice(newIndex, 0, removedElement);
       }
       return array.indexOf(element);
@@ -58260,7 +58260,7 @@ var require_ApplicationCommand = __commonJS({
       static optionsEqual(existing, options, enforceOptionOrder = false) {
         if (existing.length !== options.length) return false;
         if (enforceOptionOrder) {
-          return existing.every((option, index) => this._optionEquals(option, options[index], enforceOptionOrder));
+          return existing.every((option, index2) => this._optionEquals(option, options[index2], enforceOptionOrder));
         }
         const newOptions = new Map(options.map((option) => [option.name, option]));
         for (const option of existing) {
@@ -58289,9 +58289,9 @@ var require_ApplicationCommand = __commonJS({
         }
         if (existing.choices) {
           if (enforceOptionOrder && !existing.choices.every(
-            (choice, index) => choice.name === option.choices[index].name && choice.value === option.choices[index].value && isEqual(
+            (choice, index2) => choice.name === option.choices[index2].name && choice.value === option.choices[index2].value && isEqual(
               choice.nameLocalizations ?? {},
-              option.choices[index].nameLocalizations ?? option.choices[index].name_localizations ?? {}
+              option.choices[index2].nameLocalizations ?? option.choices[index2].name_localizations ?? {}
             )
           )) {
             return false;
@@ -58554,9 +58554,9 @@ var require_ApplicationCommandManager = __commonJS({
        *   .then(console.log)
        *   .catch(console.error);
        */
-      async set(commands, guildId) {
+      async set(commands2, guildId) {
         const data = await this.client.rest.put(this.commandPath({ guildId }), {
-          body: commands.map((command) => this.constructor.transformCommand(command))
+          body: commands2.map((command) => this.constructor.transformCommand(command))
         });
         return data.reduce(
           (collection, command) => collection.set(command.id, this._add(command, true, guildId)),
@@ -59885,10 +59885,10 @@ var require_Hash = __commonJS({
     var hashHas = require_hashHas();
     var hashSet = require_hashSet();
     function Hash(entries) {
-      var index = -1, length = entries == null ? 0 : entries.length;
+      var index2 = -1, length = entries == null ? 0 : entries.length;
       this.clear();
-      while (++index < length) {
-        var entry = entries[index];
+      while (++index2 < length) {
+        var entry = entries[index2];
         this.set(entry[0], entry[1]);
       }
     }
@@ -59946,15 +59946,15 @@ var require_listCacheDelete = __commonJS({
     var arrayProto = Array.prototype;
     var splice = arrayProto.splice;
     function listCacheDelete(key2) {
-      var data = this.__data__, index = assocIndexOf(data, key2);
-      if (index < 0) {
+      var data = this.__data__, index2 = assocIndexOf(data, key2);
+      if (index2 < 0) {
         return false;
       }
       var lastIndex = data.length - 1;
-      if (index == lastIndex) {
+      if (index2 == lastIndex) {
         data.pop();
       } else {
-        splice.call(data, index, 1);
+        splice.call(data, index2, 1);
       }
       --this.size;
       return true;
@@ -59968,8 +59968,8 @@ var require_listCacheGet = __commonJS({
   "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_listCacheGet.js"(exports2, module2) {
     var assocIndexOf = require_assocIndexOf();
     function listCacheGet(key2) {
-      var data = this.__data__, index = assocIndexOf(data, key2);
-      return index < 0 ? void 0 : data[index][1];
+      var data = this.__data__, index2 = assocIndexOf(data, key2);
+      return index2 < 0 ? void 0 : data[index2][1];
     }
     module2.exports = listCacheGet;
   }
@@ -59991,12 +59991,12 @@ var require_listCacheSet = __commonJS({
   "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_listCacheSet.js"(exports2, module2) {
     var assocIndexOf = require_assocIndexOf();
     function listCacheSet(key2, value) {
-      var data = this.__data__, index = assocIndexOf(data, key2);
-      if (index < 0) {
+      var data = this.__data__, index2 = assocIndexOf(data, key2);
+      if (index2 < 0) {
         ++this.size;
         data.push([key2, value]);
       } else {
-        data[index][1] = value;
+        data[index2][1] = value;
       }
       return this;
     }
@@ -60013,10 +60013,10 @@ var require_ListCache = __commonJS({
     var listCacheHas = require_listCacheHas();
     var listCacheSet = require_listCacheSet();
     function ListCache(entries) {
-      var index = -1, length = entries == null ? 0 : entries.length;
+      var index2 = -1, length = entries == null ? 0 : entries.length;
       this.clear();
-      while (++index < length) {
-        var entry = entries[index];
+      while (++index2 < length) {
+        var entry = entries[index2];
         this.set(entry[0], entry[1]);
       }
     }
@@ -60138,10 +60138,10 @@ var require_MapCache = __commonJS({
     var mapCacheHas = require_mapCacheHas();
     var mapCacheSet = require_mapCacheSet();
     function MapCache(entries) {
-      var index = -1, length = entries == null ? 0 : entries.length;
+      var index2 = -1, length = entries == null ? 0 : entries.length;
       this.clear();
-      while (++index < length) {
-        var entry = entries[index];
+      while (++index2 < length) {
+        var entry = entries[index2];
         this.set(entry[0], entry[1]);
       }
     }
@@ -60223,9 +60223,9 @@ var require_stringToPath = __commonJS({
 var require_arrayMap = __commonJS({
   "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_arrayMap.js"(exports2, module2) {
     function arrayMap(array, iteratee) {
-      var index = -1, length = array == null ? 0 : array.length, result = Array(length);
-      while (++index < length) {
-        result[index] = iteratee(array[index], index, array);
+      var index2 = -1, length = array == null ? 0 : array.length, result = Array(length);
+      while (++index2 < length) {
+        result[index2] = iteratee(array[index2], index2, array);
       }
       return result;
     }
@@ -60311,11 +60311,11 @@ var require_baseGet = __commonJS({
     var toKey = require_toKey();
     function baseGet(object, path2) {
       path2 = castPath(path2, object);
-      var index = 0, length = path2.length;
-      while (object != null && index < length) {
-        object = object[toKey(path2[index++])];
+      var index2 = 0, length = path2.length;
+      while (object != null && index2 < length) {
+        object = object[toKey(path2[index2++])];
       }
-      return index && index == length ? object : void 0;
+      return index2 && index2 == length ? object : void 0;
     }
     module2.exports = baseGet;
   }
@@ -60418,10 +60418,10 @@ var require_SetCache = __commonJS({
     var setCacheAdd = require_setCacheAdd();
     var setCacheHas = require_setCacheHas();
     function SetCache(values) {
-      var index = -1, length = values == null ? 0 : values.length;
+      var index2 = -1, length = values == null ? 0 : values.length;
       this.__data__ = new MapCache();
-      while (++index < length) {
-        this.add(values[index]);
+      while (++index2 < length) {
+        this.add(values[index2]);
       }
     }
     SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
@@ -60434,10 +60434,10 @@ var require_SetCache = __commonJS({
 var require_baseFindIndex = __commonJS({
   "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_baseFindIndex.js"(exports2, module2) {
     function baseFindIndex(array, predicate, fromIndex, fromRight) {
-      var length = array.length, index = fromIndex + (fromRight ? 1 : -1);
-      while (fromRight ? index-- : ++index < length) {
-        if (predicate(array[index], index, array)) {
-          return index;
+      var length = array.length, index2 = fromIndex + (fromRight ? 1 : -1);
+      while (fromRight ? index2-- : ++index2 < length) {
+        if (predicate(array[index2], index2, array)) {
+          return index2;
         }
       }
       return -1;
@@ -60460,10 +60460,10 @@ var require_baseIsNaN = __commonJS({
 var require_strictIndexOf = __commonJS({
   "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_strictIndexOf.js"(exports2, module2) {
     function strictIndexOf(array, value, fromIndex) {
-      var index = fromIndex - 1, length = array.length;
-      while (++index < length) {
-        if (array[index] === value) {
-          return index;
+      var index2 = fromIndex - 1, length = array.length;
+      while (++index2 < length) {
+        if (array[index2] === value) {
+          return index2;
         }
       }
       return -1;
@@ -60501,9 +60501,9 @@ var require_arrayIncludes = __commonJS({
 var require_arrayIncludesWith = __commonJS({
   "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_arrayIncludesWith.js"(exports2, module2) {
     function arrayIncludesWith(array, value, comparator) {
-      var index = -1, length = array == null ? 0 : array.length;
-      while (++index < length) {
-        if (comparator(value, array[index])) {
+      var index2 = -1, length = array == null ? 0 : array.length;
+      while (++index2 < length) {
+        if (comparator(value, array[index2])) {
           return true;
         }
       }
@@ -60546,9 +60546,9 @@ var require_noop = __commonJS({
 var require_setToArray = __commonJS({
   "node_modules/.pnpm/lodash@4.18.1/node_modules/lodash/_setToArray.js"(exports2, module2) {
     function setToArray(set) {
-      var index = -1, result = Array(set.size);
+      var index2 = -1, result = Array(set.size);
       set.forEach(function(value) {
-        result[++index] = value;
+        result[++index2] = value;
       });
       return result;
     }
@@ -60581,7 +60581,7 @@ var require_baseUniq = __commonJS({
     var setToArray = require_setToArray();
     var LARGE_ARRAY_SIZE = 200;
     function baseUniq(array, iteratee, comparator) {
-      var index = -1, includes = arrayIncludes, length = array.length, isCommon = true, result = [], seen = result;
+      var index2 = -1, includes = arrayIncludes, length = array.length, isCommon = true, result = [], seen = result;
       if (comparator) {
         isCommon = false;
         includes = arrayIncludesWith;
@@ -60597,8 +60597,8 @@ var require_baseUniq = __commonJS({
         seen = iteratee ? [] : result;
       }
       outer:
-        while (++index < length) {
-          var value = array[index], computed = iteratee ? iteratee(value) : value;
+        while (++index2 < length) {
+          var value = array[index2], computed = iteratee ? iteratee(value) : value;
           value = comparator || value !== 0 ? value : 0;
           if (isCommon && computed === computed) {
             var seenIndex = seen.length;
@@ -62430,9 +62430,9 @@ ${givenBlock}`;
         const header = `${options.stylize("CombinedError", "special")} (${options.stylize(this.errors.length.toString(), "number")})`;
         const message = options.stylize(this.message, "regexp");
         const errors2 = this.errors.map((error, i3) => {
-          const index = options.stylize((i3 + 1).toString(), "number");
+          const index2 = options.stylize((i3 + 1).toString(), "number");
           const body = error[customInspectSymbolStackLess](depth - 1, newOptions).replace(/\n/g, padding);
-          return `  ${index} ${body}`;
+          return `  ${index2} ${body}`;
         }).join("\n\n");
         return `${header}
   ${message}
@@ -64214,7 +64214,7 @@ var require_dist9 = __commonJS({
       SlashCommandAssertions: () => Assertions_exports10,
       SlashCommandAttachmentOption: () => SlashCommandAttachmentOption,
       SlashCommandBooleanOption: () => SlashCommandBooleanOption,
-      SlashCommandBuilder: () => SlashCommandBuilder9,
+      SlashCommandBuilder: () => SlashCommandBuilder10,
       SlashCommandChannelOption: () => SlashCommandChannelOption,
       SlashCommandIntegerOption: () => SlashCommandIntegerOption,
       SlashCommandMentionableOption: () => SlashCommandMentionableOption,
@@ -64395,10 +64395,10 @@ var require_dist9 = __commonJS({
        * @param deleteCount - The number of fields to remove
        * @param fields - The replacing field objects
        */
-      spliceFields(index, deleteCount, ...fields) {
+      spliceFields(index2, deleteCount, ...fields) {
         validateFieldLength(fields.length - deleteCount, this.data.fields);
         embedFieldsArrayPredicate.parse(fields);
-        if (this.data.fields) this.data.fields.splice(index, deleteCount, ...fields);
+        if (this.data.fields) this.data.fields.splice(index2, deleteCount, ...fields);
         else this.data.fields = fields;
         return this;
       }
@@ -65153,11 +65153,11 @@ var require_dist9 = __commonJS({
        * @param deleteCount - The number of options to remove
        * @param options - The replacing option objects or builders
        */
-      spliceOptions(index, deleteCount, ...options) {
+      spliceOptions(index2, deleteCount, ...options) {
         const normalizedOptions = normalizeArray(options);
         const clone = [...this.options];
         clone.splice(
-          index,
+          index2,
           deleteCount,
           ...normalizedOptions.map((normalizedOption) => {
             const json2 = "toJSON" in normalizedOption ? normalizedOption.toJSON() : normalizedOption;
@@ -65367,11 +65367,11 @@ var require_dist9 = __commonJS({
        * @param deleteCount - The number of options to remove
        * @param options - The replacing option objects or builders
        */
-      spliceOptions(index, deleteCount, ...options) {
+      spliceOptions(index2, deleteCount, ...options) {
         const normalizedOptions = normalizeArray(options);
         const clone = [...this.options];
         clone.splice(
-          index,
+          index2,
           deleteCount,
           ...normalizedOptions.map((normalizedOption) => {
             const json2 = "toJSON" in normalizedOption ? normalizedOption.toJSON() : normalizedOption;
@@ -66058,11 +66058,11 @@ var require_dist9 = __commonJS({
        * @param deleteCount - The number of options to remove
        * @param options - The replacing option objects or builders
        */
-      spliceOptions(index, deleteCount, ...options) {
+      spliceOptions(index2, deleteCount, ...options) {
         const normalizedOptions = normalizeArray(options);
         const clone = [...this.options];
         clone.splice(
-          index,
+          index2,
           deleteCount,
           ...normalizedOptions.map(
             (normalizedOption) => normalizedOption instanceof StringSelectMenuOptionBuilder ? normalizedOption : new StringSelectMenuOptionBuilder(selectMenuStringOptionPredicate.parse(normalizedOption))
@@ -66884,9 +66884,9 @@ var require_dist9 = __commonJS({
        * @param deleteCount - The amount of components to remove
        * @param components - The components to set
        */
-      spliceComponents(index, deleteCount, ...components) {
+      spliceComponents(index2, deleteCount, ...components) {
         this.components.splice(
-          index,
+          index2,
           deleteCount,
           ...normalizeArray(components).map(
             (component) => component instanceof ComponentBuilder ? component : createComponentBuilder(component)
@@ -67064,9 +67064,9 @@ var require_dist9 = __commonJS({
        * @param deleteCount - The amount of items to remove
        * @param items - The items to insert
        */
-      spliceItems(index, deleteCount, ...items) {
+      spliceItems(index2, deleteCount, ...items) {
         this.items.splice(
-          index,
+          index2,
           deleteCount,
           ...normalizeArray(items).map((input) => {
             const result = resolveBuilder(input, MediaGalleryItemBuilder);
@@ -67180,9 +67180,9 @@ var require_dist9 = __commonJS({
        * @param deleteCount - The amount of text display components to remove
        * @param components - The text display components to insert
        */
-      spliceTextDisplayComponents(index, deleteCount, ...components) {
+      spliceTextDisplayComponents(index2, deleteCount, ...components) {
         this.components.splice(
-          index,
+          index2,
           deleteCount,
           ...normalizeArray(components).map((input) => {
             const result = resolveBuilder(input, TextDisplayBuilder);
@@ -67506,9 +67506,9 @@ var require_dist9 = __commonJS({
        * @param deleteCount - The number of labels to remove
        * @param labels - The replacing label objects
        */
-      spliceLabelComponents(index, deleteCount, ...labels) {
+      spliceLabelComponents(index2, deleteCount, ...labels) {
         const resolved = labels.map((label) => resolveBuilder(label, LabelBuilder));
-        this.components.splice(index, deleteCount, ...resolved);
+        this.components.splice(index2, deleteCount, ...resolved);
         return this;
       }
       /**
@@ -68520,7 +68520,7 @@ var require_dist9 = __commonJS({
         return this;
       }
     };
-    var SlashCommandBuilder9 = class {
+    var SlashCommandBuilder10 = class {
       /**
        * The name of this command.
        */
@@ -68573,10 +68573,10 @@ var require_dist9 = __commonJS({
        */
       nsfw = void 0;
     };
-    __name(SlashCommandBuilder9, "SlashCommandBuilder");
-    SlashCommandBuilder9 = __decorateClass([
+    __name(SlashCommandBuilder10, "SlashCommandBuilder");
+    SlashCommandBuilder10 = __decorateClass([
       (0, import_ts_mixer6.mix)(SharedSlashCommandOptions, SharedNameAndDescription, SharedSlashCommandSubcommands, SharedSlashCommand)
-    ], SlashCommandBuilder9);
+    ], SlashCommandBuilder10);
     var Assertions_exports11 = {};
     __export2(Assertions_exports11, {
       contextsPredicate: () => contextsPredicate2,
@@ -71099,7 +71099,7 @@ var require_Message = __commonJS({
           this.nonce ??= null;
         }
         if ("embeds" in data) {
-          this.embeds = data.embeds.map((embed) => new Embed(embed));
+          this.embeds = data.embeds.map((embed2) => new Embed(embed2));
         } else {
           this.embeds = this.embeds?.slice() ?? [];
         }
@@ -71795,7 +71795,7 @@ var require_Message = __commonJS({
         if (!message) return false;
         const embedUpdate = !message.author && !message.attachments;
         if (embedUpdate) return this.id === message.id && this.embeds.length === message.embeds.length;
-        let equal = this.id === message.id && this.author.id === message.author.id && this.content === message.content && this.nonce === message.nonce && this.tts === message.tts && this.attachments.size === message.attachments.size && this.embeds.length === message.embeds.length && this.attachments.every((attachment) => message.attachments.has(attachment.id)) && this.embeds.every((embed, index) => embed.equals(message.embeds[index]));
+        let equal = this.id === message.id && this.author.id === message.author.id && this.content === message.content && this.nonce === message.nonce && this.tts === message.tts && this.attachments.size === message.attachments.size && this.embeds.length === message.embeds.length && this.attachments.every((attachment) => message.attachments.has(attachment.id)) && this.embeds.every((embed2, index2) => embed2.equals(message.embeds[index2]));
         if (equal && rawData) {
           equal = this.mentions.everyone === message.mentions.everyone && this.createdTimestamp === Date.parse(rawData.timestamp) && this.editedTimestamp === Date.parse(rawData.edited_timestamp);
         }
@@ -73163,7 +73163,7 @@ var require_GuildMember = __commonJS({
        * @returns {boolean}
        */
       equals(member) {
-        return member instanceof this.constructor && this.id === member.id && this.partial === member.partial && this.guild.id === member.guild.id && this.joinedTimestamp === member.joinedTimestamp && this.nickname === member.nickname && this.avatar === member.avatar && this.banner === member.banner && this.pending === member.pending && this.communicationDisabledUntilTimestamp === member.communicationDisabledUntilTimestamp && this.flags.bitfield === member.flags.bitfield && (this._roles === member._roles || this._roles.length === member._roles.length && this._roles.every((role, index) => role === member._roles[index])) && this.avatarDecorationData?.asset === member.avatarDecorationData?.asset && this.avatarDecorationData?.skuId === member.avatarDecorationData?.skuId && this.collectibles?.nameplate?.skuId === member.collectibles?.nameplate?.skuId && this.collectibles?.nameplate?.asset === member.collectibles?.nameplate?.asset && this.collectibles?.nameplate?.label === member.collectibles?.nameplate?.label && this.collectibles?.nameplate?.palette === member.collectibles?.nameplate?.palette;
+        return member instanceof this.constructor && this.id === member.id && this.partial === member.partial && this.guild.id === member.guild.id && this.joinedTimestamp === member.joinedTimestamp && this.nickname === member.nickname && this.avatar === member.avatar && this.banner === member.banner && this.pending === member.pending && this.communicationDisabledUntilTimestamp === member.communicationDisabledUntilTimestamp && this.flags.bitfield === member.flags.bitfield && (this._roles === member._roles || this._roles.length === member._roles.length && this._roles.every((role, index2) => role === member._roles[index2])) && this.avatarDecorationData?.asset === member.avatarDecorationData?.asset && this.avatarDecorationData?.skuId === member.avatarDecorationData?.skuId && this.collectibles?.nameplate?.skuId === member.collectibles?.nameplate?.skuId && this.collectibles?.nameplate?.asset === member.collectibles?.nameplate?.asset && this.collectibles?.nameplate?.label === member.collectibles?.nameplate?.label && this.collectibles?.nameplate?.palette === member.collectibles?.nameplate?.palette;
       }
       /**
        * When concatenated with a string, this automatically returns the user's mention instead of the GuildMember object.
@@ -73721,8 +73721,8 @@ var require_MessagePayload = __commonJS({
             };
           }
         }
-        const attachments = this.options.files?.map((file, index) => ({
-          id: index.toString(),
+        const attachments = this.options.files?.map((file, index2) => ({
+          id: index2.toString(),
           description: file.description,
           title: file.title,
           waveform: file.waveform,
@@ -73762,7 +73762,7 @@ var require_MessagePayload = __commonJS({
           nonce,
           enforce_nonce,
           embeds: this.options.embeds?.map(
-            (embed) => isJSONEncodable(embed) ? embed.toJSON() : this.target.client.options.jsonTransformer(embed)
+            (embed2) => isJSONEncodable(embed2) ? embed2.toJSON() : this.target.client.options.jsonTransformer(embed2)
           ),
           components,
           username,
@@ -74415,8 +74415,8 @@ var require_User = __commonJS({
        * @readonly
        */
       get defaultAvatarURL() {
-        const index = this.discriminator === "0" || this.discriminator === "0000" ? calculateUserDefaultAvatarIndex(this.id) : this.discriminator % 5;
-        return this.client.rest.cdn.defaultAvatar(index);
+        const index2 = this.discriminator === "0" || this.discriminator === "0000" ? calculateUserDefaultAvatarIndex(this.id) : this.discriminator % 5;
+        return this.client.rest.cdn.defaultAvatar(index2);
       }
       /**
        * A link to the user's avatar if they have one.
@@ -74784,10 +74784,10 @@ var require_Enums = __commonJS({
     "use strict";
     function createEnum(keys) {
       const obj = {};
-      for (const [index, key2] of keys.entries()) {
+      for (const [index2, key2] of keys.entries()) {
         if (key2 === null) continue;
-        obj[key2] = index;
-        obj[index] = key2;
+        obj[key2] = index2;
+        obj[index2] = key2;
       }
       return obj;
     }
@@ -85187,8 +85187,8 @@ var require_websocket_server = __commonJS({
        */
       shouldHandle(req) {
         if (this.options.path) {
-          const index = req.url.indexOf("?");
-          const pathname = index !== -1 ? req.url.slice(0, index) : req.url;
+          const index2 = req.url.indexOf("?");
+          const pathname = index2 !== -1 ? req.url.slice(0, index2) : req.url;
           if (pathname !== this.options.path) return false;
         }
         return true;
@@ -86952,7 +86952,7 @@ var require_WebSocketShard = __commonJS({
     var EventEmitter = __require("node:events");
     var process2 = __require("node:process");
     var { setTimeout: setTimeout2, clearTimeout: clearTimeout2 } = __require("node:timers");
-    var { GatewayIntentBits: GatewayIntentBits13 } = require_v106();
+    var { GatewayIntentBits: GatewayIntentBits14 } = require_v106();
     var Status2 = require_Status();
     var WebSocketShardEvents = require_WebSocketShardEvents();
     var deprecationEmittedForImportant = false;
@@ -87039,7 +87039,7 @@ var require_WebSocketShard = __commonJS({
           this.emit(WebSocketShardEvents.AllReady);
           return;
         }
-        const hasGuildsIntent = this.manager.client.options.intents.has(GatewayIntentBits13.Guilds);
+        const hasGuildsIntent = this.manager.client.options.intents.has(GatewayIntentBits14.Guilds);
         const { waitGuildTimeout } = this.manager.client.options;
         this.readyTimeout = setTimeout2(
           () => {
@@ -90502,7 +90502,7 @@ var require_GuildInviteManager = __commonJS({
         maxAge,
         maxUses,
         unique,
-        targetUser,
+        targetUser: targetUser2,
         targetApplication,
         targetType,
         roles,
@@ -90516,7 +90516,7 @@ var require_GuildInviteManager = __commonJS({
           max_age: maxAge,
           max_uses: maxUses,
           unique,
-          target_user_id: this.client.users.resolveId(targetUser),
+          target_user_id: this.client.users.resolveId(targetUser2),
           target_application_id: targetApplication?.id ?? targetApplication?.applicationId ?? targetApplication,
           role_ids: roles?.map((role) => this.guild.roles.resolveId(role)),
           target_type: targetType
@@ -91963,7 +91963,7 @@ var require_Presence = __commonJS({
        * @returns {boolean}
        */
       equals(presence) {
-        return this === presence || presence && this.status === presence.status && this.clientStatus?.web === presence.clientStatus?.web && this.clientStatus?.mobile === presence.clientStatus?.mobile && this.clientStatus?.desktop === presence.clientStatus?.desktop && this.activities.length === presence.activities.length && this.activities.every((activity, index) => activity.equals(presence.activities[index]));
+        return this === presence || presence && this.status === presence.status && this.clientStatus?.web === presence.clientStatus?.web && this.clientStatus?.mobile === presence.clientStatus?.mobile && this.clientStatus?.desktop === presence.clientStatus?.desktop && this.activities.length === presence.activities.length && this.activities.every((activity, index2) => activity.equals(presence.activities[index2]));
       }
       toJSON() {
         return flatten(this);
@@ -94646,7 +94646,7 @@ var require_Widget = __commonJS({
 var require_IntentsBitField = __commonJS({
   "node_modules/.pnpm/discord.js@14.28.1/node_modules/discord.js/src/util/IntentsBitField.js"(exports2, module2) {
     "use strict";
-    var { GatewayIntentBits: GatewayIntentBits13 } = require_v106();
+    var { GatewayIntentBits: GatewayIntentBits14 } = require_v106();
     var BitField = require_BitField();
     var IntentsBitField2 = class extends BitField {
       /**
@@ -94654,7 +94654,7 @@ var require_IntentsBitField = __commonJS({
        * @type {GatewayIntentBits}
        * @memberof IntentsBitField
        */
-      static Flags = GatewayIntentBits13;
+      static Flags = GatewayIntentBits14;
     };
     module2.exports = IntentsBitField2;
   }
@@ -98380,8 +98380,8 @@ function haveSameKeys(left, right) {
   if (leftKeys.length !== rightKeys.length) {
     return false;
   }
-  for (const [index, key2] of leftKeys.entries()) {
-    if (key2 !== rightKeys[index]) {
+  for (const [index2, key2] of leftKeys.entries()) {
+    if (key2 !== rightKeys[index2]) {
       return false;
     }
   }
@@ -102676,10 +102676,10 @@ var ZodObject = class _ZodObject extends ZodType {
   //   }) as any;
   //   return merged;
   // }
-  catchall(index) {
+  catchall(index2) {
     return new _ZodObject({
       ...this._def,
-      catchall: index
+      catchall: index2
     });
   }
   pick(mask) {
@@ -102997,9 +102997,9 @@ function mergeValues(a, b) {
       return { valid: false };
     }
     const newArray = [];
-    for (let index = 0; index < a.length; index++) {
-      const itemA = a[index];
-      const itemB = b[index];
+    for (let index2 = 0; index2 < a.length; index2++) {
+      const itemA = a[index2];
+      const itemB = b[index2];
       const sharedValue = mergeValues(itemA, itemB);
       if (!sharedValue.valid) {
         return { valid: false };
@@ -103205,10 +103205,10 @@ var ZodMap = class extends ZodType {
     }
     const keyType = this._def.keyType;
     const valueType = this._def.valueType;
-    const pairs = [...ctx.data.entries()].map(([key2, value], index) => {
+    const pairs = [...ctx.data.entries()].map(([key2, value], index2) => {
       return {
-        key: keyType._parse(new ParseInputLazyPath(ctx, key2, ctx.path, [index, "key"])),
-        value: valueType._parse(new ParseInputLazyPath(ctx, value, ctx.path, [index, "value"]))
+        key: keyType._parse(new ParseInputLazyPath(ctx, key2, ctx.path, [index2, "key"])),
+        value: valueType._parse(new ParseInputLazyPath(ctx, value, ctx.path, [index2, "value"]))
       };
     });
     if (ctx.common.async) {
@@ -104189,7 +104189,8 @@ var MODULE_NAMES = [
   "webhooks",
   "quiz",
   "quotes",
-  "ktp"
+  "ktp",
+  "wizzy"
 ];
 var snowflakeOrEmpty = external_exports.string().regex(/^(\d{5,25})?$/, "harus ID Discord (angka) atau kosong");
 var welcomeConfigSchema = external_exports.object({
@@ -104354,7 +104355,8 @@ var moduleSchemas = {
   webhooks: webhooksConfigSchema,
   quiz: quizConfigSchema,
   quotes: quotesConfigSchema,
-  ktp: external_exports.object({}).passthrough().optional()
+  ktp: external_exports.object({}).passthrough().optional(),
+  wizzy: external_exports.object({ enabled: external_exports.boolean().default(true) }).passthrough()
 };
 var guildConfigSchema = external_exports.object({
   welcome: welcomeConfigSchema.optional(),
@@ -104368,7 +104370,8 @@ var guildConfigSchema = external_exports.object({
   webhooks: webhooksConfigSchema.optional(),
   quiz: quizConfigSchema.optional(),
   quotes: quotesConfigSchema.optional(),
-  ktp: external_exports.object({}).passthrough().optional()
+  ktp: external_exports.object({}).passthrough().optional(),
+  wizzy: external_exports.object({ enabled: external_exports.boolean().default(true) }).passthrough().optional()
 });
 var botLevelConfigSchema = external_exports.object({
   modules: external_exports.array(external_exports.enum(MODULE_NAMES)).default([])
@@ -104707,8 +104710,8 @@ var PgDialect = class {
       return void 0;
     }
     const joinsArray = [];
-    for (const [index, joinMeta] of joins.entries()) {
-      if (index === 0) {
+    for (const [index2, joinMeta] of joins.entries()) {
+      if (index2 === 0) {
         joinsArray.push(sql` `);
       }
       const table = joinMeta.table;
@@ -104734,7 +104737,7 @@ var PgDialect = class {
           sql`${sql.raw(joinMeta.joinType)} join${lateralSql} ${table} on ${joinMeta.on}`
         );
       }
-      if (index < joins.length - 1) {
+      if (index2 < joins.length - 1) {
         joinsArray.push(sql` `);
       }
     }
@@ -107555,6 +107558,9 @@ var Index = class {
     this.config = { ...config2, table };
   }
 };
+function index(name) {
+  return new IndexBuilderOn(false, name);
+}
 function uniqueIndex(name) {
   return new IndexBuilderOn(true, name);
 }
@@ -107896,7 +107902,9 @@ __export(schema_exports, {
   guildMembers: () => guildMembers,
   tickets: () => tickets,
   users: () => users,
-  webhooks: () => webhooks
+  webhooks: () => webhooks,
+  wizzyCreatures: () => wizzyCreatures,
+  wizzyUsers: () => wizzyUsers
 });
 var users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -107975,6 +107983,31 @@ var guildMembers = pgTable("guild_members", {
   lastWorkAt: timestamp("last_work_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [uniqueIndex("guild_members_uq").on(t.botId, t.discordGuildId, t.discordUserId)]);
+var wizzyUsers = pgTable("wizzy_users", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  discordUserId: text("discord_user_id").notNull(),
+  house: text("house").notNull().default(""),
+  galleons: integer("galleons").notNull().default(100),
+  xp: integer("xp").notNull().default(0),
+  level: integer("level").notNull().default(1),
+  dailyStreak: integer("daily_streak").notNull().default(0),
+  lastDailyAt: timestamp("last_daily_at", { withTimezone: true }),
+  wins: integer("wins").notNull().default(0),
+  losses: integer("losses").notNull().default(0),
+  rankPoints: integer("rank_points").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("wizzy_users_uq").on(t.botId, t.discordUserId)]);
+var wizzyCreatures = pgTable("wizzy_creatures", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  discordUserId: text("discord_user_id").notNull(),
+  creatureId: text("creature_id").notNull(),
+  level: integer("level").notNull().default(1),
+  xp: integer("xp").notNull().default(0),
+  isInTeam: boolean("is_in_team").notNull().default(false),
+  caughtAt: timestamp("caught_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("wizzy_creatures_user_idx").on(t.botId, t.discordUserId)]);
 var webhooks = pgTable("webhooks", {
   id: serial("id").primaryKey(),
   botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
@@ -108004,7 +108037,7 @@ async function recordError(botId, err) {
 }
 
 // apps/worker/src/runner.ts
-var import_discord12 = __toESM(require_src2(), 1);
+var import_discord13 = __toESM(require_src2(), 1);
 
 // apps/worker/src/modules/customcmd.ts
 var import_discord = __toESM(require_src2(), 1);
@@ -108388,19 +108421,19 @@ async function renderKtp(user, guildName, data) {
   spacedCentered(ctx, `KARTU KOMUNITAS RESMI \u2022 ${guildName.toUpperCase()}`, W / 2, CY + CH - 20, 4);
   return canvas.toBuffer("image/png");
 }
-async function sendKtp(ctx, guildName, targetUser, targetId, data) {
+async function sendKtp(ctx, guildName, targetUser2, targetId, data) {
   if (canvasMod) {
     try {
-      const buffer = await renderKtp(targetUser, guildName, data);
+      const buffer = await renderKtp(targetUser2, guildName, data);
       return ctx.reply({ files: [new import_discord3.AttachmentBuilder(buffer, { name: "ktp.png" })] });
     } catch (e) {
       await recordError(ctx.botId, e);
     }
   }
-  const embed = {
+  const embed2 = {
     title: "\u{1FAAA} Kartu Tanda Penduduk",
     description: [
-      `**Nama:** ${data.nama ?? targetUser.username}`,
+      `**Nama:** ${data.nama ?? targetUser2.username}`,
       `**ID Akun:** ${targetId}`,
       `**Tempat/Tgl Lahir:** ${data.tempat ?? "-"}, ${data.tglLahir ?? "-"}`,
       `**Jenis Kelamin:** ${data.gender ?? "-"}`,
@@ -108411,7 +108444,7 @@ async function sendKtp(ctx, guildName, targetUser, targetId, data) {
     ].join("\n"),
     color: 1981066
   };
-  return ctx.reply({ embeds: [embed] });
+  return ctx.reply({ embeds: [embed2] });
 }
 var FIELD_MAP = {
   nama: "nama",
@@ -108517,9 +108550,9 @@ var ktpView = {
     if (!ctx.guild || !ctx.user) return ctx.reply("\u274C Hanya di server.");
     const targetMember = args.user;
     const targetId = targetMember?.id ?? ctx.user.id;
-    const targetUser = targetMember?.user ?? ctx.user;
+    const targetUser2 = targetMember?.user ?? ctx.user;
     const data = await getKtp(ctx.botId, ctx.guild.id, targetId) ?? {};
-    return sendKtp(ctx, ctx.guild.name, targetUser, targetId, data);
+    return sendKtp(ctx, ctx.guild.name, targetUser2, targetId, data);
   }
 };
 var ktpModule = {
@@ -108623,12 +108656,12 @@ var levelingModule = {
 // apps/worker/src/modules/logging.ts
 var import_discord5 = __toESM(require_src2(), 1);
 var COLORS = { delete: 15548997, edit: 16705372, join: 5763719, leave: 15548997, roles: 5793266 };
-async function sendLog(ctx, embed) {
+async function sendLog(ctx, embed2) {
   const id = ctx.config.channelId;
   if (typeof id !== "string" || !id) return;
   const ch = await ctx.client.channels.fetch(id).catch(() => null);
   if (!ch?.isTextBased() || !("send" in ch)) return;
-  await ch.send({ embeds: [embed] }).catch((e) => recordError(ctx.botId, e));
+  await ch.send({ embeds: [embed2] }).catch((e) => recordError(ctx.botId, e));
 }
 var fmt2 = (s) => s ? s.replace(/```/g, "```\u200B").slice(0, 900) || "(kosong)" : "(kosong)";
 var loggingModule = {
@@ -108853,7 +108886,7 @@ async function nextQuestion(ctx, s) {
   const q = s.questions[s.index];
   const timeSec = config2.timePerQuestionSec ?? 240;
   const endsAt = Math.floor((Date.now() + timeSec * 1e3) / 1e3);
-  const embed = {
+  const embed2 = {
     title: config2.title,
     description: [
       q.question,
@@ -108868,7 +108901,7 @@ async function nextQuestion(ctx, s) {
   const ch = await ctx.client.channels.fetch(s.channelId).catch(() => null);
   if (!ch?.isTextBased() || !("send" in ch)) return endQuiz(ctx, s, "kanal tidak tersedia");
   const mention = config2.mentionRoleId ? `<@&${config2.mentionRoleId}>` : void 0;
-  const msg = await ch.send({ content: mention, embeds: [embed], components: [questionRow(s, q)] }).catch((e) => {
+  const msg = await ch.send({ content: mention, embeds: [embed2], components: [questionRow(s, q)] }).catch((e) => {
     recordError(ctx.botId, e);
     return null;
   });
@@ -108927,14 +108960,14 @@ async function endQuiz(ctx, s, reason) {
   s.stopped = true;
   sessions.delete(sessionKey(ctx.botId, ctx.guild.id));
   const board = topScores(s, 5);
-  const embed = {
+  const embed2 = {
     title: `\u{1F3C1} ${cfg3(ctx.config).title} \u2014 Selesai`,
     description: `Alasan: ${reason}`,
     color: ACCENT3,
     fields: [{ name: "Skor Akhir (top 5)", value: board || "Tidak ada jawaban benar \u2014 coba lagi!" }]
   };
   const ch = await ctx.client.channels.fetch(s.channelId).catch(() => null);
-  if (ch?.isTextBased() && "send" in ch) await ch.send({ embeds: [embed] }).catch(() => {
+  if (ch?.isTextBased() && "send" in ch) await ch.send({ embeds: [embed2] }).catch(() => {
   });
 }
 async function startQuiz(ctx, channel, starter, reply) {
@@ -109574,7 +109607,7 @@ var ticketsModule = {
 // apps/worker/src/modules/utilities.ts
 var import_discord10 = __toESM(require_src2(), 1);
 var ACCENT4 = 5793266;
-var optUser = (cmd) => cmd.addUserOption((o) => o.setName("user").setDescription("User (kosong = dirimu)"));
+var optUser = (cmd2) => cmd2.addUserOption((o) => o.setName("user").setDescription("User (kosong = dirimu)"));
 var ping = {
   name: "ping",
   description: "Cek latensi bot",
@@ -109739,6 +109772,264 @@ var welcomeModule = {
   }
 };
 
+// apps/worker/src/modules/wizzy.ts
+var import_discord12 = __toESM(require_src2(), 1);
+var COLOR = 8073207;
+var FOOTER = "Wizzy \u2022 Dunia Sihir";
+var HUNT_COOLDOWN_MS = 15e3;
+var DAY_MS = 864e5;
+var RARITIES = {
+  common: { label: "Common", chance: 60, price: 10, emoji: "\u26AA" },
+  uncommon: { label: "Uncommon", chance: 25, price: 40, emoji: "\u{1F7E2}" },
+  rare: { label: "Rare", chance: 10, price: 150, emoji: "\u{1F535}" },
+  epic: { label: "Epic", chance: 4, price: 600, emoji: "\u{1F7E3}" },
+  legendary: { label: "Legendary", chance: 0.9, price: 3e3, emoji: "\u{1F7E1}" },
+  mythic: { label: "Mythic", chance: 0.1, price: 25e3, emoji: "\u{1F534}" }
+};
+var CREATURES = [
+  { id: "pixie", name: "Pixie", emoji: "\u{1F9DA}", rarity: "common" },
+  { id: "niffler", name: "Niffler", emoji: "\u{1F9A1}", rarity: "common" },
+  { id: "bowtruckle", name: "Bowtruckle", emoji: "\u{1F33F}", rarity: "common" },
+  { id: "firecrab", name: "Fire Crab", emoji: "\u{1F980}", rarity: "common" },
+  { id: "hippogriff", name: "Hippogriff", emoji: "\u{1F985}", rarity: "uncommon" },
+  { id: "kelpie", name: "Kelpie", emoji: "\u{1F434}", rarity: "uncommon" },
+  { id: "puffskein", name: "Puffskein", emoji: "\u{1F439}", rarity: "uncommon" },
+  { id: "unicorn", name: "Unicorn", emoji: "\u{1F984}", rarity: "rare" },
+  { id: "centaur", name: "Centaur", emoji: "\u{1F3F9}", rarity: "rare" },
+  { id: "merfolk", name: "Merfolk", emoji: "\u{1F9DC}", rarity: "rare" },
+  { id: "thestral", name: "Thestral", emoji: "\u{1F480}", rarity: "epic" },
+  { id: "basilisk", name: "Basilisk", emoji: "\u{1F40D}", rarity: "epic" },
+  { id: "griffin", name: "Griffin", emoji: "\u{1F981}", rarity: "epic" },
+  { id: "phoenix", name: "Phoenix", emoji: "\u{1F525}", rarity: "legendary" },
+  { id: "dragon", name: "Dragon", emoji: "\u{1F432}", rarity: "legendary" },
+  { id: "kraken", name: "Kraken", emoji: "\u{1F991}", rarity: "legendary" },
+  { id: "archmage", name: "Archmage Spirit", emoji: "\u{1F30C}", rarity: "mythic" },
+  { id: "wyrm", name: "Ancient Wyrm", emoji: "\u{1F409}", rarity: "mythic" }
+];
+var byId = Object.fromEntries(CREATURES.map((c) => [c.id, c]));
+var HOUSES = ["Ignis \u{1F525}", "Aqua \u{1F4A7}", "Ventus \u{1F32A}\uFE0F", "Terra \u{1FAA8}"];
+var fmt3 = (n) => n.toLocaleString("id-ID");
+var embed = (title, description, color = COLOR) => ({ title, description, color, footer: { text: FOOTER } });
+var getUser = async (botId, userId) => {
+  const [u] = await db.select().from(wizzyUsers).where(and(eq(wizzyUsers.botId, botId), eq(wizzyUsers.discordUserId, userId)));
+  return u;
+};
+var getCreatures = async (botId, userId) => db.select().from(wizzyCreatures).where(and(eq(wizzyCreatures.botId, botId), eq(wizzyCreatures.discordUserId, userId)));
+function rollRarity() {
+  const entries = Object.entries(RARITIES);
+  let roll = Math.random() * entries.reduce((s, [, r]) => s + r.chance, 0);
+  for (const [key2, r] of entries) {
+    roll -= r.chance;
+    if (roll <= 0) return key2;
+  }
+  return "common";
+}
+function huntOnce() {
+  const rarity = rollRarity();
+  const pool2 = CREATURES.filter((c) => c.rarity === rarity);
+  return pool2[Math.floor(Math.random() * pool2.length)];
+}
+function cmd(name, description, run, arg) {
+  return {
+    name,
+    description,
+    args: arg ? [{ name: arg.name, type: "string", rest: arg.rest }] : [],
+    buildSlash: () => {
+      const b = new import_discord12.SlashCommandBuilder().setName(name).setDescription(description);
+      if (arg) b.addStringOption((o) => o.setName(arg.name).setDescription(arg.description).setRequired(false));
+      return b.toJSON();
+    },
+    execute: run
+  };
+}
+var needUser = async (ctx) => {
+  const u = await getUser(ctx.botId, ctx.user.id);
+  if (!u) await ctx.reply("Kamu belum mulai! Ketik `gstart` dulu \u{1F9D9}\u200D\u2642\uFE0F");
+  return u;
+};
+var targetUser = (ctx, raw) => {
+  const text2 = String(raw ?? "");
+  const id = text2.match(/^<@!?(\d+)>$/)?.[1] ?? (/^\d{5,25}$/.test(text2) ? text2 : null);
+  return id ?? ctx.user.id;
+};
+var commands = [
+  cmd("start", "Mulai petualangan di Dunia Sihir", async (ctx) => {
+    if (await getUser(ctx.botId, ctx.user.id)) {
+      return ctx.reply("Kamu sudah punya akun, penyihir! Ketik `ghunt` untuk berburu.");
+    }
+    const house = HOUSES[Math.floor(Math.random() * HOUSES.length)];
+    await db.insert(wizzyUsers).values({ botId: ctx.botId, discordUserId: ctx.user.id, house });
+    return ctx.reply({ embeds: [embed(
+      "\u2728 Selamat datang di Dunia Sihir!",
+      `Topi seleksi memilihmu masuk house **${house}**!
+Kamu mendapat **100 Galleon**.
+
+Ketik \`ghunt\` untuk berburu makhluk pertamamu.`
+    )] });
+  }),
+  cmd("profile", "Kartu penyihir", async (ctx, args) => {
+    const id = targetUser(ctx, args.user);
+    const u = await getUser(ctx.botId, id);
+    if (!u) return ctx.reply(id === ctx.user.id ? "Ketik `gstart` dulu!" : "Pemain itu belum mulai.");
+    const member = ctx.guild?.members.cache.get(id) ?? await ctx.guild?.members.fetch(id).catch(() => null);
+    const display = member?.user ?? ctx.client.users.cache.get(id) ?? ctx.user;
+    const owned = await getCreatures(ctx.botId, id);
+    const dex = new Set(owned.map((c) => c.creatureId)).size;
+    return ctx.reply({ embeds: [{
+      ...embed("\u{1F9D9} Kartu Penyihir", `**${display.username}**`),
+      thumbnail: { url: display.displayAvatarURL() },
+      fields: [
+        { name: "House", value: u.house, inline: true },
+        { name: "Level", value: `${u.level} (${u.xp}/${u.level * 100} XP)`, inline: true },
+        { name: "Galleon", value: `\u{1F4B0} ${fmt3(u.galleons)}`, inline: true },
+        { name: "Koleksi", value: `\u{1F3C6} ${owned.length} makhluk`, inline: true },
+        { name: "Battle", value: `${u.wins}M / ${u.losses}K`, inline: true },
+        { name: "Dex", value: `${dex}/${CREATURES.length} jenis`, inline: true },
+        { name: "Streak Daily", value: `\u{1F525} ${u.dailyStreak}`, inline: true }
+      ]
+    }] });
+  }, { name: "user", description: "ID atau mention user (kosong = diri sendiri)" }),
+  cmd("daily", "Klaim hadiah harian", async (ctx) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const now = Date.now();
+    const since = u.lastDailyAt ? now - u.lastDailyAt.getTime() : DAY_MS;
+    if (since < DAY_MS) {
+      const left = DAY_MS - since;
+      return ctx.reply(`\u23F3 Daily berikutnya dalam **${Math.floor(left / 36e5)}j ${Math.floor(left % 36e5 / 6e4)}m**.`);
+    }
+    const streak = since < 2 * DAY_MS ? Math.min(u.dailyStreak + 1, 30) : 1;
+    const reward = 200 + streak * 20;
+    await db.update(wizzyUsers).set({ dailyStreak: streak, lastDailyAt: new Date(now) }).where(eq(wizzyUsers.id, u.id));
+    await db.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${reward}` }).where(eq(wizzyUsers.id, u.id));
+    return ctx.reply({ embeds: [embed(
+      "\u{1F381} Hadiah Harian",
+      `Kamu mendapat **${fmt3(reward)} Galleon**!
+\u{1F525} Streak: **${streak}** hari`
+    )] });
+  }),
+  cmd("cash", "Cek saldo Galleon", async (ctx) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    return ctx.reply(`\u{1F4B0} **${ctx.user.username}**, saldomu: **${fmt3(u.galleons)} Galleon**`);
+  }),
+  cmd("hunt", "Berburu makhluk sihir", async (ctx) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const key2 = `${ctx.botId}:${ctx.user.id}`;
+    const left = (cooldowns.get(key2) ?? 0) - Date.now();
+    if (left > 0) return ctx.reply(`\u23F3 Tunggu **${Math.ceil(left / 1e3)} detik** lagi.`);
+    cooldowns.set(key2, Date.now() + HUNT_COOLDOWN_MS);
+    const caught = Array.from({ length: 1 + Math.floor(Math.random() * 3) }, huntOnce);
+    const levelUp = await db.transaction(async (tx) => {
+      for (const c of caught) {
+        await tx.insert(wizzyCreatures).values({ botId: ctx.botId, discordUserId: ctx.user.id, creatureId: c.id });
+      }
+      let xp = u.xp + caught.length * 5, level = u.level;
+      while (xp >= level * 100) {
+        xp -= level * 100;
+        level++;
+      }
+      await tx.update(wizzyUsers).set({ xp, level }).where(eq(wizzyUsers.id, u.id));
+      return level > u.level ? level : 0;
+    });
+    const lines = caught.map((c) => `${c.emoji} **${c.name}** ${RARITIES[c.rarity].emoji} ${RARITIES[c.rarity].label}`);
+    let desc2 = `${ctx.user.username} berburu dan menemukan:
+
+${lines.join("\n")}`;
+    if (levelUp) desc2 += `
+
+\u{1F389} **Naik ke level ${levelUp}!**`;
+    return ctx.reply({ embeds: [embed("\u{1F3C6} Hasil Berburu", desc2)] });
+  }),
+  cmd("zoo", "Lihat koleksi makhluk", async (ctx) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const owned = await getCreatures(ctx.botId, ctx.user.id);
+    if (!owned.length) return ctx.reply("Koleksimu kosong. Ketik `ghunt`!");
+    const count = /* @__PURE__ */ new Map();
+    for (const o of owned) count.set(o.creatureId, (count.get(o.creatureId) ?? 0) + 1);
+    const sections = Object.keys(RARITIES).map((key2) => {
+      const items = CREATURES.filter((c) => c.rarity === key2 && count.has(c.id)).map((c) => `${c.emoji}x${count.get(c.id)}`).join(" ");
+      return items ? `${RARITIES[key2].emoji} **${RARITIES[key2].label}**: ${items}` : "";
+    }).filter(Boolean);
+    return ctx.reply({ embeds: [embed(
+      `\u{1F4DA} Zoo ${ctx.user.username}`,
+      `${sections.join("\n")}
+
+\u{1F4D6} Dex: **${count.size}/${CREATURES.length}** jenis`
+    )] });
+  }),
+  cmd("sell", "Jual makhluk", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const target = String(args.target ?? "").trim().toLowerCase();
+    if (!target) return ctx.reply("Pakai: `gsell all`, `gsell <rarity>`, atau `gsell <nama makhluk>`");
+    const key2 = target.replace(/\s/g, "");
+    const owned = (await getCreatures(ctx.botId, ctx.user.id)).filter((c) => !c.isInTeam);
+    const toSell = owned.filter((c) => {
+      const info = byId[c.creatureId];
+      if (!info) return false;
+      if (target === "all") return true;
+      if (target in RARITIES) return info.rarity === target;
+      return info.id === key2 || info.name.toLowerCase().replace(/\s/g, "") === key2;
+    });
+    if (!toSell.length) return ctx.reply("Tidak ada makhluk yang cocok untuk dijual (makhluk di tim tidak ikut terjual).");
+    const total = toSell.reduce((s, c) => s + RARITIES[byId[c.creatureId].rarity].price, 0);
+    await db.transaction(async (tx) => {
+      for (const c of toSell) {
+        await tx.delete(wizzyCreatures).where(eq(wizzyCreatures.id, c.id));
+      }
+      await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${total}` }).where(eq(wizzyUsers.id, u.id));
+    });
+    return ctx.reply(`\u{1F4B0} Menjual **${toSell.length}** makhluk seharga **${fmt3(total)} Galleon**!`);
+  }, { name: "target", description: "all | rarity | nama makhluk", rest: true }),
+  cmd("help", "Daftar command Wizzy", async (ctx) => ctx.reply({ embeds: [embed("\u{1F52E} Bantuan Wizzy", [
+    "**\u{1F9D9} Dasar**",
+    "`gstart` mulai petualangan",
+    "`gprofile [@user]` kartu penyihir",
+    "`gdaily` hadiah harian",
+    "`gcash` cek saldo",
+    "",
+    "**\u{1F3C6} Berburu**",
+    "`ghunt` (`gh`) berburu makhluk",
+    "`gzoo` lihat koleksi",
+    "`gsell <all|rarity|nama>` jual makhluk",
+    "",
+    "*Battle, shop, dan lainnya segera hadir!*"
+  ].join("\n"))] }))
+];
+var cooldowns = /* @__PURE__ */ new Map();
+var ALIASES2 = {
+  h: "hunt",
+  bal: "cash",
+  balance: "cash",
+  p: "profile",
+  profil: "profile",
+  z: "zoo",
+  koleksi: "zoo",
+  s: "sell",
+  commands: "help"
+};
+var wizzyModule = {
+  name: "wizzy",
+  intents: [import_discord12.GatewayIntentBits.Guilds, import_discord12.GatewayIntentBits.GuildMessages, import_discord12.GatewayIntentBits.MessageContent],
+  commands,
+  async onPrefixCommand(ctx, name, rest) {
+    const canonical = ALIASES2[name];
+    if (!canonical) return false;
+    const cmd2 = commands.find((c) => c.name === canonical);
+    if (!cmd2) return false;
+    const args = {};
+    if (cmd2.args[0]) args[cmd2.args[0].name] = cmd2.args[0].rest ? rest.join(" ") : rest[0] ?? "";
+    await cmd2.execute(ctx, args);
+    return true;
+  },
+  stop() {
+    cooldowns.clear();
+  }
+};
+
 // apps/worker/src/modules/index.ts
 var MODULES = [
   welcomeModule,
@@ -109751,23 +110042,24 @@ var MODULES = [
   economyModule,
   quizModule,
   quotesModule,
-  ktpModule
+  ktpModule,
+  wizzyModule
 ];
 
 // apps/worker/src/runner.ts
 var ALL_INTENTS = [
-  import_discord12.GatewayIntentBits.Guilds,
-  import_discord12.GatewayIntentBits.GuildMessages,
-  import_discord12.GatewayIntentBits.MessageContent,
-  import_discord12.GatewayIntentBits.GuildMembers
+  import_discord13.GatewayIntentBits.Guilds,
+  import_discord13.GatewayIntentBits.GuildMessages,
+  import_discord13.GatewayIntentBits.MessageContent,
+  import_discord13.GatewayIntentBits.GuildMembers
 ];
 async function upsertGuild(botId, g) {
   await db.insert(botGuilds).values({ botId, discordGuildId: g.id, name: g.name }).onConflictDoUpdate({ target: [botGuilds.botId, botGuilds.discordGuildId], set: { name: g.name } }).catch((e) => logger.error({ err: e, botId }, "upsert guild gagal"));
 }
-async function parsePrefixArgs(cmd, message, tokens) {
+async function parsePrefixArgs(cmd2, message, tokens) {
   const out = {};
   let i = 0;
-  for (const a of cmd.args) {
+  for (const a of cmd2.args) {
     if (a.type === "user") {
       const raw = tokens[i++];
       const id = raw?.match(/^<@!?(\d+)>$/)?.[1] ?? (/^\d{5,25}$/.test(raw ?? "") ? raw : void 0);
@@ -109802,64 +110094,64 @@ var BotRunner = class {
     const enabled = botLevelConfigSchema.parse(cfgRow?.data ?? {}).modules;
     this.mods = MODULES.filter((m) => enabled.includes(m.name));
     const mods = this.mods;
-    const client = new import_discord12.Client({ intents: ALL_INTENTS });
+    const client = new import_discord13.Client({ intents: ALL_INTENTS });
     this.client = client;
-    client.once(import_discord12.Events.ClientReady, async (c) => {
+    client.once(import_discord13.Events.ClientReady, async (c) => {
       logger.info({ botId: bot.id, bot: c.user?.tag, guilds: c.guilds.cache.size, modules: mods.map((m) => m.name) }, "bot online");
       for (const g of c.guilds.cache.values()) await upsertGuild(bot.id, g);
-      const body = mods.flatMap((m) => m.commands.map((cmd) => cmd.buildSlash()));
+      const body = mods.flatMap((m) => m.commands.map((cmd2) => cmd2.buildSlash()));
       try {
-        await c.rest.put(import_discord12.Routes.applicationCommands(bot.applicationId), { body: [] });
+        await c.rest.put(import_discord13.Routes.applicationCommands(bot.applicationId), { body: [] });
         for (const g of c.guilds.cache.values()) {
-          await c.rest.put(import_discord12.Routes.applicationGuildCommands(bot.applicationId, g.id), { body });
+          await c.rest.put(import_discord13.Routes.applicationGuildCommands(bot.applicationId, g.id), { body });
         }
       } catch (e) {
         await recordError(bot.id, e);
       }
     });
-    client.on(import_discord12.Events.GuildCreate, (g) => {
+    client.on(import_discord13.Events.GuildCreate, (g) => {
       void upsertGuild(bot.id, g);
-      const body = mods.flatMap((m) => m.commands.map((cmd) => cmd.buildSlash()));
-      void client.rest.put(import_discord12.Routes.applicationGuildCommands(bot.applicationId, g.id), { body }).catch((e) => recordError(bot.id, e));
+      const body = mods.flatMap((m) => m.commands.map((cmd2) => cmd2.buildSlash()));
+      void client.rest.put(import_discord13.Routes.applicationGuildCommands(bot.applicationId, g.id), { body }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord12.Events.GuildDelete, (g) => {
+    client.on(import_discord13.Events.GuildDelete, (g) => {
       void db.delete(botGuilds).where(and(eq(botGuilds.botId, bot.id), eq(botGuilds.discordGuildId, g.id))).catch((e) => logger.error({ err: e }, "hapus guild gagal"));
     });
-    client.on(import_discord12.Events.InteractionCreate, (i) => {
+    client.on(import_discord13.Events.InteractionCreate, (i) => {
       if (i.isChatInputCommand()) void this.handleSlash(bot, i).catch((e) => recordError(bot.id, e));
       else void this.handleComponent(bot, i).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord12.Events.MessageCreate, (m) => {
+    client.on(import_discord13.Events.MessageCreate, (m) => {
       void this.handleMessage(bot, m).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord12.Events.GuildMemberAdd, (member) => {
+    client.on(import_discord13.Events.GuildMemberAdd, (member) => {
       void this.forModules(bot, member.guild?.id, async (mod, config2) => {
         await mod.onMemberAdd?.({ client: member.client, botId: bot.id, guild: member.guild, config: config2 }, member);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord12.Events.GuildMemberRemove, (member) => {
+    client.on(import_discord13.Events.GuildMemberRemove, (member) => {
       void this.forModules(bot, member.guild?.id, async (mod, config2) => {
         await mod.onMemberRemove?.({ client: member.client, botId: bot.id, guild: member.guild, config: config2 }, member);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord12.Events.GuildMemberUpdate, (oldMember, newMember) => {
+    client.on(import_discord13.Events.GuildMemberUpdate, (oldMember, newMember) => {
       void this.forModules(bot, newMember.guild?.id, async (mod, config2) => {
         await mod.onMemberUpdate?.({ client: newMember.client, botId: bot.id, guild: newMember.guild, config: config2 }, oldMember, newMember);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord12.Events.MessageDelete, (m) => {
+    client.on(import_discord13.Events.MessageDelete, (m) => {
       void this.forModules(bot, m.guild?.id, async (mod, config2) => {
         await mod.onMessageDelete?.({ client: m.client, botId: bot.id, guild: m.guild, config: config2 }, m);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord12.Events.MessageUpdate, (oldM, newM) => {
+    client.on(import_discord13.Events.MessageUpdate, (oldM, newM) => {
       void this.forModules(bot, newM.guild?.id, async (mod, config2) => {
         await mod.onMessageUpdate?.({ client: newM.client, botId: bot.id, guild: newM.guild, config: config2 }, oldM, newM);
       }).catch((e) => recordError(bot.id, e));
     });
-    client.on(import_discord12.Events.Error, (e) => void recordError(bot.id, e));
-    client.on(import_discord12.Events.ShardError, (e) => void recordError(bot.id, e));
-    client.on(import_discord12.Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, "gateway terputus \u2014 discord.js reconnect otomatis"));
+    client.on(import_discord13.Events.Error, (e) => void recordError(bot.id, e));
+    client.on(import_discord13.Events.ShardError, (e) => void recordError(bot.id, e));
+    client.on(import_discord13.Events.ShardDisconnect, () => logger.warn({ botId: bot.id }, "gateway terputus \u2014 discord.js reconnect otomatis"));
     logger.info({ botId: this.botId }, "runner: memanggil client.login");
     await client.login(token);
     logger.info({ botId: this.botId }, "runner: client.login selesai");
@@ -109927,17 +110219,17 @@ var BotRunner = class {
   async handleSlash(bot, interaction) {
     if (!interaction.inGuild() || !interaction.guild) return;
     const mod = this.mods.find((m) => m.commands.some((c) => c.name === interaction.commandName));
-    const cmd = mod?.commands.find((c) => c.name === interaction.commandName);
-    if (!mod || !cmd) return;
+    const cmd2 = mod?.commands.find((c) => c.name === interaction.commandName);
+    if (!mod || !cmd2) return;
     const config2 = await this.guildConfig(bot, mod.name, interaction.guild.id);
     if (config2.enabled === false) return void interaction.reply({ content: "\u274C Modul ini dinonaktifkan di server ini.", ephemeral: true }).catch(() => {
     });
-    if (!await this.notRateLimited(bot.id, interaction.guild.id, interaction.user.id, cmd.name)) {
+    if (!await this.notRateLimited(bot.id, interaction.guild.id, interaction.user.id, cmd2.name)) {
       return void interaction.reply({ content: "\u23F3 Terlalu cepat \u2014 coba lagi beberapa detik.", ephemeral: true }).catch(() => {
       });
     }
     const args = {};
-    for (const a of cmd.args) {
+    for (const a of cmd2.args) {
       if (a.type === "user") args[a.name] = interaction.options.getMember(a.name) ?? null;
       else if (a.type === "int") args[a.name] = interaction.options.getInteger(a.name);
       else args[a.name] = interaction.options.getString(a.name) ?? "";
@@ -109953,7 +110245,7 @@ var BotRunner = class {
       showModal: (modal) => interaction.showModal(modal),
       reply: (payload) => {
         const base = { allowedMentions: { parse: [] } };
-        const vis = cmd.publicReply ? {} : { ephemeral: true };
+        const vis = cmd2.publicReply ? {} : { ephemeral: true };
         if (interaction.deferred) {
           const opts2 = typeof payload === "string" ? { content: payload, ...base } : { embeds: payload.embeds, files: payload.files, ...base };
           return interaction.editReply(opts2);
@@ -109963,13 +110255,13 @@ var BotRunner = class {
       }
     };
     try {
-      if (cmd.defer) await interaction.deferReply({ ephemeral: !cmd.publicReply });
-      await cmd.execute(ctx, args);
+      if (cmd2.defer) await interaction.deferReply({ ephemeral: !cmd2.publicReply });
+      await cmd2.execute(ctx, args);
       await db.insert(commandLogs).values({
         botId: bot.id,
         discordGuildId: interaction.guild.id,
         discordUserId: interaction.user.id,
-        commandName: cmd.name
+        commandName: cmd2.name
       });
     } catch (e) {
       await recordError(bot.id, e);
@@ -109995,41 +110287,41 @@ var BotRunner = class {
     const [nameRaw, ...rest] = content.split(/\s+/);
     const name = nameRaw.toLowerCase();
     const mod = this.mods.find((m) => m.commands.some((c) => c.name === name));
-    const cmd = mod?.commands.find((c) => c.name === name);
-    if (!mod || !cmd) {
-      const customMod = this.mods.find((m) => m.onPrefixCommand);
-      if (!customMod) return;
-      const config3 = await this.guildConfig(bot, customMod.name, message.guild.id);
-      if (config3.enabled === false) return;
-      if (!await this.notRateLimited(bot.id, message.guild.id, message.author.id, name)) {
-        return void message.reply({ content: "\u23F3 Terlalu cepat \u2014 coba lagi beberapa detik.", allowedMentions: { parse: [] } });
-      }
-      const ctx2 = this.prefixContext(bot, message, config3);
-      const handled = await customMod.onPrefixCommand(ctx2, name, rest);
-      if (handled) {
+    const cmd2 = mod?.commands.find((c) => c.name === name);
+    if (!mod || !cmd2) {
+      for (const customMod of this.mods) {
+        if (!customMod.onPrefixCommand) continue;
+        const config3 = await this.guildConfig(bot, customMod.name, message.guild.id);
+        if (config3.enabled === false) continue;
+        if (!await this.notRateLimited(bot.id, message.guild.id, message.author.id, name)) {
+          return void message.reply({ content: "\u23F3 Terlalu cepat \u2014 coba lagi beberapa detik.", allowedMentions: { parse: [] } });
+        }
+        const ctx2 = this.prefixContext(bot, message, config3);
+        if (!await customMod.onPrefixCommand(ctx2, name, rest)) continue;
         await db.insert(commandLogs).values({
           botId: bot.id,
           discordGuildId: message.guild.id,
           discordUserId: message.author.id,
           commandName: name
         }).catch((e) => recordError(bot.id, e));
+        return;
       }
       return;
     }
-    if (!await this.notRateLimited(bot.id, message.guild.id, message.author.id, cmd.name)) {
+    if (!await this.notRateLimited(bot.id, message.guild.id, message.author.id, cmd2.name)) {
       return void message.reply({ content: "\u23F3 Terlalu cepat \u2014 coba lagi beberapa detik.", allowedMentions: { parse: [] } });
     }
     const config2 = await this.guildConfig(bot, mod.name, message.guild.id);
     if (config2.enabled === false) return void message.reply({ content: "\u274C Modul ini dinonaktifkan di server ini.", allowedMentions: { parse: [] } });
-    const args = await parsePrefixArgs(cmd, message, rest);
+    const args = await parsePrefixArgs(cmd2, message, rest);
     const ctx = this.prefixContext(bot, message, config2);
     try {
-      await cmd.execute(ctx, args);
+      await cmd2.execute(ctx, args);
       await db.insert(commandLogs).values({
         botId: bot.id,
         discordGuildId: message.guild.id,
         discordUserId: message.author.id,
-        commandName: cmd.name
+        commandName: cmd2.name
       });
     } catch (e) {
       await recordError(bot.id, e);
@@ -110054,8 +110346,8 @@ var BotRunner = class {
     };
   }
   /** Cooldown 3 detik per user/guild/command. */
-  async notRateLimited(botId, guildId, userId, cmd) {
-    const ok = await redis.set(`rl:cmd:${botId}:${guildId}:${userId}:${cmd}`, "1", "EX", 3, "NX");
+  async notRateLimited(botId, guildId, userId, cmd2) {
+    const ok = await redis.set(`rl:cmd:${botId}:${guildId}:${userId}:${cmd2}`, "1", "EX", 3, "NX");
     return ok === "OK";
   }
 };
