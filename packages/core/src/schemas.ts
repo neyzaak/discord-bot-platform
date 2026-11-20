@@ -156,6 +156,12 @@ export const quotesConfigSchema = z.object({
   })).max(500, 'maksimal 500 kutipan').default([]),
 });
 
+export const wizzyConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  currency: z.string().trim().min(1).max(16).default('Galleon'),
+  huntCooldownSec: z.number().int().min(1).max(3600).default(15),
+}).passthrough();
+
 export const moduleSchemas = {
   welcome: welcomeConfigSchema,
   moderation: moderationConfigSchema,
@@ -169,7 +175,7 @@ export const moduleSchemas = {
   quiz: quizConfigSchema,
   quotes: quotesConfigSchema,
   ktp: z.object({}).passthrough().optional(),
-  wizzy: z.object({ enabled: z.boolean().default(true) }).passthrough(),
+  wizzy: wizzyConfigSchema,
 } satisfies Record<ModuleName, z.ZodTypeAny>;
 
 /** Bentuk `bot_configs.data` untuk satu guild. */
@@ -186,7 +192,7 @@ export const guildConfigSchema = z.object({
   quiz: quizConfigSchema.optional(),
   quotes: quotesConfigSchema.optional(),
   ktp: z.object({}).passthrough().optional(),
-  wizzy: z.object({ enabled: z.boolean().default(true) }).passthrough().optional(),
+  wizzy: wizzyConfigSchema.optional(),
 });
 
 /** Bentuk `bot_configs.data` level bot (guild ''). */

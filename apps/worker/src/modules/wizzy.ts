@@ -6,7 +6,6 @@ import type { BotModule, CommandContext, ModuleCommand } from './types';
 const COLOR = 0x7b2ff7;
 const FOOTER = 'Wizzy • Dunia Sihir';
 const GOLD = 0xf5c542;
-const HUNT_COOLDOWN_MS = 15_000;
 const DAY_MS = 86_400_000;
 
 const RARITIES = {
@@ -43,6 +42,8 @@ const byId = Object.fromEntries(CREATURES.map((c) => [c.id, c])) as Record<strin
 
 const HOUSES = ['Ignis 🔥', 'Aqua 💧', 'Ventus 🌪️', 'Terra 🪨'];
 const fmt = (n: number) => n.toLocaleString('id-ID');
+const cur = (ctx: CommandContext) => String(ctx.config.currency || 'Galleon');
+const cdMs = (ctx: CommandContext) => (Number(ctx.config.huntCooldownSec) || 15) * 1000;
 const embed = (title: string, description: string, color = COLOR) => ({ title, description, color, footer: { text: FOOTER } });
 
 const getUser = async (botId: number, userId: string) => {
@@ -103,7 +104,7 @@ const commands: ModuleCommand[] = [
     const house = HOUSES[Math.floor(Math.random() * HOUSES.length)]!;
     await db.insert(wizzyUsers).values({ botId: ctx.botId, discordUserId: ctx.user.id, house });
     return ctx.reply({ embeds: [embed('✨ Selamat datang di Dunia Sihir!',
-      `Topi seleksi memilihmu masuk house **${house}**!\nKamu mendapat **100 Galleon**.\n\nKetik \`ghunt\` untuk berburu makhluk pertamamu.`)] });
+      `Topi seleksi memilihmu masuk house **${house}**!\nKamu mendapat **100 ${cur(ctx)}**.\n\nKetik \`ghunt\` untuk berburu makhluk pertamamu.`)] });
   }),
 
   cmd('profile', 'Kartu penyihir', async (ctx, args) => {
@@ -120,7 +121,7 @@ const commands: ModuleCommand[] = [
       fields: [
         { name: 'House', value: u.house, inline: true },
         { name: 'Level', value: `${u.level} (${u.xp}/${u.level * 100} XP)`, inline: true },
-        { name: 'Galleon', value: `💰 ${fmt(u.galleons)}`, inline: true },
+        { name: cur(ctx), value: `💰 ${fmt(u.galleons)}`, inline: true },
         { name: 'Koleksi', value: `🏆 ${owned.length} makhluk`, inline: true },
         { name: 'Battle', value: `${u.wins}M / ${u.losses}K`, inline: true },
         { name: 'Dex', value: `${dex}/${CREATURES.length} jenis`, inline: true },
@@ -145,13 +146,13 @@ const commands: ModuleCommand[] = [
     await db.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${reward}` })
       .where(eq(wizzyUsers.id, u.id));
     return ctx.reply({ embeds: [embed('🎁 Hadiah Harian',
-      `Kamu mendapat **${fmt(reward)} Galleon**!\n🔥 Streak: **${streak}** hari`)] });
+      `Kamu mendapat **${fmt(reward)} ${cur(ctx)}**!\n🔥 Streak: **${streak}** hari`)] });
   }),
 
   cmd('cash', 'Cek saldo Galleon', async (ctx) => {
     const u = await needUser(ctx);
     if (!u) return;
-    return ctx.reply(`💰 **${ctx.user.username}**, saldomu: **${fmt(u.galleons)} Galleon**`);
+    return ctx.reply(`💰 **${ctx.user.username}**, saldomu: **${fmt(u.galleons)} ${cur(ctx)}**`);
   }),
 
   cmd('hunt', 'Berburu makhluk sihir', async (ctx) => {
@@ -160,7 +161,7 @@ const commands: ModuleCommand[] = [
     const key = `${ctx.botId}:${ctx.user.id}`;
     const left = (cooldowns.get(key) ?? 0) - Date.now();
     if (left > 0) return ctx.reply(`⏳ Tunggu **${Math.ceil(left / 1000)} detik** lagi.`);
-    cooldowns.set(key, Date.now() + HUNT_COOLDOWN_MS);
+    cooldowns.set(key, Date.now() + cdMs(ctx));
 
     const caught = Array.from({ length: 1 + Math.floor(Math.random() * 3) }, huntOnce);
     const levelUp = await db.transaction(async (tx) => {
@@ -217,7 +218,7 @@ const commands: ModuleCommand[] = [
       await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${total}` })
         .where(eq(wizzyUsers.id, u.id));
     });
-    return ctx.reply(`💰 Menjual **${toSell.length}** makhluk seharga **${fmt(total)} Galleon**!`);
+    return ctx.reply(`💰 Menjual **${toSell.length}** makhluk seharga **${fmt(total)} ${cur(ctx)}**!`);
   }, { name: 'target', description: 'all | rarity | nama makhluk', rest: true }),
 
   cmd('help', 'Daftar command Wizzy', async (ctx) => ctx.reply({ embeds: [embed('🔮 Bantuan Wizzy', [

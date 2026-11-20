@@ -104343,6 +104343,11 @@ var quotesConfigSchema = external_exports.object({
     imageUrl: external_exports.string().trim().max(500).default("")
   })).max(500, "maksimal 500 kutipan").default([])
 });
+var wizzyConfigSchema = external_exports.object({
+  enabled: external_exports.boolean().default(true),
+  currency: external_exports.string().trim().min(1).max(16).default("Galleon"),
+  huntCooldownSec: external_exports.number().int().min(1).max(3600).default(15)
+}).passthrough();
 var moduleSchemas = {
   welcome: welcomeConfigSchema,
   moderation: moderationConfigSchema,
@@ -104356,7 +104361,7 @@ var moduleSchemas = {
   quiz: quizConfigSchema,
   quotes: quotesConfigSchema,
   ktp: external_exports.object({}).passthrough().optional(),
-  wizzy: external_exports.object({ enabled: external_exports.boolean().default(true) }).passthrough()
+  wizzy: wizzyConfigSchema
 };
 var guildConfigSchema = external_exports.object({
   welcome: welcomeConfigSchema.optional(),
@@ -104371,7 +104376,7 @@ var guildConfigSchema = external_exports.object({
   quiz: quizConfigSchema.optional(),
   quotes: quotesConfigSchema.optional(),
   ktp: external_exports.object({}).passthrough().optional(),
-  wizzy: external_exports.object({ enabled: external_exports.boolean().default(true) }).passthrough().optional()
+  wizzy: wizzyConfigSchema.optional()
 });
 var botLevelConfigSchema = external_exports.object({
   modules: external_exports.array(external_exports.enum(MODULE_NAMES)).default([])
@@ -108606,9 +108611,9 @@ async function rankEmbed(botId, guildId, targetUserId, targetTag) {
   const [row] = await db.select().from(guildMembers).where(memberKey(botId, guildId, targetUserId));
   const xp = row?.xp ?? 0;
   const level = levelForXp(xp);
-  const cur = xpForLevel(level);
+  const cur2 = xpForLevel(level);
   const next = xpForLevel(level + 1);
-  const filled = Math.round(10 * ((xp - cur) / Math.max(1, next - cur)));
+  const filled = Math.round(10 * ((xp - cur2) / Math.max(1, next - cur2)));
   const bar = "\u2588".repeat(Math.max(0, Math.min(10, filled))) + "\u2591".repeat(10 - Math.max(0, Math.min(10, filled)));
   return {
     title: `\u{1F4CA} Rank ${targetTag}`,
@@ -109115,7 +109120,7 @@ async function getBg(c) {
   return bgImage;
 }
 var cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-var nextOf = (arr, cur) => arr[(arr.indexOf(cur) + 1) % arr.length];
+var nextOf = (arr, cur2) => arr[(arr.indexOf(cur2) + 1) % arr.length];
 function wibNow() {
   return new Date(Date.now() + 7 * 36e5);
 }
@@ -109776,7 +109781,6 @@ var welcomeModule = {
 var import_discord12 = __toESM(require_src2(), 1);
 var COLOR = 8073207;
 var FOOTER = "Wizzy \u2022 Dunia Sihir";
-var HUNT_COOLDOWN_MS = 15e3;
 var DAY_MS = 864e5;
 var RARITIES = {
   common: { label: "Common", chance: 60, price: 10, emoji: "\u26AA" },
@@ -109809,6 +109813,8 @@ var CREATURES = [
 var byId = Object.fromEntries(CREATURES.map((c) => [c.id, c]));
 var HOUSES = ["Ignis \u{1F525}", "Aqua \u{1F4A7}", "Ventus \u{1F32A}\uFE0F", "Terra \u{1FAA8}"];
 var fmt3 = (n) => n.toLocaleString("id-ID");
+var cur = (ctx) => String(ctx.config.currency || "Galleon");
+var cdMs = (ctx) => (Number(ctx.config.huntCooldownSec) || 15) * 1e3;
 var embed = (title, description, color = COLOR) => ({ title, description, color, footer: { text: FOOTER } });
 var getUser = async (botId, userId) => {
   const [u] = await db.select().from(wizzyUsers).where(and(eq(wizzyUsers.botId, botId), eq(wizzyUsers.discordUserId, userId)));
@@ -109862,7 +109868,7 @@ var commands = [
     return ctx.reply({ embeds: [embed(
       "\u2728 Selamat datang di Dunia Sihir!",
       `Topi seleksi memilihmu masuk house **${house}**!
-Kamu mendapat **100 Galleon**.
+Kamu mendapat **100 ${cur(ctx)}**.
 
 Ketik \`ghunt\` untuk berburu makhluk pertamamu.`
     )] });
@@ -109881,7 +109887,7 @@ Ketik \`ghunt\` untuk berburu makhluk pertamamu.`
       fields: [
         { name: "House", value: u.house, inline: true },
         { name: "Level", value: `${u.level} (${u.xp}/${u.level * 100} XP)`, inline: true },
-        { name: "Galleon", value: `\u{1F4B0} ${fmt3(u.galleons)}`, inline: true },
+        { name: cur(ctx), value: `\u{1F4B0} ${fmt3(u.galleons)}`, inline: true },
         { name: "Koleksi", value: `\u{1F3C6} ${owned.length} makhluk`, inline: true },
         { name: "Battle", value: `${u.wins}M / ${u.losses}K`, inline: true },
         { name: "Dex", value: `${dex}/${CREATURES.length} jenis`, inline: true },
@@ -109904,14 +109910,14 @@ Ketik \`ghunt\` untuk berburu makhluk pertamamu.`
     await db.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${reward}` }).where(eq(wizzyUsers.id, u.id));
     return ctx.reply({ embeds: [embed(
       "\u{1F381} Hadiah Harian",
-      `Kamu mendapat **${fmt3(reward)} Galleon**!
+      `Kamu mendapat **${fmt3(reward)} ${cur(ctx)}**!
 \u{1F525} Streak: **${streak}** hari`
     )] });
   }),
   cmd("cash", "Cek saldo Galleon", async (ctx) => {
     const u = await needUser(ctx);
     if (!u) return;
-    return ctx.reply(`\u{1F4B0} **${ctx.user.username}**, saldomu: **${fmt3(u.galleons)} Galleon**`);
+    return ctx.reply(`\u{1F4B0} **${ctx.user.username}**, saldomu: **${fmt3(u.galleons)} ${cur(ctx)}**`);
   }),
   cmd("hunt", "Berburu makhluk sihir", async (ctx) => {
     const u = await needUser(ctx);
@@ -109919,7 +109925,7 @@ Ketik \`ghunt\` untuk berburu makhluk pertamamu.`
     const key2 = `${ctx.botId}:${ctx.user.id}`;
     const left = (cooldowns.get(key2) ?? 0) - Date.now();
     if (left > 0) return ctx.reply(`\u23F3 Tunggu **${Math.ceil(left / 1e3)} detik** lagi.`);
-    cooldowns.set(key2, Date.now() + HUNT_COOLDOWN_MS);
+    cooldowns.set(key2, Date.now() + cdMs(ctx));
     const caught = Array.from({ length: 1 + Math.floor(Math.random() * 3) }, huntOnce);
     const levelUp = await db.transaction(async (tx) => {
       for (const c of caught) {
@@ -109982,7 +109988,7 @@ ${lines.join("\n")}`;
       }
       await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${total}` }).where(eq(wizzyUsers.id, u.id));
     });
-    return ctx.reply(`\u{1F4B0} Menjual **${toSell.length}** makhluk seharga **${fmt3(total)} Galleon**!`);
+    return ctx.reply(`\u{1F4B0} Menjual **${toSell.length}** makhluk seharga **${fmt3(total)} ${cur(ctx)}**!`);
   }, { name: "target", description: "all | rarity | nama makhluk", rest: true }),
   cmd("help", "Daftar command Wizzy", async (ctx) => ctx.reply({ embeds: [embed("\u{1F52E} Bantuan Wizzy", [
     "**\u{1F9D9} Dasar**",

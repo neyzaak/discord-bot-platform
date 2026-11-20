@@ -24,7 +24,7 @@ export interface GuildConfigData {
     font: 'poppins' | 'playfair'; textSize: 'kecil' | 'sedang' | 'besar'; photoPosition: 'kiri' | 'kanan';
     quotes: QuoteEntry[];
   };
-  wizzy?: { enabled: boolean };
+  wizzy?: { enabled: boolean; currency: string; huntCooldownSec: number };
 }
 
 const inputCls = 'w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-400';
@@ -55,8 +55,8 @@ function Num({ value, onChange, min, max, w = 'max-w-[120px]' }: {
   );
 }
 
-export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
-  cfg: GuildConfigData; channels: Opt[]; roles: Opt[]; onChange: (next: GuildConfigData) => void;
+export function GuildConfigPanel({ cfg, channels, roles, modules, onChange }: {
+  cfg: GuildConfigData; channels: Opt[]; roles: Opt[]; modules?: string[]; onChange: (next: GuildConfigData) => void;
 }) {
   const { t } = useI18n();
   const textChannels = channels.filter((c) => c.type !== 4);
@@ -64,11 +64,14 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
   const [showSoal, setShowSoal] = useState(25);
   const [showQuote, setShowQuote] = useState(25);
   const set = <K extends keyof GuildConfigData>(k: K, v: GuildConfigData[K]) => onChange({ ...cfg, [k]: v });
+  // Tampilkan hanya config modul yang aktif di bot ini — bot game tidak perlu panel Quotes/Moderasi.
+  const show = (m: string) => !modules || modules.includes(m);
+  const secCls = (m: string) => `rounded-xl border border-slate-800 p-4 ${show(m) ? '' : 'hidden'}`;
 
   return (
     <div className="space-y-5">
       {/* Selamat Datang */}
-      <div className="rounded-xl border border-slate-800 p-4">
+      <div className={secCls('welcome')}>
         <h3 className="mb-3 font-medium">{t('mod.welcome')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.welcome.commands')}</p>
         <div className="mb-3"><Check label={t('mod.welcome.enabled')} checked={cfg.welcome.enabled} onChange={(v) => set('welcome', { ...cfg.welcome, enabled: v })} /></div>
@@ -95,7 +98,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
       </div>
 
       {/* Moderasi */}
-      <div className="rounded-xl border border-slate-800 p-4">
+      <div className={secCls('moderation')}>
         <h3 className="mb-3 font-medium">{t('mod.moderation')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.moderation.commands')}</p>
         <div className="mb-3">
@@ -107,7 +110,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
       </div>
 
       {/* Tiket */}
-      <div className="rounded-xl border border-slate-800 p-4">
+      <div className={secCls('tickets')}>
         <h3 className="mb-3 font-medium">{t('mod.tickets')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.tickets.commands')}</p>
         <div className="mb-3"><Check label={t('mod.enabled')} checked={cfg.tickets.enabled} onChange={(v) => set('tickets', { ...cfg.tickets, enabled: v })} /></div>
@@ -128,7 +131,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
       </div>
 
       {/* Logging */}
-      <div className="rounded-xl border border-slate-800 p-4">
+      <div className={secCls('logging')}>
         <h3 className="mb-3 font-medium">{t('mod.logging')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.logging.commands')}</p>
         <div className="mb-3">
@@ -145,14 +148,14 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
       </div>
 
       {/* Utilitas */}
-      <div className="rounded-xl border border-slate-800 p-4">
+      <div className={secCls('utilities')}>
         <h3 className="mb-3 font-medium">{t('mod.utilities')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.utilities.commands')}</p>
         <Check label={t('mod.enabled')} checked={cfg.utilities.enabled} onChange={(v) => set('utilities', { enabled: v })} />
       </div>
 
       {/* Custom Command */}
-      <div className="rounded-xl border border-slate-800 p-4">
+      <div className={secCls('customcmd')}>
         <h3 className="mb-3 font-medium">{t('mod.customcmd')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.customcmd.commands')}</p>
         <div className="mb-3"><Check label={t('mod.enabled')} checked={cfg.customcmd.enabled} onChange={(v) => set('customcmd', { ...cfg.customcmd, enabled: v })} /></div>
@@ -197,7 +200,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
       </div>
 
       {/* Leveling */}
-      <div className="rounded-xl border border-slate-800 p-4">
+      <div className={secCls('leveling')}>
         <h3 className="mb-3 font-medium">{t('mod.leveling')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.leveling.commands')}</p>
         <div className="mb-3"><Check label={t('mod.enabled')} checked={cfg.leveling.enabled} onChange={(v) => set('leveling', { ...cfg.leveling, enabled: v })} /></div>
@@ -246,7 +249,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
       </div>
 
       {/* Ekonomi */}
-      <div className="rounded-xl border border-slate-800 p-4">
+      <div className={secCls('economy')}>
         <h3 className="mb-3 font-medium">{t('mod.economy')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.economy.commands')}</p>
         <div className="mb-3"><Check label={t('mod.enabled')} checked={cfg.economy.enabled} onChange={(v) => set('economy', { ...cfg.economy, enabled: v })} /></div>
@@ -297,14 +300,14 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
       </div>
 
       {/* Webhooks */}
-      <div className="rounded-xl border border-slate-800 p-4">
+      <div className={secCls('webhooks')}>
         <h3 className="mb-3 font-medium">{t('mod.webhooks')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.webhooks.note')}</p>
         <Check label={t('mod.enabled')} checked={cfg.webhooks.enabled} onChange={(v) => set('webhooks', { enabled: v })} />
       </div>
 
       {/* Quiz */}
-      <div className="rounded-xl border border-slate-800 p-4">
+      <div className={secCls('quiz')}>
         <h3 className="mb-3 font-medium">{t('mod.quiz')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.quiz.commands')}</p>
         <div className="mb-3"><Check label={t('mod.enabled')} checked={cfg.quiz.enabled} onChange={(v) => set('quiz', { ...cfg.quiz, enabled: v })} /></div>
@@ -416,7 +419,7 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
       </div>
 
       {/* Quotes */}
-      <div className="rounded-xl border border-slate-800 p-4">
+      <div className={secCls('quotes')}>
         <h3 className="mb-3 font-medium">{t('mod.quotes')}</h3>
         <p className="mb-3 text-xs text-slate-500">{t('mod.quotes.commands')}</p>
         <div className="mb-3"><Check label={t('mod.enabled')} checked={cfg.quotes.enabled} onChange={(v) => set('quotes', { ...cfg.quotes, enabled: v })} /></div>
@@ -507,6 +510,21 @@ export function GuildConfigPanel({ cfg, channels, roles, onChange }: {
             + {t('mod.quotes.add')}
           </button>
         )}
+      </div>
+
+      {/* Wizzy */}
+      <div className={secCls('wizzy')}>
+        <h3 className="mb-3 font-medium">{t('mod.wizzy')}</h3>
+        <p className="mb-3 text-xs text-slate-500">{t('mod.wizzy.commands')}</p>
+        <div className="mb-3">
+          <label className={labelCls}>{t('mod.wizzy.currency')}</label>
+          <input value={cfg.wizzy?.currency ?? 'Galleon'} maxLength={16}
+            onChange={(e) => set('wizzy', { enabled: cfg.wizzy?.enabled ?? true, currency: e.target.value, huntCooldownSec: cfg.wizzy?.huntCooldownSec ?? 15 })}
+            className={`${inputCls} max-w-[200px]`} />
+        </div>
+        <label className={labelCls}>{t('mod.wizzy.cooldown')}</label>
+        <Num value={cfg.wizzy?.huntCooldownSec ?? 15} min={1} max={3600}
+          onChange={(v) => set('wizzy', { enabled: cfg.wizzy?.enabled ?? true, currency: cfg.wizzy?.currency ?? 'Galleon', huntCooldownSec: v })} />
       </div>
     </div>
   );

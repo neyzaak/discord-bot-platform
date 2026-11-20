@@ -286,7 +286,7 @@ export default function BotDetailPage() {
             </div>
             {guildId && cfg && (
               <>
-                <GuildConfigPanel cfg={cfg} channels={channels} roles={roles} onChange={setCfg} />
+                <GuildConfigPanel cfg={cfg} channels={channels} roles={roles} modules={bot.modules} onChange={setCfg} />
                 <button onClick={saveConfig} disabled={busy}
                   className="mt-5 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-400 disabled:opacity-50">
                   {busy ? t('common.saving') : t('common.save')}

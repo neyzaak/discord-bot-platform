@@ -51855,6 +51855,11 @@ var quotesConfigSchema = external_exports.object({
     imageUrl: external_exports.string().trim().max(500).default("")
   })).max(500, "maksimal 500 kutipan").default([])
 });
+var wizzyConfigSchema = external_exports.object({
+  enabled: external_exports.boolean().default(true),
+  currency: external_exports.string().trim().min(1).max(16).default("Galleon"),
+  huntCooldownSec: external_exports.number().int().min(1).max(3600).default(15)
+}).passthrough();
 var moduleSchemas = {
   welcome: welcomeConfigSchema,
   moderation: moderationConfigSchema,
@@ -51868,7 +51873,7 @@ var moduleSchemas = {
   quiz: quizConfigSchema,
   quotes: quotesConfigSchema,
   ktp: external_exports.object({}).passthrough().optional(),
-  wizzy: external_exports.object({ enabled: external_exports.boolean().default(true) }).passthrough()
+  wizzy: wizzyConfigSchema
 };
 var guildConfigSchema = external_exports.object({
   welcome: welcomeConfigSchema.optional(),
@@ -51883,7 +51888,7 @@ var guildConfigSchema = external_exports.object({
   quiz: quizConfigSchema.optional(),
   quotes: quotesConfigSchema.optional(),
   ktp: external_exports.object({}).passthrough().optional(),
-  wizzy: external_exports.object({ enabled: external_exports.boolean().default(true) }).passthrough().optional()
+  wizzy: wizzyConfigSchema.optional()
 });
 var botLevelConfigSchema = external_exports.object({
   modules: external_exports.array(external_exports.enum(MODULE_NAMES)).default([])
