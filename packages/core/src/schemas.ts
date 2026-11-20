@@ -3,7 +3,7 @@ import { z } from 'zod';
 /** Modul aktif platform: F1 welcome+moderation, F2 tickets/logging/utilities/customcmd, F3 leveling/economy/webhooks, quiz, quotes (kartu kutipan), ktp. */
 export const MODULE_NAMES = [
   'welcome', 'moderation', 'tickets', 'logging', 'utilities',
-  'customcmd', 'leveling', 'economy', 'webhooks', 'quiz', 'quotes', 'ktp',
+  'customcmd', 'leveling', 'economy', 'webhooks', 'quiz', 'quotes', 'ktp', 'wizzy',
 ] as const;
 export type ModuleName = (typeof MODULE_NAMES)[number];
 
@@ -169,6 +169,7 @@ export const moduleSchemas = {
   quiz: quizConfigSchema,
   quotes: quotesConfigSchema,
   ktp: z.object({}).passthrough().optional(),
+  wizzy: z.object({ enabled: z.boolean().default(true) }).passthrough(),
 } satisfies Record<ModuleName, z.ZodTypeAny>;
 
 /** Bentuk `bot_configs.data` untuk satu guild. */
@@ -185,6 +186,7 @@ export const guildConfigSchema = z.object({
   quiz: quizConfigSchema.optional(),
   quotes: quotesConfigSchema.optional(),
   ktp: z.object({}).passthrough().optional(),
+  wizzy: z.object({ enabled: z.boolean().default(true) }).passthrough().optional(),
 });
 
 /** Bentuk `bot_configs.data` level bot (guild ''). */
@@ -241,6 +243,7 @@ export const moduleInvitePermissions: Record<ModuleName, string[]> = {
   quiz: ['ViewChannel', 'SendMessages', 'EmbedLinks'],
   quotes: ['ViewChannel', 'SendMessages', 'EmbedLinks', 'AttachFiles'],
   ktp: ['ViewChannel', 'SendMessages', 'EmbedLinks'],
+  wizzy: ['ViewChannel', 'SendMessages', 'EmbedLinks'],
 };
 
 export function invitePermissionsBitfield(modules: readonly string[]): string {

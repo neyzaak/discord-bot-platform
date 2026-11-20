@@ -1,5 +1,5 @@
 import {
-  integer, jsonb, pgTable, serial, text, timestamp, uniqueIndex, varchar,
+  boolean, index, integer, jsonb, pgTable, serial, text, timestamp, uniqueIndex, varchar,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -88,6 +88,34 @@ export const guildMembers = pgTable('guild_members', {
   lastWorkAt: timestamp('last_work_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [uniqueIndex('guild_members_uq').on(t.botId, t.discordGuildId, t.discordUserId)]);
+
+/** Data pemain Wizzy — dipisah per bot supaya tidak tabrak dengan bot lain. */
+export const wizzyUsers = pgTable('wizzy_users', {
+  id: serial('id').primaryKey(),
+  botId: integer('bot_id').notNull().references(() => bots.id, { onDelete: 'cascade' }),
+  discordUserId: text('discord_user_id').notNull(),
+  house: text('house').notNull().default(''),
+  galleons: integer('galleons').notNull().default(100),
+  xp: integer('xp').notNull().default(0),
+  level: integer('level').notNull().default(1),
+  dailyStreak: integer('daily_streak').notNull().default(0),
+  lastDailyAt: timestamp('last_daily_at', { withTimezone: true }),
+  wins: integer('wins').notNull().default(0),
+  losses: integer('losses').notNull().default(0),
+  rankPoints: integer('rank_points').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [uniqueIndex('wizzy_users_uq').on(t.botId, t.discordUserId)]);
+
+export const wizzyCreatures = pgTable('wizzy_creatures', {
+  id: serial('id').primaryKey(),
+  botId: integer('bot_id').notNull().references(() => bots.id, { onDelete: 'cascade' }),
+  discordUserId: text('discord_user_id').notNull(),
+  creatureId: text('creature_id').notNull(),
+  level: integer('level').notNull().default(1),
+  xp: integer('xp').notNull().default(0),
+  isInTeam: boolean('is_in_team').notNull().default(false),
+  caughtAt: timestamp('caught_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index('wizzy_creatures_user_idx').on(t.botId, t.discordUserId)]);
 
 /** Endpoint ingest webhook eksternal per kanal target. Token = kredensial. */
 export const webhooks = pgTable('webhooks', {
