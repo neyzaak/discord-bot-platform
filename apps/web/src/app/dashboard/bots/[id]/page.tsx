@@ -31,6 +31,7 @@ const MODULES: Array<{ key: string; icon: IconName }> = [
   { key: 'webhooks', icon: 'webhook' },
   { key: 'quiz', icon: 'quiz' },
   { key: 'quotes', icon: 'quote' },
+  { key: 'wizzy', icon: 'quiz' },
 ];
 const cardCls = 'rounded-2xl border border-slate-800/80 bg-slate-900/50 p-5';
 const btnGhost = 'flex items-center gap-2 rounded-lg bg-white/5 px-3 py-1.5 text-sm text-slate-200 transition hover:bg-white/10 disabled:opacity-50';

@@ -24,6 +24,7 @@ export interface GuildConfigData {
     font: 'poppins' | 'playfair'; textSize: 'kecil' | 'sedang' | 'besar'; photoPosition: 'kiri' | 'kanan';
     quotes: QuoteEntry[];
   };
+  wizzy?: { enabled: boolean };
 }
 
 const inputCls = 'w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-400';
