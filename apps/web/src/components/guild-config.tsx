@@ -65,8 +65,9 @@ function Num({ value, onChange, min, max, w = 'max-w-[120px]' }: {
   );
 }
 
-export function GuildConfigPanel({ cfg, channels, roles, modules, onChange }: {
+export function GuildConfigPanel({ cfg, channels, roles, modules, onChange, loadedBanks = [], onLoadBank }: {
   cfg: GuildConfigData; channels: Opt[]; roles: Opt[]; modules?: string[]; onChange: (next: GuildConfigData) => void;
+  loadedBanks?: string[]; onLoadBank?: (module: 'quiz' | 'quotes') => Promise<void>;
 }) {
   const { t } = useI18n();
   const textChannels = channels.filter((c) => c.type !== 4);
@@ -347,7 +348,14 @@ export function GuildConfigPanel({ cfg, channels, roles, modules, onChange }: {
         </div>
 
         <label className={labelCls}>{t('mod.quiz.questions')}</label>
+        {!loadedBanks.includes('quiz') && onLoadBank && (
+          <button type="button" onClick={() => void onLoadBank('quiz')}
+            className="mb-2 rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500">
+            {t('mod.quiz.loadBank')}
+          </button>
+        )}
         <p className="mb-2 text-xs text-slate-500">{cfg.quiz.questions.length} {t('mod.quiz.stored')}</p>
+        {loadedBanks.includes('quiz') && (<>
         <QuizImport existing={cfg.quiz.questions} onImport={(qs) => set('quiz', { ...cfg.quiz, questions: qs })} />
         <div className="space-y-3">
           {cfg.quiz.questions.slice(0, showSoal).map((q, qi) => (
@@ -428,6 +436,7 @@ export function GuildConfigPanel({ cfg, channels, roles, modules, onChange }: {
             + {t('mod.quiz.addQuestion')}
           </button>
         )}
+        </>)}
       </div>
 
       {/* Quotes */}
@@ -474,7 +483,14 @@ export function GuildConfigPanel({ cfg, channels, roles, modules, onChange }: {
         </div>
 
         <label className={labelCls}>{t('mod.quotes.bank')}</label>
+        {!loadedBanks.includes('quotes') && onLoadBank && (
+          <button type="button" onClick={() => void onLoadBank('quotes')}
+            className="mb-2 rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500">
+            {t('mod.quotes.loadBank')}
+          </button>
+        )}
         <p className="mb-2 text-xs text-slate-500">{cfg.quotes.quotes.length} {t('mod.quotes.stored')}</p>
+        {loadedBanks.includes('quotes') && (<>
         <div className="space-y-3">
           {cfg.quotes.quotes.slice(0, showQuote).map((q, qi) => (
             <div key={qi} className="rounded-lg border border-slate-800 p-3">
@@ -522,6 +538,7 @@ export function GuildConfigPanel({ cfg, channels, roles, modules, onChange }: {
             + {t('mod.quotes.add')}
           </button>
         )}
+        </>)}
       </div>
 
       {/* Wizzy */}

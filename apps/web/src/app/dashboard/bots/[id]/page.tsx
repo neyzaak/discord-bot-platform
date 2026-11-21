@@ -51,6 +51,7 @@ export default function BotDetailPage() {
   const [channels, setChannels] = useState<Opt[]>([]);
   const [roles, setRoles] = useState<Opt[]>([]);
   const [cfg, setCfg] = useState<GuildConfigData | null>(null);
+  const [loadedBanks, setLoadedBanks] = useState<string[]>([]);
   const [staffInput, setStaffInput] = useState('');
 
   const notify = (msg: string) => { setFlash(msg); setTimeout(() => setFlash(''), 2500); };
@@ -74,7 +75,7 @@ export default function BotDetailPage() {
   }, [load]);
 
   const loadGuildData = useCallback(async (gid: string) => {
-    setChannels([]); setRoles([]); setCfg(null);
+    setChannels([]); setRoles([]); setCfg(null); setLoadedBanks([]);
     if (!gid) return;
     try {
       const [c, ch, rl] = await Promise.all([
@@ -105,11 +106,26 @@ export default function BotDetailPage() {
     } catch (e) { fail(e); }
   };
 
+  const loadBank = async (module: 'quiz' | 'quotes') => {
+    if (!guildId) return;
+    setBusy(true); setError('');
+    try {
+      const d = await api<{ config: unknown }>(`/bots/${botId}/guilds/${guildId}/config/${module}`);
+      setCfg((prev) => prev ? { ...prev, [module]: d.config } as GuildConfigData : prev);
+      setLoadedBanks((prev) => prev.includes(module) ? prev : [...prev, module]);
+    } catch (e) { fail(e); } finally { setBusy(false); }
+  };
+
   const saveConfig = async () => {
     if (!guildId || !cfg) return;
     setBusy(true); setError('');
     try {
       await api(`/bots/${botId}/guilds/${guildId}/config`, { method: 'PUT', body: JSON.stringify(cfg) });
+      for (const module of loadedBanks) {
+        await api(`/bots/${botId}/guilds/${guildId}/config/${module}`, {
+          method: 'PUT', body: JSON.stringify(cfg[module as 'quiz' | 'quotes']),
+        });
+      }
       notify(t('common.saved'));
     } catch (e) { fail(e); } finally { setBusy(false); }
   };
@@ -286,7 +302,8 @@ export default function BotDetailPage() {
             </div>
             {guildId && cfg && (
               <>
-                <GuildConfigPanel cfg={cfg} channels={channels} roles={roles} modules={bot.modules} onChange={setCfg} />
+                <GuildConfigPanel cfg={cfg} channels={channels} roles={roles} modules={bot.modules}
+                  onChange={setCfg} loadedBanks={loadedBanks} onLoadBank={loadBank} />
                 <button onClick={saveConfig} disabled={busy}
                   className="mt-5 rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-400 disabled:opacity-50">
                   {busy ? t('common.saving') : t('common.save')}

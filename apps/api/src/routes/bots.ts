@@ -202,6 +202,12 @@ botsRouter.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
 
 // ---- Config per guild (generik untuk semua modul) ----
 
+// Bank soal/kutipan bisa 1+ MB — jangan ikut GET/PUT config biasa. Diambil/disimpan
+// lewat /config/:module hanya saat pengguna membuka editor bank tersebut.
+const BANK_KEY = { quiz: 'questions', quotes: 'quotes' } as const;
+type BankModule = keyof typeof BANK_KEY;
+const isBankModule = (name: string): name is BankModule => name in BANK_KEY;
+
 botsRouter.get('/:id/guilds/:guildId/config', requireAuth, asyncHandler(async (req, res) => {
   const bot = await loadOwnedBot(req);
   const guildId = requireSnowflake(req.params.guildId);
@@ -209,13 +215,48 @@ botsRouter.get('/:id/guilds/:guildId/config', requireAuth, asyncHandler(async (r
 
   const [row] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
   const data = guildConfigSchema.parse((row?.data as Record<string, unknown>) ?? {});
-  const config = Object.fromEntries(
-    Object.entries(moduleSchemas).map(([name, schema]) => [name, schema.parse((data as Record<string, unknown>)[name] ?? {})]),
-  );
+  const config = Object.fromEntries(Object.entries(moduleSchemas).map(([name, schema]) => {
+    const value = schema.parse((data as Record<string, unknown>)[name] ?? {}) as Record<string, unknown>;
+    return [name, isBankModule(name) ? { ...value, [BANK_KEY[name]]: [] } : value];
+  }));
   res.json({ config });
 }));
 
 const configLimiter = rateLimit({ windowSec: 60, max: 30, key: (req) => `user:${req.user?.id ?? req.ip}` });
+
+/** Ambil satu modul utuh, termasuk bank soal/kutipan — dipakai editor bank saja. */
+botsRouter.get('/:id/guilds/:guildId/config/:module', requireAuth, asyncHandler(async (req, res) => {
+  const bot = await loadOwnedBot(req);
+  const guildId = requireSnowflake(req.params.guildId);
+  await assertBotInGuild(bot.id, guildId);
+  const name = req.params.module;
+  if (!(name in moduleSchemas)) throw httpError(400, 'modul tidak dikenal');
+  const [row] = await db.select().from(botConfigs)
+    .where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
+  const data = guildConfigSchema.parse((row?.data as Record<string, unknown>) ?? {}) as Record<string, unknown>;
+  res.json({ config: moduleSchemas[name as keyof typeof moduleSchemas].parse(data[name] ?? {}) });
+}));
+
+/** Simpan satu modul utuh termasuk bank — endpoint terpisah supaya PUT config tetap ringan. */
+botsRouter.put('/:id/guilds/:guildId/config/:module', requireAuth, configLimiter, asyncHandler(async (req, res) => {
+  const bot = await loadOwnedBot(req);
+  const guildId = requireSnowflake(req.params.guildId);
+  await assertBotInGuild(bot.id, guildId);
+  await assertUserManagesGuild(req.user!.discordId, guildId);
+  const name = req.params.module;
+  if (!(name in moduleSchemas)) throw httpError(400, 'modul tidak dikenal');
+  const value = moduleSchemas[name as keyof typeof moduleSchemas].parse(req.body);
+  const [existing] = await db.select().from(botConfigs)
+    .where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
+  const merged = { ...((existing?.data as Record<string, unknown>) ?? {}), [name]: value };
+  await db.insert(botConfigs).values({ botId: bot.id, discordGuildId: guildId, data: merged })
+    .onConflictDoUpdate({
+      target: [botConfigs.botId, botConfigs.discordGuildId],
+      set: { data: merged, updatedAt: new Date() },
+    });
+  publishBot(bot.id, 'reload');
+  res.json({ ok: true });
+}));
 
 botsRouter.put('/:id/guilds/:guildId/config', requireAuth, configLimiter, asyncHandler(async (req, res) => {
   const bot = await loadOwnedBot(req);
@@ -224,14 +265,21 @@ botsRouter.put('/:id/guilds/:guildId/config', requireAuth, configLimiter, asyncH
   await assertUserManagesGuild(req.user!.discordId, guildId);
 
   const parsed = guildConfigSchema.parse(req.body) as Record<string, unknown>;
+  const [existing] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
+  const oldData = (existing?.data as Record<string, unknown>) ?? {};
   const data: Record<string, unknown> = {};
   for (const [name, schema] of Object.entries(moduleSchemas)) {
-    if (parsed[name] !== undefined) data[name] = schema.parse(parsed[name]);
+    if (parsed[name] === undefined) continue;
+    const value = schema.parse(parsed[name]) as Record<string, unknown>;
+    if (isBankModule(name)) {
+      const key = BANK_KEY[name];
+      const oldBank = (oldData[name] as Record<string, unknown>)?.[key];
+      data[name] = { ...value, [key]: Array.isArray(oldBank) && oldBank.length ? oldBank : value[key] };
+    } else data[name] = value;
   }
   if (Object.keys(data).length === 0) throw httpError(400, 'config kosong');
 
-  const [existing] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
-  const merged = { ...((existing?.data as Record<string, unknown>) ?? {}), ...data };
+  const merged = { ...oldData, ...data };
 
   await db.insert(botConfigs)
     .values({ botId: bot.id, discordGuildId: guildId, data: merged })

@@ -59088,31 +59088,68 @@ botsRouter.delete("/:id", requireAuth, asyncHandler(async (req, res) => {
   logger.info({ botId: bot.id }, "bot dihapus");
   res.json({ ok: true });
 }));
+var BANK_KEY = { quiz: "questions", quotes: "quotes" };
+var isBankModule = (name) => name in BANK_KEY;
 botsRouter.get("/:id/guilds/:guildId/config", requireAuth, asyncHandler(async (req, res) => {
   const bot = await loadOwnedBot(req);
   const guildId = requireSnowflake(req.params.guildId);
   await assertBotInGuild(bot.id, guildId);
   const [row] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
   const data = guildConfigSchema.parse(row?.data ?? {});
-  const config2 = Object.fromEntries(
-    Object.entries(moduleSchemas).map(([name, schema]) => [name, schema.parse(data[name] ?? {})])
-  );
+  const config2 = Object.fromEntries(Object.entries(moduleSchemas).map(([name, schema]) => {
+    const value = schema.parse(data[name] ?? {});
+    return [name, isBankModule(name) ? { ...value, [BANK_KEY[name]]: [] } : value];
+  }));
   res.json({ config: config2 });
 }));
 var configLimiter = rateLimit({ windowSec: 60, max: 30, key: (req) => `user:${req.user?.id ?? req.ip}` });
+botsRouter.get("/:id/guilds/:guildId/config/:module", requireAuth, asyncHandler(async (req, res) => {
+  const bot = await loadOwnedBot(req);
+  const guildId = requireSnowflake(req.params.guildId);
+  await assertBotInGuild(bot.id, guildId);
+  const name = req.params.module;
+  if (!(name in moduleSchemas)) throw httpError(400, "modul tidak dikenal");
+  const [row] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
+  const data = guildConfigSchema.parse(row?.data ?? {});
+  res.json({ config: moduleSchemas[name].parse(data[name] ?? {}) });
+}));
+botsRouter.put("/:id/guilds/:guildId/config/:module", requireAuth, configLimiter, asyncHandler(async (req, res) => {
+  const bot = await loadOwnedBot(req);
+  const guildId = requireSnowflake(req.params.guildId);
+  await assertBotInGuild(bot.id, guildId);
+  await assertUserManagesGuild(req.user.discordId, guildId);
+  const name = req.params.module;
+  if (!(name in moduleSchemas)) throw httpError(400, "modul tidak dikenal");
+  const value = moduleSchemas[name].parse(req.body);
+  const [existing] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
+  const merged = { ...existing?.data ?? {}, [name]: value };
+  await db.insert(botConfigs).values({ botId: bot.id, discordGuildId: guildId, data: merged }).onConflictDoUpdate({
+    target: [botConfigs.botId, botConfigs.discordGuildId],
+    set: { data: merged, updatedAt: /* @__PURE__ */ new Date() }
+  });
+  publishBot(bot.id, "reload");
+  res.json({ ok: true });
+}));
 botsRouter.put("/:id/guilds/:guildId/config", requireAuth, configLimiter, asyncHandler(async (req, res) => {
   const bot = await loadOwnedBot(req);
   const guildId = requireSnowflake(req.params.guildId);
   await assertBotInGuild(bot.id, guildId);
   await assertUserManagesGuild(req.user.discordId, guildId);
   const parsed = guildConfigSchema.parse(req.body);
+  const [existing] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
+  const oldData = existing?.data ?? {};
   const data = {};
   for (const [name, schema] of Object.entries(moduleSchemas)) {
-    if (parsed[name] !== void 0) data[name] = schema.parse(parsed[name]);
+    if (parsed[name] === void 0) continue;
+    const value = schema.parse(parsed[name]);
+    if (isBankModule(name)) {
+      const key2 = BANK_KEY[name];
+      const oldBank = oldData[name]?.[key2];
+      data[name] = { ...value, [key2]: Array.isArray(oldBank) && oldBank.length ? oldBank : value[key2] };
+    } else data[name] = value;
   }
   if (Object.keys(data).length === 0) throw httpError(400, "config kosong");
-  const [existing] = await db.select().from(botConfigs).where(and(eq(botConfigs.botId, bot.id), eq(botConfigs.discordGuildId, guildId)));
-  const merged = { ...existing?.data ?? {}, ...data };
+  const merged = { ...oldData, ...data };
   await db.insert(botConfigs).values({ botId: bot.id, discordGuildId: guildId, data: merged }).onConflictDoUpdate({
     target: [botConfigs.botId, botConfigs.discordGuildId],
     set: { data: merged, updatedAt: /* @__PURE__ */ new Date() }
