@@ -3073,14 +3073,14 @@ var require_tools = __commonJS({
       }
       return point2 < 32 ? JSON.stringify(str) : '"' + result + '"';
     }
-    function asJson(obj, msg, num, time2) {
+    function asJson(obj, msg, num2, time2) {
       if (asJsonChan.hasSubscribers === false) {
-        return _asJson.call(this, obj, msg, num, time2);
+        return _asJson.call(this, obj, msg, num2, time2);
       }
       const store = { instance: this, arguments };
-      return asJsonChan.traceSync(_asJson, store, this, obj, msg, num, time2);
+      return asJsonChan.traceSync(_asJson, store, this, obj, msg, num2, time2);
     }
-    function _asJson(obj, msg, num, time2) {
+    function _asJson(obj, msg, num2, time2) {
       const stringify2 = this[stringifySym];
       const stringifySafe = this[stringifySafeSym];
       const stringifiers = this[stringifiersSym];
@@ -3090,7 +3090,7 @@ var require_tools = __commonJS({
       const formatters = this[formattersSym];
       const messageKey = this[messageKeySym];
       const errorKey = this[errorKeySym];
-      let data = this[lsCacheSym][num] + time2;
+      let data = this[lsCacheSym][num2] + time2;
       data = data + chindings;
       let value;
       if (formatters.log) {
@@ -3716,7 +3716,7 @@ var require_proto = __commonJS({
     function defaultMixinMergeStrategy(mergeObject, mixinObject) {
       return Object.assign(mixinObject, mergeObject);
     }
-    function write(_obj, msg, num) {
+    function write(_obj, msg, num2) {
       const t = this[timeSym]();
       const mixin = this[mixinSym];
       const errorKey = this[errorKeySym];
@@ -3738,12 +3738,12 @@ var require_proto = __commonJS({
         }
       }
       if (mixin) {
-        obj = mixinMergeStrategy(obj, mixin(obj, num, this));
+        obj = mixinMergeStrategy(obj, mixin(obj, num2, this));
       }
-      const s = this[asJsonSym](obj, msg, num, t);
+      const s = this[asJsonSym](obj, msg, num2, t);
       const stream = this[streamSym];
       if (stream[needsMetadataGsym] === true) {
-        stream.lastLevel = num;
+        stream.lastLevel = num2;
         stream.lastObj = obj;
         stream.lastMsg = msg;
         stream.lastTime = t.slice(this[timeSliceIndexSym]);
@@ -11281,7 +11281,7 @@ var require_ClusterSubscriber = __commonJS({
           }
         }
         if (previousChannels.subscribe.length || previousChannels.psubscribe.length || previousChannels.ssubscribe.length) {
-          let pending = 0;
+          let pending2 = 0;
           for (const type of ["subscribe", "psubscribe", "ssubscribe"]) {
             const channels = previousChannels[type];
             if (channels.length == 0) {
@@ -11290,9 +11290,9 @@ var require_ClusterSubscriber = __commonJS({
             debug("%s %d channels", type, channels.length);
             if (type === "ssubscribe") {
               for (const channel of channels) {
-                pending += 1;
+                pending2 += 1;
                 this.subscriber[type](channel).then(() => {
-                  if (!--pending) {
+                  if (!--pending2) {
                     this.lastActiveSubscriber = this.subscriber;
                   }
                 }).catch(() => {
@@ -11300,9 +11300,9 @@ var require_ClusterSubscriber = __commonJS({
                 });
               }
             } else {
-              pending += 1;
+              pending2 += 1;
               this.subscriber[type](channels).then(() => {
-                if (!--pending) {
+                if (!--pending2) {
                   this.lastActiveSubscriber = this.subscriber;
                 }
               }).catch(() => {
@@ -11804,8 +11804,8 @@ var require_denque = __commonJS({
       this._list.length >>>= 1;
       this._capacityMask >>>= 1;
     };
-    Denque.prototype._nextPowerOf2 = function _nextPowerOf2(num) {
-      var log2 = Math.log(num) / Math.log(2);
+    Denque.prototype._nextPowerOf2 = function _nextPowerOf2(num2) {
+      var log2 = Math.log(num2) / Math.log(2);
       var nextPow2 = 1 << log2 + 1;
       return Math.max(nextPow2, 4);
     };
@@ -15628,8 +15628,8 @@ var require_postgres_date = __commonJS({
     function bcYearToNegativeYear(year) {
       return -(year - 1);
     }
-    function is0To99(num) {
-      return num >= 0 && num < 100;
+    function is0To99(num2) {
+      return num2 >= 0 && num2 < 100;
     }
   }
 });
@@ -15705,9 +15705,9 @@ var require_postgres_interval = __commonJS({
     var NUMBER = "([+-]?\\d+)";
     var YEAR = NUMBER + "\\s+years?";
     var MONTH = NUMBER + "\\s+mons?";
-    var DAY = NUMBER + "\\s+days?";
+    var DAY2 = NUMBER + "\\s+days?";
     var TIME = "([+-])?([\\d]*):(\\d\\d):(\\d\\d)\\.?(\\d{1,6})?";
-    var INTERVAL = new RegExp([YEAR, MONTH, DAY, TIME].map(function(regexString) {
+    var INTERVAL = new RegExp([YEAR, MONTH, DAY2, TIME].map(function(regexString) {
       return "(" + regexString + ")?";
     }).join("\\s*"));
     var positions = {
@@ -15984,7 +15984,7 @@ var require_textParsers = __commonJS({
 var require_pg_int8 = __commonJS({
   "node_modules/.pnpm/pg-int8@1.0.1/node_modules/pg-int8/index.js"(exports2, module2) {
     "use strict";
-    var BASE = 1e6;
+    var BASE2 = 1e6;
     function readInt8(buffer) {
       var high = buffer.readInt32BE(0);
       var low = buffer.readUInt32BE(4);
@@ -16002,11 +16002,11 @@ var require_pg_int8 = __commonJS({
       var l;
       var i;
       {
-        carry = high % BASE;
-        high = high / BASE >>> 0;
+        carry = high % BASE2;
+        high = high / BASE2 >>> 0;
         t = 4294967296 * carry + low;
-        low = t / BASE >>> 0;
-        digits = "" + (t - BASE * low);
+        low = t / BASE2 >>> 0;
+        digits = "" + (t - BASE2 * low);
         if (low === 0 && high === 0) {
           return sign + digits + result;
         }
@@ -16018,11 +16018,11 @@ var require_pg_int8 = __commonJS({
         result = pad + digits + result;
       }
       {
-        carry = high % BASE;
-        high = high / BASE >>> 0;
+        carry = high % BASE2;
+        high = high / BASE2 >>> 0;
         t = 4294967296 * carry + low;
-        low = t / BASE >>> 0;
-        digits = "" + (t - BASE * low);
+        low = t / BASE2 >>> 0;
+        digits = "" + (t - BASE2 * low);
         if (low === 0 && high === 0) {
           return sign + digits + result;
         }
@@ -16034,11 +16034,11 @@ var require_pg_int8 = __commonJS({
         result = pad + digits + result;
       }
       {
-        carry = high % BASE;
-        high = high / BASE >>> 0;
+        carry = high % BASE2;
+        high = high / BASE2 >>> 0;
         t = 4294967296 * carry + low;
-        low = t / BASE >>> 0;
-        digits = "" + (t - BASE * low);
+        low = t / BASE2 >>> 0;
+        digits = "" + (t - BASE2 * low);
         if (low === 0 && high === 0) {
           return sign + digits + result;
         }
@@ -16050,9 +16050,9 @@ var require_pg_int8 = __commonJS({
         result = pad + digits + result;
       }
       {
-        carry = high % BASE;
+        carry = high % BASE2;
         t = 4294967296 * carry + low;
-        digits = "" + t % BASE;
+        digits = "" + t % BASE2;
         return sign + digits + result;
       }
     }
@@ -17805,18 +17805,18 @@ var require_buffer_writer = __commonJS({
           oldBuffer.copy(this.buffer, 0, 0, this.offset);
         }
       }
-      addInt32(num) {
+      addInt32(num2) {
         this.ensure(4);
-        this.buffer[this.offset++] = num >>> 24 & 255;
-        this.buffer[this.offset++] = num >>> 16 & 255;
-        this.buffer[this.offset++] = num >>> 8 & 255;
-        this.buffer[this.offset++] = num >>> 0 & 255;
+        this.buffer[this.offset++] = num2 >>> 24 & 255;
+        this.buffer[this.offset++] = num2 >>> 16 & 255;
+        this.buffer[this.offset++] = num2 >>> 8 & 255;
+        this.buffer[this.offset++] = num2 >>> 0 & 255;
         return this;
       }
-      addInt16(num) {
+      addInt16(num2) {
         this.ensure(2);
-        this.buffer[this.offset++] = num >>> 8 & 255;
-        this.buffer[this.offset++] = num >>> 0 & 255;
+        this.buffer[this.offset++] = num2 >>> 8 & 255;
+        this.buffer[this.offset++] = num2 >>> 0 & 255;
         return this;
       }
       addCString(string) {
@@ -29415,8 +29415,8 @@ var require_pool_base = __commonJS({
       }
       get [kPending]() {
         let ret = this[kQueued];
-        for (const { [kPending]: pending } of this[kClients]) {
-          ret += pending;
+        for (const { [kPending]: pending2 } of this[kClients]) {
+          ret += pending2;
         }
         return ret;
       }
@@ -32537,18 +32537,18 @@ var require_mock_agent = __commonJS({
       }
       pendingInterceptors() {
         const mockAgentClients = this[kClients];
-        return Array.from(mockAgentClients.entries()).flatMap(([origin, scope]) => scope[kDispatches].map((dispatch) => ({ ...dispatch, origin }))).filter(({ pending }) => pending);
+        return Array.from(mockAgentClients.entries()).flatMap(([origin, scope]) => scope[kDispatches].map((dispatch) => ({ ...dispatch, origin }))).filter(({ pending: pending2 }) => pending2);
       }
       assertNoPendingInterceptors({ pendingInterceptorsFormatter = new PendingInterceptorsFormatter() } = {}) {
-        const pending = this.pendingInterceptors();
-        if (pending.length === 0) {
+        const pending2 = this.pendingInterceptors();
+        if (pending2.length === 0) {
           return;
         }
-        const pluralizer = new Pluralizer("interceptor", "interceptors").pluralize(pending.length);
+        const pluralizer = new Pluralizer("interceptor", "interceptors").pluralize(pending2.length);
         throw new UndiciError(`
 ${pluralizer.count} ${pluralizer.noun} ${pluralizer.is} pending:
 
-${pendingInterceptorsFormatter.format(pending)}
+${pendingInterceptorsFormatter.format(pending2)}
 `.trim());
       }
     };
@@ -38184,8 +38184,8 @@ var require_util8 = __commonJS({
           return false;
         }
       }
-      const num = Number.parseInt(value, 10);
-      return num >= 8 && num <= 15;
+      const num2 = Number.parseInt(value, 10);
+      return num2 >= 8 && num2 <= 15;
     }
     var hasIntl = typeof process.versions.icu === "string";
     var fatalDecoder = hasIntl ? new TextDecoder("utf-8", { fatal: true }) : void 0;
@@ -41733,15 +41733,15 @@ var require_message = __commonJS({
       ComponentType2[ComponentType2["Checkbox"] = 23] = "Checkbox";
       ComponentType2[ComponentType2["SelectMenu"] = 3] = "SelectMenu";
     })(ComponentType || (exports2.ComponentType = ComponentType = {}));
-    var ButtonStyle4;
-    (function(ButtonStyle5) {
-      ButtonStyle5[ButtonStyle5["Primary"] = 1] = "Primary";
-      ButtonStyle5[ButtonStyle5["Secondary"] = 2] = "Secondary";
-      ButtonStyle5[ButtonStyle5["Success"] = 3] = "Success";
-      ButtonStyle5[ButtonStyle5["Danger"] = 4] = "Danger";
-      ButtonStyle5[ButtonStyle5["Link"] = 5] = "Link";
-      ButtonStyle5[ButtonStyle5["Premium"] = 6] = "Premium";
-    })(ButtonStyle4 || (exports2.ButtonStyle = ButtonStyle4 = {}));
+    var ButtonStyle5;
+    (function(ButtonStyle6) {
+      ButtonStyle6[ButtonStyle6["Primary"] = 1] = "Primary";
+      ButtonStyle6[ButtonStyle6["Secondary"] = 2] = "Secondary";
+      ButtonStyle6[ButtonStyle6["Success"] = 3] = "Success";
+      ButtonStyle6[ButtonStyle6["Danger"] = 4] = "Danger";
+      ButtonStyle6[ButtonStyle6["Link"] = 5] = "Link";
+      ButtonStyle6[ButtonStyle6["Premium"] = 6] = "Premium";
+    })(ButtonStyle5 || (exports2.ButtonStyle = ButtonStyle5 = {}));
     var TextInputStyle3;
     (function(TextInputStyle4) {
       TextInputStyle4[TextInputStyle4["Short"] = 1] = "Short";
@@ -47738,8 +47738,8 @@ var require_toHex = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.fromHex = exports2.toHex = void 0;
-    var hex = (num) => new Number(num).toString(16).toLowerCase();
-    var toHex = (num) => `0x${hex(num).length === 1 ? "0" + hex(num) : hex(num)}`;
+    var hex = (num2) => new Number(num2).toString(16).toLowerCase();
+    var toHex = (num2) => `0x${hex(num2).length === 1 ? "0" + hex(num2) : hex(num2)}`;
     exports2.toHex = toHex;
     var fromHex = (hex2) => new Number(hex2);
     exports2.fromHex = fromHex;
@@ -59573,7 +59573,7 @@ var require_getRawTag = __commonJS({
     var nativeObjectToString = objectProto.toString;
     var symToStringTag = Symbol2 ? Symbol2.toStringTag : void 0;
     function getRawTag(value) {
-      var isOwn = hasOwnProperty.call(value, symToStringTag), tag = value[symToStringTag];
+      var isOwn = hasOwnProperty.call(value, symToStringTag), tag2 = value[symToStringTag];
       try {
         value[symToStringTag] = void 0;
         var unmasked = true;
@@ -59582,7 +59582,7 @@ var require_getRawTag = __commonJS({
       var result = nativeObjectToString.call(value);
       if (unmasked) {
         if (isOwn) {
-          value[symToStringTag] = tag;
+          value[symToStringTag] = tag2;
         } else {
           delete value[symToStringTag];
         }
@@ -59692,8 +59692,8 @@ var require_isFunction = __commonJS({
       if (!isObject(value)) {
         return false;
       }
-      var tag = baseGetTag(value);
-      return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
+      var tag2 = baseGetTag(value);
+      return tag2 == funcTag || tag2 == genTag || tag2 == asyncTag || tag2 == proxyTag;
     }
     module2.exports = isFunction;
   }
@@ -64168,14 +64168,14 @@ var require_dist9 = __commonJS({
     };
     var index_exports = {};
     __export2(index_exports, {
-      ActionRowBuilder: () => ActionRowBuilder4,
+      ActionRowBuilder: () => ActionRowBuilder5,
       ApplicationCommandNumericOptionMinMaxValueMixin: () => ApplicationCommandNumericOptionMinMaxValueMixin,
       ApplicationCommandOptionBase: () => ApplicationCommandOptionBase,
       ApplicationCommandOptionChannelTypesMixin: () => ApplicationCommandOptionChannelTypesMixin,
       ApplicationCommandOptionWithAutocompleteMixin: () => ApplicationCommandOptionWithAutocompleteMixin,
       ApplicationCommandOptionWithChoicesMixin: () => ApplicationCommandOptionWithChoicesMixin,
       BaseSelectMenuBuilder: () => BaseSelectMenuBuilder,
-      ButtonBuilder: () => ButtonBuilder4,
+      ButtonBuilder: () => ButtonBuilder5,
       ChannelSelectMenuBuilder: () => ChannelSelectMenuBuilder,
       CheckboxAssertions: () => Assertions_exports3,
       CheckboxBuilder: () => CheckboxBuilder,
@@ -64742,7 +64742,7 @@ var require_dist9 = __commonJS({
     };
     var import_v1027 = require_v106();
     var import_v102 = require_v106();
-    var ButtonBuilder4 = class extends ComponentBuilder {
+    var ButtonBuilder5 = class extends ComponentBuilder {
       static {
         __name(this, "ButtonBuilder");
       }
@@ -66571,7 +66571,7 @@ var require_dist9 = __commonJS({
     var dividerPredicate = import_shapeshift9.s.boolean();
     var spacingPredicate = import_shapeshift9.s.nativeEnum(import_v1020.SeparatorSpacingSize);
     var textDisplayContentPredicate = import_shapeshift9.s.string().lengthGreaterThanOrEqual(1).lengthLessThanOrEqual(4e3).setValidationEnabled(isValidationEnabled);
-    var accessoryPredicate = import_shapeshift9.s.instance(ButtonBuilder4).or(import_shapeshift9.s.instance(ThumbnailBuilder)).setValidationEnabled(isValidationEnabled);
+    var accessoryPredicate = import_shapeshift9.s.instance(ButtonBuilder5).or(import_shapeshift9.s.instance(ThumbnailBuilder)).setValidationEnabled(isValidationEnabled);
     var containerColorPredicate = colorPredicate.nullish();
     function assertReturnOfBuilder(input, ExpectedInstanceOf) {
       import_shapeshift9.s.instance(ExpectedInstanceOf).setValidationEnabled(isValidationEnabled).parse(input);
@@ -66824,7 +66824,7 @@ var require_dist9 = __commonJS({
        */
       addActionRowComponents(...components) {
         this.components.push(
-          ...normalizeArray(components).map((component) => resolveBuilder(component, ActionRowBuilder4))
+          ...normalizeArray(components).map((component) => resolveBuilder(component, ActionRowBuilder5))
         );
         return this;
       }
@@ -67146,7 +67146,7 @@ var require_dist9 = __commonJS({
        * @param accessory - The accessory to use
        */
       setButtonAccessory(accessory) {
-        Reflect.set(this, "accessory", accessoryPredicate.parse(resolveBuilder(accessory, ButtonBuilder4)));
+        Reflect.set(this, "accessory", accessoryPredicate.parse(resolveBuilder(accessory, ButtonBuilder5)));
         return this;
       }
       /**
@@ -67210,9 +67210,9 @@ var require_dist9 = __commonJS({
       }
       switch (data.type) {
         case import_v1027.ComponentType.ActionRow:
-          return new ActionRowBuilder4(data);
+          return new ActionRowBuilder5(data);
         case import_v1027.ComponentType.Button:
-          return new ButtonBuilder4(data);
+          return new ButtonBuilder5(data);
         case import_v1027.ComponentType.StringSelect:
           return new StringSelectMenuBuilder(data);
         case import_v1027.ComponentType.TextInput:
@@ -67268,7 +67268,7 @@ var require_dist9 = __commonJS({
       return new Constructor(builder);
     }
     __name(resolveBuilder, "resolveBuilder");
-    var ActionRowBuilder4 = class extends ComponentBuilder {
+    var ActionRowBuilder5 = class extends ComponentBuilder {
       static {
         __name(this, "ActionRowBuilder");
       }
@@ -67351,7 +67351,7 @@ var require_dist9 = __commonJS({
     });
     var import_shapeshift10 = require_cjs3();
     var titleValidator = import_shapeshift10.s.string().lengthGreaterThanOrEqual(1).lengthLessThanOrEqual(45).setValidationEnabled(isValidationEnabled);
-    var componentsValidator = import_shapeshift10.s.union([import_shapeshift10.s.instance(ActionRowBuilder4), import_shapeshift10.s.instance(LabelBuilder), import_shapeshift10.s.instance(TextDisplayBuilder)]).array().lengthGreaterThanOrEqual(1).setValidationEnabled(isValidationEnabled);
+    var componentsValidator = import_shapeshift10.s.union([import_shapeshift10.s.instance(ActionRowBuilder5), import_shapeshift10.s.instance(LabelBuilder), import_shapeshift10.s.instance(TextDisplayBuilder)]).array().lengthGreaterThanOrEqual(1).setValidationEnabled(isValidationEnabled);
     function validateRequiredParameters2(customId, title, components) {
       customIdValidator.parse(customId);
       titleValidator.parse(title);
@@ -67406,15 +67406,15 @@ var require_dist9 = __commonJS({
       addComponents(...components) {
         this.components.push(
           ...normalizeArray(components).map((component, idx) => {
-            if (component instanceof ActionRowBuilder4 || component instanceof LabelBuilder || component instanceof TextDisplayBuilder) {
+            if (component instanceof ActionRowBuilder5 || component instanceof LabelBuilder || component instanceof TextDisplayBuilder) {
               return component;
             }
             if (component instanceof TextInputBuilder3) {
-              return new ActionRowBuilder4().addComponents(component);
+              return new ActionRowBuilder5().addComponents(component);
             }
             if ("type" in component) {
               if (component.type === import_v1029.ComponentType.ActionRow) {
-                return new ActionRowBuilder4(component);
+                return new ActionRowBuilder5(component);
               }
               if (component.type === import_v1029.ComponentType.Label) {
                 return new LabelBuilder(component);
@@ -67423,7 +67423,7 @@ var require_dist9 = __commonJS({
                 return new TextDisplayBuilder(component);
               }
               if (component.type === import_v1029.ComponentType.TextInput) {
-                return new ActionRowBuilder4().addComponents(
+                return new ActionRowBuilder5().addComponents(
                   new TextInputBuilder3(component)
                 );
               }
@@ -67463,7 +67463,7 @@ var require_dist9 = __commonJS({
        */
       addActionRowComponents(...components) {
         const normalized = normalizeArray(components);
-        const resolved = normalized.map((row) => resolveBuilder(row, ActionRowBuilder4));
+        const resolved = normalized.map((row) => resolveBuilder(row, ActionRowBuilder5));
         this.components.push(...resolved);
         return this;
       }
@@ -70163,7 +70163,7 @@ var require_ActionRowBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { createComponentBuilder } = require_Components();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
-    var ActionRowBuilder4 = class extends BuildersActionRow {
+    var ActionRowBuilder5 = class extends BuildersActionRow {
       constructor({ components, ...data } = {}) {
         super({
           ...toSnakeCase2(data),
@@ -70179,7 +70179,7 @@ var require_ActionRowBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ActionRowBuilder4;
+    module2.exports = ActionRowBuilder5;
   }
 });
 
@@ -70191,7 +70191,7 @@ var require_ButtonBuilder = __commonJS({
     var { isJSONEncodable } = require_dist2();
     var { toSnakeCase: toSnakeCase2 } = require_Transformers();
     var { resolvePartialEmoji } = require_Util();
-    var ButtonBuilder4 = class extends BuildersButton {
+    var ButtonBuilder5 = class extends BuildersButton {
       constructor({ emoji, ...data } = {}) {
         super(toSnakeCase2({ ...data, emoji: emoji && typeof emoji === "string" ? resolvePartialEmoji(emoji) : emoji }));
       }
@@ -70215,7 +70215,7 @@ var require_ButtonBuilder = __commonJS({
         return new this(isJSONEncodable(other) ? other.toJSON() : other);
       }
     };
-    module2.exports = ButtonBuilder4;
+    module2.exports = ButtonBuilder5;
   }
 });
 
@@ -70968,8 +70968,8 @@ var require_Components = __commonJS({
     }
     module2.exports = { createComponent, createComponentBuilder, findComponentByCustomId };
     var ActionRow = require_ActionRow();
-    var ActionRowBuilder4 = require_ActionRowBuilder();
-    var ButtonBuilder4 = require_ButtonBuilder();
+    var ActionRowBuilder5 = require_ActionRowBuilder();
+    var ButtonBuilder5 = require_ButtonBuilder();
     var ButtonComponent = require_ButtonComponent();
     var ChannelSelectMenuBuilder = require_ChannelSelectMenuBuilder();
     var ChannelSelectMenuComponent = require_ChannelSelectMenuComponent();
@@ -71011,8 +71011,8 @@ var require_Components = __commonJS({
       [ComponentType.Label]: LabelComponent
     };
     var ComponentTypeToBuilder = {
-      [ComponentType.ActionRow]: ActionRowBuilder4,
-      [ComponentType.Button]: ButtonBuilder4,
+      [ComponentType.ActionRow]: ActionRowBuilder5,
+      [ComponentType.Button]: ButtonBuilder5,
       [ComponentType.StringSelect]: StringSelectMenuBuilder,
       [ComponentType.TextInput]: TextInputBuilder3,
       [ComponentType.UserSelect]: UserSelectMenuBuilder,
@@ -75471,7 +75471,7 @@ var require_ThreadOnlyChannel = __commonJS({
       _patch(data) {
         super._patch(data);
         if ("available_tags" in data) {
-          this.availableTags = data.available_tags.map((tag) => transformAPIGuildForumTag(tag));
+          this.availableTags = data.available_tags.map((tag2) => transformAPIGuildForumTag(tag2));
         } else {
           this.availableTags ??= [];
         }
@@ -77317,24 +77317,24 @@ var require_Channels = __commonJS({
       }
       return channel;
     }
-    function transformAPIGuildForumTag(tag) {
+    function transformAPIGuildForumTag(tag2) {
       return {
-        id: tag.id,
-        name: tag.name,
-        moderated: tag.moderated,
-        emoji: tag.emoji_id ?? tag.emoji_name ? {
-          id: tag.emoji_id,
-          name: tag.emoji_name
+        id: tag2.id,
+        name: tag2.name,
+        moderated: tag2.moderated,
+        emoji: tag2.emoji_id ?? tag2.emoji_name ? {
+          id: tag2.emoji_id,
+          name: tag2.emoji_name
         } : null
       };
     }
-    function transformGuildForumTag(tag) {
+    function transformGuildForumTag(tag2) {
       return {
-        id: tag.id,
-        name: tag.name,
-        moderated: tag.moderated,
-        emoji_id: tag.emoji?.id ?? null,
-        emoji_name: tag.emoji?.name ?? null
+        id: tag2.id,
+        name: tag2.name,
+        moderated: tag2.moderated,
+        emoji_id: tag2.emoji?.id ?? null,
+        emoji_name: tag2.emoji?.name ?? null
       };
     }
     function transformAPIGuildDefaultReaction(defaultReaction) {
@@ -82049,26 +82049,26 @@ var require_permessage_deflate2 = __commonJS({
             value = value[0];
             if (key2 === "client_max_window_bits") {
               if (value !== true) {
-                const num = +value;
-                if (!Number.isInteger(num) || num < 8 || num > 15) {
+                const num2 = +value;
+                if (!Number.isInteger(num2) || num2 < 8 || num2 > 15) {
                   throw new TypeError(
                     `Invalid value for parameter "${key2}": ${value}`
                   );
                 }
-                value = num;
+                value = num2;
               } else if (!this._isServer) {
                 throw new TypeError(
                   `Invalid value for parameter "${key2}": ${value}`
                 );
               }
             } else if (key2 === "server_max_window_bits") {
-              const num = +value;
-              if (!Number.isInteger(num) || num < 8 || num > 15) {
+              const num2 = +value;
+              if (!Number.isInteger(num2) || num2 < 8 || num2 > 15) {
                 throw new TypeError(
                   `Invalid value for parameter "${key2}": ${value}`
                 );
               }
-              value = num;
+              value = num2;
             } else if (key2 === "client_no_context_takeover" || key2 === "server_no_context_takeover") {
               if (value !== true) {
                 throw new TypeError(
@@ -82782,8 +82782,8 @@ var require_receiver2 = __commonJS({
           return;
         }
         const buf = this.consume(8);
-        const num = buf.readUInt32BE(0);
-        if (num > Math.pow(2, 53 - 32) - 1) {
+        const num2 = buf.readUInt32BE(0);
+        if (num2 > Math.pow(2, 53 - 32) - 1) {
           const error = this.createError(
             RangeError,
             "Unsupported WebSocket frame: payload length > 2^53 - 1",
@@ -82794,7 +82794,7 @@ var require_receiver2 = __commonJS({
           cb(error);
           return;
         }
-        this._payloadLength = num * Math.pow(2, 32) + buf.readUInt32BE(4);
+        this._payloadLength = num2 * Math.pow(2, 32) + buf.readUInt32BE(4);
         this.haveLength(cb);
       }
       /**
@@ -90502,7 +90502,7 @@ var require_GuildInviteManager = __commonJS({
         maxAge,
         maxUses,
         unique,
-        targetUser: targetUser2,
+        targetUser,
         targetApplication,
         targetType,
         roles,
@@ -90516,7 +90516,7 @@ var require_GuildInviteManager = __commonJS({
           max_age: maxAge,
           max_uses: maxUses,
           unique,
-          target_user_id: this.client.users.resolveId(targetUser2),
+          target_user_id: this.client.users.resolveId(targetUser),
           target_application_id: targetApplication?.id ?? targetApplication?.applicationId ?? targetApplication,
           role_ids: roles?.map((role) => this.guild.roles.resolveId(role)),
           target_type: targetType
@@ -99776,6 +99776,12 @@ var pgTable = (name, columns, extraConfig) => {
 };
 
 // node_modules/.pnpm/drizzle-orm@0.36.4_@types+pg@8.23.1_@types+react@19.3.0_pg@8.23.1_react@19.3.1/node_modules/drizzle-orm/pg-core/primary-keys.js
+function primaryKey(...config2) {
+  if (config2[0].columns) {
+    return new PrimaryKeyBuilder(config2[0].columns, config2[0].name);
+  }
+  return new PrimaryKeyBuilder(config2);
+}
 var PrimaryKeyBuilder = class {
   static [entityKind] = "PgPrimaryKeyBuilder";
   /** @internal */
@@ -99932,19 +99938,19 @@ function extractTablesRelationalConfig(schema, configHelpers) {
       const relations2 = value.config(
         configHelpers(value.table)
       );
-      let primaryKey;
+      let primaryKey2;
       for (const [relationName, relation] of Object.entries(relations2)) {
         if (tableName) {
           const tableConfig = tablesConfig[tableName];
           tableConfig.relations[relationName] = relation;
-          if (primaryKey) {
-            tableConfig.primaryKey.push(...primaryKey);
+          if (primaryKey2) {
+            tableConfig.primaryKey.push(...primaryKey2);
           }
         } else {
           if (!(dbName in relationsBuffer)) {
             relationsBuffer[dbName] = {
               relations: {},
-              primaryKey
+              primaryKey: primaryKey2
             };
           }
           relationsBuffer[dbName].relations[relationName] = relation;
@@ -104346,7 +104352,17 @@ var quotesConfigSchema = external_exports.object({
 var wizzyConfigSchema = external_exports.object({
   enabled: external_exports.boolean().default(true),
   currency: external_exports.string().trim().min(1).max(16).default("Galleon"),
-  huntCooldownSec: external_exports.number().int().min(1).max(3600).default(15)
+  huntCooldownSec: external_exports.number().int().min(1).max(3600).default(15),
+  maxLevel: external_exports.number().int().min(2).max(200).default(50),
+  startingSlots: external_exports.number().int().min(1).max(5).default(3),
+  maxSlots: external_exports.number().int().min(1).max(10).default(5),
+  giveTaxPct: external_exports.number().int().min(0).max(50).default(5),
+  maxBet: external_exports.number().int().min(1).max(1e6).default(1e4),
+  fuseCost: external_exports.number().int().min(0).max(1e6).default(200),
+  autohuntCost: external_exports.number().int().min(0).max(1e6).default(100),
+  autohuntMax: external_exports.number().int().min(1).max(100).default(20),
+  covenCost: external_exports.number().int().min(0).max(1e6).default(5e3),
+  covenMax: external_exports.number().int().min(1).max(200).default(20)
 }).passthrough();
 var moduleSchemas = {
   welcome: welcomeConfigSchema,
@@ -104605,8 +104621,8 @@ var PgDialect = class {
   escapeName(name) {
     return `"${name}"`;
   }
-  escapeParam(num) {
-    return `$${num + 1}`;
+  escapeParam(num2) {
+    return `$${num2 + 1}`;
   }
   escapeString(str) {
     return `'${str.replace(/'/g, "''")}'`;
@@ -107908,7 +107924,12 @@ __export(schema_exports, {
   tickets: () => tickets,
   users: () => users,
   webhooks: () => webhooks,
+  wizzyBattles: () => wizzyBattles,
+  wizzyBuffs: () => wizzyBuffs,
+  wizzyCovenMembers: () => wizzyCovenMembers,
+  wizzyCovens: () => wizzyCovens,
   wizzyCreatures: () => wizzyCreatures,
+  wizzyInventory: () => wizzyInventory,
   wizzyUsers: () => wizzyUsers
 });
 var users = pgTable("users", {
@@ -108001,6 +108022,9 @@ var wizzyUsers = pgTable("wizzy_users", {
   wins: integer("wins").notNull().default(0),
   losses: integer("losses").notNull().default(0),
   rankPoints: integer("rank_points").notNull().default(0),
+  teamSlots: integer("team_slots").notNull().default(3),
+  wand: text("wand").notNull().default(""),
+  dungeonFloor: integer("dungeon_floor").notNull().default(1),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [uniqueIndex("wizzy_users_uq").on(t.botId, t.discordUserId)]);
 var wizzyCreatures = pgTable("wizzy_creatures", {
@@ -108013,6 +108037,43 @@ var wizzyCreatures = pgTable("wizzy_creatures", {
   isInTeam: boolean("is_in_team").notNull().default(false),
   caughtAt: timestamp("caught_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("wizzy_creatures_user_idx").on(t.botId, t.discordUserId)]);
+var wizzyInventory = pgTable("wizzy_inventory", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  discordUserId: text("discord_user_id").notNull(),
+  itemId: text("item_id").notNull(),
+  quantity: integer("quantity").notNull().default(0)
+}, (t) => [uniqueIndex("wizzy_inventory_uq").on(t.botId, t.discordUserId, t.itemId)]);
+var wizzyBuffs = pgTable("wizzy_buffs", {
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  discordUserId: text("discord_user_id").notNull(),
+  buff: text("buff").notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull()
+}, (t) => [primaryKey({ columns: [t.botId, t.discordUserId, t.buff] })]);
+var wizzyCovens = pgTable("wizzy_covens", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  ownerId: text("owner_id").notNull(),
+  bank: integer("bank").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("wizzy_covens_uq").on(t.botId, t.name)]);
+var wizzyCovenMembers = pgTable("wizzy_coven_members", {
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  covenId: integer("coven_id").notNull().references(() => wizzyCovens.id, { onDelete: "cascade" }),
+  discordUserId: text("discord_user_id").notNull(),
+  role: text("role").notNull().default("member"),
+  joinedAt: timestamp("joined_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [primaryKey({ columns: [t.botId, t.discordUserId] })]);
+var wizzyBattles = pgTable("wizzy_battles", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  p1: text("p1").notNull(),
+  p2: text("p2").notNull(),
+  winner: text("winner"),
+  bet: integer("bet").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+});
 var webhooks = pgTable("webhooks", {
   id: serial("id").primaryKey(),
   botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
@@ -108426,10 +108487,10 @@ async function renderKtp(user, guildName, data) {
   spacedCentered(ctx, `KARTU KOMUNITAS RESMI \u2022 ${guildName.toUpperCase()}`, W / 2, CY + CH - 20, 4);
   return canvas.toBuffer("image/png");
 }
-async function sendKtp(ctx, guildName, targetUser2, targetId, data) {
+async function sendKtp(ctx, guildName, targetUser, targetId, data) {
   if (canvasMod) {
     try {
-      const buffer = await renderKtp(targetUser2, guildName, data);
+      const buffer = await renderKtp(targetUser, guildName, data);
       return ctx.reply({ files: [new import_discord3.AttachmentBuilder(buffer, { name: "ktp.png" })] });
     } catch (e) {
       await recordError(ctx.botId, e);
@@ -108438,7 +108499,7 @@ async function sendKtp(ctx, guildName, targetUser2, targetId, data) {
   const embed2 = {
     title: "\u{1FAAA} Kartu Tanda Penduduk",
     description: [
-      `**Nama:** ${data.nama ?? targetUser2.username}`,
+      `**Nama:** ${data.nama ?? targetUser.username}`,
       `**ID Akun:** ${targetId}`,
       `**Tempat/Tgl Lahir:** ${data.tempat ?? "-"}, ${data.tglLahir ?? "-"}`,
       `**Jenis Kelamin:** ${data.gender ?? "-"}`,
@@ -108555,9 +108616,9 @@ var ktpView = {
     if (!ctx.guild || !ctx.user) return ctx.reply("\u274C Hanya di server.");
     const targetMember = args.user;
     const targetId = targetMember?.id ?? ctx.user.id;
-    const targetUser2 = targetMember?.user ?? ctx.user;
+    const targetUser = targetMember?.user ?? ctx.user;
     const data = await getKtp(ctx.botId, ctx.guild.id, targetId) ?? {};
-    return sendKtp(ctx, ctx.guild.name, targetUser2, targetId, data);
+    return sendKtp(ctx, ctx.guild.name, targetUser, targetId, data);
   }
 };
 var ktpModule = {
@@ -109781,7 +109842,7 @@ var welcomeModule = {
 var import_discord12 = __toESM(require_src2(), 1);
 var COLOR = 8073207;
 var FOOTER = "Wizzy \u2022 Dunia Sihir";
-var DAY_MS = 864e5;
+var DAY = 864e5;
 var RARITIES = {
   common: { label: "Common", chance: 60, price: 10, emoji: "\u26AA" },
   uncommon: { label: "Uncommon", chance: 25, price: 40, emoji: "\u{1F7E2}" },
@@ -109790,81 +109851,428 @@ var RARITIES = {
   legendary: { label: "Legendary", chance: 0.9, price: 3e3, emoji: "\u{1F7E1}" },
   mythic: { label: "Mythic", chance: 0.1, price: 25e3, emoji: "\u{1F534}" }
 };
+var RARITY_KEYS = Object.keys(RARITIES);
 var CREATURES = [
-  { id: "pixie", name: "Pixie", emoji: "\u{1F9DA}", rarity: "common" },
-  { id: "niffler", name: "Niffler", emoji: "\u{1F9A1}", rarity: "common" },
-  { id: "bowtruckle", name: "Bowtruckle", emoji: "\u{1F33F}", rarity: "common" },
-  { id: "firecrab", name: "Fire Crab", emoji: "\u{1F980}", rarity: "common" },
-  { id: "hippogriff", name: "Hippogriff", emoji: "\u{1F985}", rarity: "uncommon" },
-  { id: "kelpie", name: "Kelpie", emoji: "\u{1F434}", rarity: "uncommon" },
-  { id: "puffskein", name: "Puffskein", emoji: "\u{1F439}", rarity: "uncommon" },
-  { id: "unicorn", name: "Unicorn", emoji: "\u{1F984}", rarity: "rare" },
-  { id: "centaur", name: "Centaur", emoji: "\u{1F3F9}", rarity: "rare" },
-  { id: "merfolk", name: "Merfolk", emoji: "\u{1F9DC}", rarity: "rare" },
-  { id: "thestral", name: "Thestral", emoji: "\u{1F480}", rarity: "epic" },
-  { id: "basilisk", name: "Basilisk", emoji: "\u{1F40D}", rarity: "epic" },
-  { id: "griffin", name: "Griffin", emoji: "\u{1F981}", rarity: "epic" },
-  { id: "phoenix", name: "Phoenix", emoji: "\u{1F525}", rarity: "legendary" },
-  { id: "dragon", name: "Dragon", emoji: "\u{1F432}", rarity: "legendary" },
-  { id: "kraken", name: "Kraken", emoji: "\u{1F991}", rarity: "legendary" },
-  { id: "archmage", name: "Archmage Spirit", emoji: "\u{1F30C}", rarity: "mythic" },
-  { id: "wyrm", name: "Ancient Wyrm", emoji: "\u{1F409}", rarity: "mythic" }
+  { id: "pixie", name: "Pixie", emoji: "\u{1F9DA}", rarity: "common", elements: ["Angin"] },
+  { id: "niffler", name: "Niffler", emoji: "\u{1F9A1}", rarity: "common", elements: ["Tanah"] },
+  { id: "bowtruckle", name: "Bowtruckle", emoji: "\u{1F33F}", rarity: "common", elements: ["Tanah"] },
+  { id: "firecrab", name: "Fire Crab", emoji: "\u{1F980}", rarity: "common", elements: ["Api"] },
+  { id: "hippogriff", name: "Hippogriff", emoji: "\u{1F985}", rarity: "uncommon", elements: ["Angin"] },
+  { id: "kelpie", name: "Kelpie", emoji: "\u{1F434}", rarity: "uncommon", elements: ["Air"] },
+  { id: "puffskein", name: "Puffskein", emoji: "\u{1F439}", rarity: "uncommon", elements: ["Cahaya"] },
+  { id: "unicorn", name: "Unicorn", emoji: "\u{1F984}", rarity: "rare", elements: ["Cahaya"] },
+  { id: "centaur", name: "Centaur", emoji: "\u{1F3F9}", rarity: "rare", elements: ["Tanah"] },
+  { id: "merfolk", name: "Merfolk", emoji: "\u{1F9DC}", rarity: "rare", elements: ["Air"] },
+  { id: "thestral", name: "Thestral", emoji: "\u{1F480}", rarity: "epic", elements: ["Gelap"] },
+  { id: "basilisk", name: "Basilisk", emoji: "\u{1F40D}", rarity: "epic", elements: ["Gelap"] },
+  { id: "griffin", name: "Griffin", emoji: "\u{1F981}", rarity: "epic", elements: ["Api"] },
+  { id: "phoenix", name: "Phoenix", emoji: "\u{1F525}", rarity: "legendary", elements: ["Api"] },
+  { id: "dragon", name: "Dragon", emoji: "\u{1F432}", rarity: "legendary", elements: ["Api"] },
+  { id: "kraken", name: "Kraken", emoji: "\u{1F991}", rarity: "legendary", elements: ["Air"] },
+  { id: "archmage", name: "Archmage Spirit", emoji: "\u{1F30C}", rarity: "mythic", elements: ["Cahaya", "Gelap"] },
+  { id: "wyrm", name: "Ancient Wyrm", emoji: "\u{1F409}", rarity: "mythic", elements: ["Api", "Air", "Angin", "Tanah", "Cahaya", "Gelap"] }
 ];
 var byId = Object.fromEntries(CREATURES.map((c) => [c.id, c]));
+var ITEMS = [
+  { id: "potion_hp", name: "Ramuan HP", emoji: "\u{1F9EA}", type: "potion", price: 100, desc: "Battle berikutnya: HP seluruh tim +25%" },
+  { id: "potion_lucky", name: "Ramuan Lucky", emoji: "\u{1F340}", type: "potion", price: 300, desc: "30 menit: peluang rarity tinggi x2 saat berburu" },
+  { id: "wand_wood", name: "Wand Kayu", emoji: "\u{1FA84}", type: "wand", price: 500, atk: 5, desc: "+5 ATK semua makhluk" },
+  { id: "wand_elder", name: "Wand Elder", emoji: "\u{1FA84}", type: "wand", price: 5e3, atk: 15, desc: "+15 ATK semua makhluk" },
+  { id: "wand_element", name: "Wand Elemen", emoji: "\u{1F52E}", type: "wand", price: 2e4, atk: 10, elemBonus: 0.3, desc: "+10 ATK & serangan efektif +30% lebih kuat" },
+  { id: "team_slot", name: "Slot Tim Tambahan", emoji: "\u2795", type: "upgrade", price: 1e4, desc: "+1 slot tim (maks 5)" }
+];
+var itemById = Object.fromEntries(ITEMS.map((i) => [i.id, i]));
+var norm = (s) => String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+var findItem = (s) => {
+  const n = norm(s);
+  return n ? ITEMS.find((i) => i.id === n || norm(i.id) === n || norm(i.name) === n || i.id.endsWith(`_${n}`)) ?? null : null;
+};
+var findCreature = (s) => {
+  const n = norm(s);
+  return n ? CREATURES.find((c) => c.id === n || norm(c.name) === n) ?? null : null;
+};
 var HOUSES = ["Ignis \u{1F525}", "Aqua \u{1F4A7}", "Ventus \u{1F32A}\uFE0F", "Terra \u{1FAA8}"];
 var fmt3 = (n) => n.toLocaleString("id-ID");
-var cur = (ctx) => String(ctx.config.currency || "Galleon");
-var cdMs = (ctx) => (Number(ctx.config.huntCooldownSec) || 15) * 1e3;
 var embed = (title, description, color = COLOR) => ({ title, description, color, footer: { text: FOOTER } });
-var getUser = async (botId, userId) => {
-  const [u] = await db.select().from(wizzyUsers).where(and(eq(wizzyUsers.botId, botId), eq(wizzyUsers.discordUserId, userId)));
+var num = (ctx, key2, def) => {
+  const v = Number(ctx.config[key2]);
+  return Number.isFinite(v) && v > 0 ? v : def;
+};
+var cur = (ctx) => String(ctx.config.currency || "Galleon");
+var getUser = async (botId, id) => (await db.select().from(wizzyUsers).where(and(eq(wizzyUsers.botId, botId), eq(wizzyUsers.discordUserId, id))).limit(1))[0];
+var getCreatures = async (botId, id) => db.select().from(wizzyCreatures).where(and(eq(wizzyCreatures.botId, botId), eq(wizzyCreatures.discordUserId, id)));
+var getTeam = async (botId, id) => db.select().from(wizzyCreatures).where(and(eq(wizzyCreatures.botId, botId), eq(wizzyCreatures.discordUserId, id), eq(wizzyCreatures.isInTeam, true))).orderBy(wizzyCreatures.id);
+var addCreature = (botId, id, creatureId) => db.insert(wizzyCreatures).values({ botId, discordUserId: id, creatureId });
+var spend = async (botId, id, amount) => {
+  const r = await db.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} - ${amount}` }).where(and(eq(wizzyUsers.botId, botId), eq(wizzyUsers.discordUserId, id), sql`${wizzyUsers.galleons} >= ${amount}`)).returning({ id: wizzyUsers.id });
+  return r.length > 0;
+};
+async function addXp2(botId, id, amount, maxLevel) {
+  const u = await getUser(botId, id);
+  if (!u) return { levelUp: false, level: 0 };
+  let xp = u.xp + amount, level = u.level;
+  while (level < maxLevel && xp >= level * 100) {
+    xp -= level * 100;
+    level++;
+  }
+  if (level >= maxLevel) xp = 0;
+  await db.update(wizzyUsers).set({ xp, level }).where(eq(wizzyUsers.id, u.id));
+  return { levelUp: level > u.level, level };
+}
+var needUser = async (ctx) => {
+  const u = await getUser(ctx.botId, ctx.user.id);
+  if (!u) await ctx.reply(`Kamu belum mulai! Ketik \`${"g"}start\` dulu \u{1F9D9}\u200D\u2642\uFE0F`);
   return u;
 };
-var getCreatures = async (botId, userId) => db.select().from(wizzyCreatures).where(and(eq(wizzyCreatures.botId, botId), eq(wizzyCreatures.discordUserId, userId)));
-function rollRarity() {
-  const entries = Object.entries(RARITIES);
-  let roll = Math.random() * entries.reduce((s, [, r]) => s + r.chance, 0);
-  for (const [key2, r] of entries) {
-    roll -= r.chance;
+var mentionId = (raw) => {
+  if (raw && typeof raw === "object") return raw.id ?? null;
+  const t = String(raw ?? "");
+  return t.match(/^<@!?(\d+)>$/)?.[1] ?? (/^\d{5,25}$/.test(t) ? t : null);
+};
+var getQty = async (botId, id, itemId) => (await db.select().from(wizzyInventory).where(and(eq(wizzyInventory.botId, botId), eq(wizzyInventory.discordUserId, id), eq(wizzyInventory.itemId, itemId))).limit(1))[0]?.quantity ?? 0;
+var addItem = (botId, id, itemId, qty) => db.insert(wizzyInventory).values({ botId, discordUserId: id, itemId, quantity: qty }).onConflictDoUpdate({
+  target: [wizzyInventory.botId, wizzyInventory.discordUserId, wizzyInventory.itemId],
+  set: { quantity: sql`${wizzyInventory.quantity} + ${qty}` }
+});
+var removeItem = async (botId, id, itemId, qty) => {
+  const r = await db.update(wizzyInventory).set({ quantity: sql`${wizzyInventory.quantity} - ${qty}` }).where(and(eq(wizzyInventory.botId, botId), eq(wizzyInventory.discordUserId, id), eq(wizzyInventory.itemId, itemId), sql`${wizzyInventory.quantity} >= ${qty}`)).returning({ id: wizzyInventory.id });
+  if (r.length) await db.delete(wizzyInventory).where(and(
+    eq(wizzyInventory.botId, botId),
+    eq(wizzyInventory.discordUserId, id),
+    eq(wizzyInventory.itemId, itemId),
+    sql`${wizzyInventory.quantity} <= 0`
+  ));
+  return r.length > 0;
+};
+var hasBuff = async (botId, id, buff) => (await db.select().from(wizzyBuffs).where(and(eq(wizzyBuffs.botId, botId), eq(wizzyBuffs.discordUserId, id), eq(wizzyBuffs.buff, buff), gt(wizzyBuffs.expiresAt, /* @__PURE__ */ new Date()))).limit(1)).length > 0;
+var setBuff = (botId, id, buff, ms) => db.insert(wizzyBuffs).values({ botId, discordUserId: id, buff, expiresAt: new Date(Date.now() + ms) }).onConflictDoUpdate({
+  target: [wizzyBuffs.botId, wizzyBuffs.discordUserId, wizzyBuffs.buff],
+  set: { expiresAt: new Date(Date.now() + ms) }
+});
+var clearBuff = (botId, id, buff) => db.delete(wizzyBuffs).where(and(eq(wizzyBuffs.botId, botId), eq(wizzyBuffs.discordUserId, id), eq(wizzyBuffs.buff, buff)));
+var myCoven = async (botId, id) => (await db.select({ c: wizzyCovens, role: wizzyCovenMembers.role }).from(wizzyCovenMembers).innerJoin(wizzyCovens, eq(wizzyCovens.id, wizzyCovenMembers.covenId)).where(and(eq(wizzyCovenMembers.botId, botId), eq(wizzyCovenMembers.discordUserId, id))).limit(1))[0];
+var CYCLE = { Api: "Angin", Angin: "Tanah", Tanah: "Air", Air: "Api" };
+var SKILLS = {
+  Api: { name: "Semburan Api", desc: "Serangan x1,8" },
+  Air: { name: "Penyembuhan Air", desc: "Pulihkan 30% HP" },
+  Angin: { name: "Badai Ganda", desc: "Serang 2x (x0,8)" },
+  Tanah: { name: "Perisai Bumi", desc: "Perisai 30% HP maksimum" },
+  Cahaya: { name: "Cahaya Suci", desc: "Pulihkan 20% HP + serang x1,2" },
+  Gelap: { name: "Sedot Jiwa", desc: "Serang x1,5, sedot 50% damage jadi HP" }
+};
+var BASE = {
+  common: { hp: 50, atk: 10, def: 5, spd: 10 },
+  uncommon: { hp: 70, atk: 14, def: 8, spd: 12 },
+  rare: { hp: 100, atk: 20, def: 12, spd: 14 },
+  epic: { hp: 150, atk: 30, def: 18, spd: 16 },
+  legendary: { hp: 220, atk: 45, def: 28, spd: 20 },
+  mythic: { hp: 350, atk: 70, def: 45, spd: 25 }
+};
+var statsFor = (type, level = 1) => {
+  const b = BASE[type.rarity], m = 1 + 0.08 * (level - 1);
+  return {
+    hp: Math.round(b.hp * m),
+    atk: Math.round(b.atk * m),
+    def: Math.round(b.def * m),
+    spd: Math.round(b.spd * (1 + 0.02 * (level - 1)))
+  };
+};
+var feedCost = (level) => level * 50;
+function makeFighter(type, level, side, wand, hpBoost = 1) {
+  const s = statsFor(type, level), hp = Math.round(s.hp * hpBoost);
+  return {
+    id: type.id,
+    name: type.name,
+    emoji: type.emoji,
+    elements: type.elements,
+    level,
+    maxHp: hp,
+    hp,
+    atk: s.atk + (wand?.atk ?? 0),
+    def: s.def,
+    spd: s.spd,
+    cd: 1,
+    shield: 0,
+    revive: type.id === "phoenix",
+    side,
+    elemBonus: wand?.elemBonus ?? 0
+  };
+}
+var pairMult = (a, d) => {
+  if (CYCLE[a] === d) return 1.5;
+  if (CYCLE[d] === a) return 0.7;
+  if (a === "Cahaya" && d === "Gelap" || a === "Gelap" && d === "Cahaya") return 1.5;
+  return 1;
+};
+var elemMult = (atk, def, bonus = 0) => {
+  const d = def[0];
+  let best = -1;
+  for (const a of atk) best = Math.max(best, pairMult(a, d));
+  return best > 1 ? best + bonus : best;
+};
+var tag = (f) => `${f.side === "A" ? "\u{1F535}" : "\u{1F534}"}${f.emoji}${f.name}`;
+var alive = (arr) => arr.filter((f) => f.hp > 0);
+var rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
+function hit(f, t, mult, log, label) {
+  const em = elemMult(f.elements, t.elements, f.elemBonus);
+  let dmg = f.atk * 100 / (100 + t.def) * mult * em * (0.9 + Math.random() * 0.2);
+  const crit = Math.random() < 0.1;
+  if (crit) dmg *= 1.5;
+  dmg = Math.max(1, Math.round(dmg));
+  const total = dmg;
+  if (t.shield > 0) {
+    const abs = Math.min(t.shield, dmg);
+    t.shield -= abs;
+    dmg -= abs;
+  }
+  t.hp -= dmg;
+  log.push(`${tag(f)} ${label} ${tag(t)} **-${total}**${em > 1 ? " \u26A1" : em < 1 ? " \u{1F6E1}\uFE0F" : ""}${crit ? " \u{1F4A5}" : ""}`);
+  if (t.hp <= 0) {
+    if (t.revive) {
+      t.revive = false;
+      t.hp = Math.round(t.maxHp * 0.5);
+      log.push(`\u{1F525} ${tag(t)} bangkit lagi dengan **Rebirth**!`);
+    } else log.push(`\u{1F480} ${tag(t)} tumbang`);
+  }
+  return dmg;
+}
+function heal(f, amount, log, label) {
+  const before = f.hp;
+  f.hp = Math.min(f.maxHp, f.hp + amount);
+  log.push(`${tag(f)} ${label} **+${f.hp - before} HP**`);
+}
+function act(f, foes, log) {
+  const t = rnd(foes);
+  if (f.cd > 0) {
+    f.cd--;
+    hit(f, t, 1, log, "\u2694\uFE0F");
+    return;
+  }
+  f.cd = 3;
+  switch (f.elements[0]) {
+    case "Api":
+      hit(f, t, 1.8, log, "\u{1F525} Semburan Api \u2192");
+      break;
+    case "Air":
+      heal(f, Math.round(f.maxHp * 0.3), log, "\u{1F4A7} Penyembuhan Air");
+      break;
+    case "Angin": {
+      hit(f, t, 0.8, log, "\u{1F32A}\uFE0F Badai \u2192");
+      const rest = alive(foes);
+      if (rest.length) hit(f, rnd(rest), 0.8, log, "\u{1F32A}\uFE0F Badai \u2192");
+      break;
+    }
+    case "Tanah": {
+      const s = Math.round(f.maxHp * 0.3);
+      f.shield += s;
+      log.push(`${tag(f)} \u{1FAA8} Perisai Bumi **+${s} perisai**`);
+      break;
+    }
+    case "Cahaya":
+      heal(f, Math.round(f.maxHp * 0.2), log, "\u2728 Cahaya Suci");
+      hit(f, t, 1.2, log, "\u2728 \u2192");
+      break;
+    case "Gelap": {
+      const d = hit(f, t, 1.5, log, "\u{1F311} Sedot Jiwa \u2192");
+      heal(f, Math.round(d * 0.5), log, "\u{1F311} menyedot");
+      break;
+    }
+    default:
+      hit(f, t, 1, log, "\u2694\uFE0F");
+  }
+}
+function simulate(A, B) {
+  const log = [], all = [...A, ...B];
+  let round = 0;
+  while (round < 15 && alive(A).length && alive(B).length) {
+    round++;
+    log.push(`**\u2014 Giliran ${round} \u2014**`);
+    const order = alive(all).sort((x, y) => y.spd - x.spd || Math.random() - 0.5);
+    for (const f of order) {
+      if (f.hp <= 0) continue;
+      const foes = alive(f.side === "A" ? B : A);
+      if (!foes.length) break;
+      act(f, foes, log);
+    }
+  }
+  const a = alive(A).length, b = alive(B).length;
+  return { winner: a && !b ? "A" : b && !a ? "B" : "draw", log, rounds: round };
+}
+var renderLog = (log) => {
+  const t = log.join("\n");
+  if (t.length <= 3300) return t;
+  const cut = t.slice(-3300);
+  return `\u2026${cut.slice(cut.indexOf("\n"))}`;
+};
+var summary = (arr) => arr.map((f) => `${f.emoji}${Math.max(0, f.hp)}/${f.maxHp}`).join(" ");
+var rollRarity = (lucky) => {
+  const entries = RARITY_KEYS.map((k) => [k, k === "common" || !lucky ? RARITIES[k].chance : RARITIES[k].chance * 2]);
+  const total = entries.reduce((s, [, c]) => s + c, 0);
+  let roll = Math.random() * total;
+  for (const [key2, c] of entries) {
+    roll -= c;
     if (roll <= 0) return key2;
   }
   return "common";
+};
+var pickOf = (rarity) => rnd(CREATURES.filter((c) => c.rarity === rarity));
+var hunt = (lucky) => Array.from({ length: 1 + Math.floor(Math.random() * 3) }, () => pickOf(rollRarity(lucky)));
+async function prepare(botId, id, side, consumeBoost) {
+  const u = await getUser(botId, id);
+  if (!u) return [];
+  const wand = u.wand ? itemById[u.wand] ?? null : null;
+  const boosted = await hasBuff(botId, id, "hpboost");
+  if (boosted && consumeBoost) await clearBuff(botId, id, "hpboost");
+  const teamRows = await getTeam(botId, id);
+  return teamRows.flatMap((c) => {
+    const t = byId[c.creatureId];
+    return t ? [makeFighter(t, c.level, side, wand, boosted ? 1.25 : 1)] : [];
+  });
 }
-function huntOnce() {
-  const rarity = rollRarity();
-  const pool2 = CREATURES.filter((c) => c.rarity === rarity);
-  return pool2[Math.floor(Math.random() * pool2.length)];
-}
-function cmd(name, description, run, arg) {
+function cmd(name, description, run, args = []) {
   return {
     name,
     description,
-    args: arg ? [{ name: arg.name, type: "string", rest: arg.rest }] : [],
+    args: args.map((a) => ({ name: a.name, type: a.type ?? "string", rest: a.rest })),
     buildSlash: () => {
       const b = new import_discord12.SlashCommandBuilder().setName(name).setDescription(description);
-      if (arg) b.addStringOption((o) => o.setName(arg.name).setDescription(arg.description).setRequired(false));
+      for (const a of args) {
+        if (a.type === "user") b.addUserOption((o) => o.setName(a.name).setDescription(a.description).setRequired(false));
+        else if (a.type === "int") b.addIntegerOption((o) => o.setName(a.name).setDescription(a.description).setRequired(false));
+        else b.addStringOption((o) => o.setName(a.name).setDescription(a.description).setRequired(false));
+      }
       return b.toJSON();
     },
     execute: run
   };
 }
-var needUser = async (ctx) => {
-  const u = await getUser(ctx.botId, ctx.user.id);
-  if (!u) await ctx.reply("Kamu belum mulai! Ketik `gstart` dulu \u{1F9D9}\u200D\u2642\uFE0F");
-  return u;
+var userArg2 = (name = "user", description = "ID atau mention user (kosong = diri sendiri)") => ({ name, description, type: "user" });
+var strArg = (name, description, rest = false) => ({ name, description, rest });
+var parseAmount = (s, max) => {
+  if (String(s ?? "").toLowerCase() === "all") return max > 0 ? max : null;
+  const n = Number.parseInt(String(s ?? ""), 10);
+  return Number.isFinite(n) && n > 0 ? Math.min(n, max) : null;
 };
-var targetUser = (ctx, raw) => {
-  const text2 = String(raw ?? "");
-  const id = text2.match(/^<@!?(\d+)>$/)?.[1] ?? (/^\d{5,25}$/.test(text2) ? text2 : null);
-  return id ?? ctx.user.id;
+var boardRows = async (botId, kind) => {
+  if (kind === "zoo") return db.select({ id: wizzyCreatures.discordUserId, v: sql`count(*)::int` }).from(wizzyCreatures).where(eq(wizzyCreatures.botId, botId)).groupBy(wizzyCreatures.discordUserId).orderBy(sql`count(*) desc`).limit(10);
+  if (kind === "battle") return db.select({ id: wizzyUsers.discordUserId, v: wizzyUsers.rankPoints, wins: wizzyUsers.wins }).from(wizzyUsers).where(eq(wizzyUsers.botId, botId)).orderBy(desc(wizzyUsers.rankPoints), desc(wizzyUsers.wins)).limit(10);
+  if (kind === "coven") return db.select({ id: wizzyCovens.name, v: wizzyCovens.bank }).from(wizzyCovens).where(eq(wizzyCovens.botId, botId)).orderBy(desc(wizzyCovens.bank)).limit(10);
+  return db.select({ id: wizzyUsers.discordUserId, v: wizzyUsers.galleons }).from(wizzyUsers).where(eq(wizzyUsers.botId, botId)).orderBy(desc(wizzyUsers.galleons)).limit(10);
 };
+var sendBoard = async (ctx, kind) => {
+  const rows = await boardRows(ctx.botId, kind);
+  const medal = (i) => ["\u{1F947}", "\u{1F948}", "\u{1F949}"][i] ?? `**${i + 1}.**`;
+  const title = kind === "zoo" ? "\u{1F984} Top Kolektor" : kind === "battle" ? "\u2694\uFE0F Peringkat Battle" : kind === "coven" ? "\u{1F3F0} Coven Terkaya" : "\u{1F4B0} Top Galleon";
+  const unit = kind === "zoo" ? "makhluk" : kind === "battle" ? "RP" : "Galleon";
+  const lines = rows.map((r, i) => `${medal(i)} ${kind === "coven" ? `**${r.id}**` : `<@${r.id}>`} \u2014 ${fmt3(r.v)} ${unit}${"wins" in r && kind === "battle" ? ` (${r.wins} menang)` : ""}`);
+  await ctx.reply({ embeds: [embed(title, lines.join("\n") || "Belum ada data.")] });
+};
+var pending = /* @__PURE__ */ new Map();
+function buttonRow(kind, kid, disabled = false) {
+  const specs = kind === "b" ? [["acc", "Terima", import_discord12.ButtonStyle.Success], ["dec", "Tolak", import_discord12.ButtonStyle.Danger]] : kind === "t" ? [["ok", "Setuju", import_discord12.ButtonStyle.Success], ["no", "Tolak", import_discord12.ButtonStyle.Danger]] : [["catch", "Tangkap!", import_discord12.ButtonStyle.Primary]];
+  return new import_discord12.ActionRowBuilder().addComponents(...specs.map(([id, label, style]) => new import_discord12.ButtonBuilder().setCustomId(`wiz:${kind}:${id}:${kid}`).setLabel(String(label)).setStyle(style).setDisabled(disabled)));
+}
+var sendWithButtons = (ctx, kind, kid, embeds, mention = "") => ctx.sourceMessage.reply({ ...mention ? { content: mention } : {}, embeds, components: [buttonRow(kind, kid)], allowedMentions: { parse: [] } });
+var busy = /* @__PURE__ */ new Set();
+var unbusy = (p) => {
+  if (p.kind === "s") return;
+  busy.delete(p.challenger);
+  busy.delete(p.target);
+};
+var armTimeout = (kid, msg, kind, p) => {
+  const timer = setTimeout(async () => {
+    if (!pending.has(kid)) return;
+    pending.delete(kid);
+    unbusy(p);
+    await msg.edit({ components: [buttonRow(kind, kid, true)], embeds: [embed("\u23F3 Kedaluwarsa", "Tawaran tidak dijawab dalam 60 detik.")] }).catch(() => {
+    });
+  }, 6e4);
+  timer.unref?.();
+  return timer;
+};
+var newKid = () => `${Date.now()}${Math.floor(Math.random() * 1e3)}`;
+var arm = (kid, msg, p) => {
+  p.timer = armTimeout(kid, msg, p.kind, p);
+  return p.timer;
+};
+async function resolveBattle(ctx, p, accepted) {
+  if (!accepted) return embed("\u2694\uFE0F Battle", "Tantangan ditolak.");
+  const [a, b] = await Promise.all([getUser(ctx.botId, p.challenger), getUser(ctx.botId, p.target)]);
+  if (!a || !b) return embed("\u2694\uFE0F Battle", "Salah satu pemain tidak ditemukan.");
+  if (p.bet > a.galleons || p.bet > b.galleons) return embed("\u2694\uFE0F Battle", "Saldo salah satu pemain tidak cukup lagi.");
+  const [A, B] = await Promise.all([prepare(ctx.botId, a.discordUserId, "A", true), prepare(ctx.botId, b.discordUserId, "B", true)]);
+  if (!A.length || !B.length) return embed("\u2694\uFE0F Battle", "Tim salah satu pemain kosong. `gteam add <nama>`");
+  const res = simulate(A, B);
+  let footer = "";
+  await db.transaction(async (tx) => {
+    if (res.winner === "draw") {
+      footer = "\u{1F91D} **Seri!** (batas 15 giliran) \u2014 tidak ada taruhan yang berpindah.";
+    } else {
+      const w = res.winner === "A" ? a : b, l = res.winner === "A" ? b : a;
+      let paid = 0;
+      if (p.bet > 0) {
+        const r = await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} - ${p.bet}` }).where(and(eq(wizzyUsers.id, l.id), sql`${wizzyUsers.galleons} >= ${p.bet}`)).returning({ id: wizzyUsers.id });
+        if (r.length) paid = p.bet;
+      }
+      await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${paid + 50}` }).where(eq(wizzyUsers.id, w.id));
+      await tx.update(wizzyUsers).set({ wins: sql`${wizzyUsers.wins} + 1`, rankPoints: sql`${wizzyUsers.rankPoints} + 25` }).where(eq(wizzyUsers.id, w.id));
+      await tx.update(wizzyUsers).set({ losses: sql`${wizzyUsers.losses} + 1`, rankPoints: sql`greatest(0, ${wizzyUsers.rankPoints} - 15)` }).where(eq(wizzyUsers.id, l.id));
+      await tx.insert(wizzyBattles).values({ botId: ctx.botId, p1: a.discordUserId, p2: b.discordUserId, winner: w.discordUserId, bet: paid });
+      footer = `\u{1F3C6} **<@${w.discordUserId}> menang!** +${fmt3(50 + paid)} ${cur(ctx)}, +30 XP, +25 RP`;
+    }
+  });
+  if (res.winner !== "draw") {
+    await addXp2(ctx.botId, res.winner === "A" ? a.discordUserId : b.discordUserId, 30, num(ctx, "maxLevel", 50));
+    await addXp2(ctx.botId, res.winner === "A" ? b.discordUserId : a.discordUserId, 10, num(ctx, "maxLevel", 50));
+  }
+  const e = embed(`\u2694\uFE0F ${p.challengerName} vs <@${p.target}>`, renderLog(res.log));
+  e.fields = [
+    { name: `\u{1F535} ${p.challengerName}`, value: summary(A), inline: true },
+    { name: `\u{1F534} <@${p.target}>`, value: summary(B), inline: true },
+    { name: "Hasil", value: footer }
+  ];
+  return e;
+}
+async function resolveTrade(ctx, p, accept) {
+  if (!accept) return embed("\u{1F501} Tukar", "Tawaran ditolak.");
+  const mine = byId[p.mine], theirs = byId[p.theirs];
+  const fee = 50;
+  let text2 = "";
+  try {
+    await db.transaction(async (tx) => {
+      const rows = await tx.select().from(wizzyCreatures).where(and(eq(wizzyCreatures.botId, ctx.botId), sql`${wizzyCreatures.discordUserId} in (${p.challenger}, ${p.target})`));
+      const a = rows.find((c) => c.discordUserId === p.challenger && c.creatureId === p.mine && !c.isInTeam);
+      const b = rows.find((c) => c.discordUserId === p.target && c.creatureId === p.theirs && !c.isInTeam);
+      if (!a || !b) {
+        text2 = "Salah satu makhluk sudah tidak tersedia.";
+        throw new Error("invalid");
+      }
+      for (const [uid, name] of [[p.challenger, p.challengerName], [p.target, `<@${p.target}>`]]) {
+        const r = await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} - ${fee}` }).where(and(eq(wizzyUsers.botId, ctx.botId), eq(wizzyUsers.discordUserId, uid), sql`${wizzyUsers.galleons} >= ${fee}`)).returning({ id: wizzyUsers.id });
+        if (!r.length) {
+          text2 = `${name} tidak punya cukup ${cur(ctx)} untuk biaya.`;
+          throw new Error("fee");
+        }
+      }
+      await tx.update(wizzyCreatures).set({ discordUserId: p.target }).where(eq(wizzyCreatures.id, a.id));
+      await tx.update(wizzyCreatures).set({ discordUserId: p.challenger }).where(eq(wizzyCreatures.id, b.id));
+      text2 = `\u2705 Tukar sukses! ${mine.emoji} ${mine.name} \u21C4 ${theirs.emoji} ${theirs.name}`;
+    });
+  } catch {
+    if (!text2) text2 = "Transaksi gagal, coba lagi.";
+  }
+  return embed("\u{1F501} Tukar", text2);
+}
 var commands = [
   cmd("start", "Mulai petualangan di Dunia Sihir", async (ctx) => {
-    if (await getUser(ctx.botId, ctx.user.id)) {
-      return ctx.reply("Kamu sudah punya akun, penyihir! Ketik `ghunt` untuk berburu.");
-    }
-    const house = HOUSES[Math.floor(Math.random() * HOUSES.length)];
-    await db.insert(wizzyUsers).values({ botId: ctx.botId, discordUserId: ctx.user.id, house });
+    if (await getUser(ctx.botId, ctx.user.id)) return ctx.reply("Kamu sudah punya akun, penyihir! Ketik `ghunt` untuk berburu.");
+    const house = rnd(HOUSES);
+    await db.insert(wizzyUsers).values({
+      botId: ctx.botId,
+      discordUserId: ctx.user.id,
+      house,
+      teamSlots: num(ctx, "startingSlots", 3)
+    });
     return ctx.reply({ embeds: [embed(
       "\u2728 Selamat datang di Dunia Sihir!",
       `Topi seleksi memilihmu masuk house **${house}**!
@@ -109874,147 +110282,586 @@ Ketik \`ghunt\` untuk berburu makhluk pertamamu.`
     )] });
   }),
   cmd("profile", "Kartu penyihir", async (ctx, args) => {
-    const id = targetUser(ctx, args.user);
+    const id = mentionId(args.user) ?? ctx.user.id;
     const u = await getUser(ctx.botId, id);
     if (!u) return ctx.reply(id === ctx.user.id ? "Ketik `gstart` dulu!" : "Pemain itu belum mulai.");
     const member = ctx.guild?.members.cache.get(id) ?? await ctx.guild?.members.fetch(id).catch(() => null);
     const display = member?.user ?? ctx.client.users.cache.get(id) ?? ctx.user;
     const owned = await getCreatures(ctx.botId, id);
-    const dex = new Set(owned.map((c) => c.creatureId)).size;
-    return ctx.reply({ embeds: [{
-      ...embed("\u{1F9D9} Kartu Penyihir", `**${display.username}**`),
-      thumbnail: { url: display.displayAvatarURL() },
-      fields: [
-        { name: "House", value: u.house, inline: true },
-        { name: "Level", value: `${u.level} (${u.xp}/${u.level * 100} XP)`, inline: true },
-        { name: cur(ctx), value: `\u{1F4B0} ${fmt3(u.galleons)}`, inline: true },
-        { name: "Koleksi", value: `\u{1F3C6} ${owned.length} makhluk`, inline: true },
-        { name: "Battle", value: `${u.wins}M / ${u.losses}K`, inline: true },
-        { name: "Dex", value: `${dex}/${CREATURES.length} jenis`, inline: true },
-        { name: "Streak Daily", value: `\u{1F525} ${u.dailyStreak}`, inline: true }
-      ]
-    }] });
-  }, { name: "user", description: "ID atau mention user (kosong = diri sendiri)" }),
+    const cov = await myCoven(ctx.botId, id);
+    const wand = u.wand ? itemById[u.wand] : null;
+    const e = embed("\u{1F9D9} Kartu Penyihir", `**${display.username}**`);
+    e.thumbnail = { url: display.displayAvatarURL() };
+    e.fields = [
+      { name: "House", value: u.house, inline: true },
+      { name: "Level", value: `${u.level} (${u.xp}/${u.level * 100} XP)`, inline: true },
+      { name: cur(ctx), value: `\u{1F4B0} ${fmt3(u.galleons)}`, inline: true },
+      { name: "Koleksi", value: `\u{1F409} ${owned.length} makhluk`, inline: true },
+      { name: "Battle", value: `${u.wins}M / ${u.losses}K \u2022 ${u.rankPoints} RP`, inline: true },
+      { name: "Dex", value: `\u{1F4D6} ${new Set(owned.map((c) => c.creatureId)).size}/${CREATURES.length}`, inline: true },
+      { name: "Streak Daily", value: `\u{1F525} ${u.dailyStreak}`, inline: true },
+      { name: "Wand", value: wand ? `${wand.emoji} ${wand.name}` : "\u2014", inline: true },
+      { name: "Dungeon", value: `Lantai ${u.dungeonFloor}`, inline: true },
+      { name: "Coven", value: cov ? cov.c.name : "\u2014", inline: true }
+    ];
+    return ctx.reply({ embeds: [e] });
+  }, [userArg2()]),
   cmd("daily", "Klaim hadiah harian", async (ctx) => {
     const u = await needUser(ctx);
     if (!u) return;
     const now = Date.now();
-    const since = u.lastDailyAt ? now - u.lastDailyAt.getTime() : DAY_MS;
-    if (since < DAY_MS) {
-      const left = DAY_MS - since;
+    const since = u.lastDailyAt ? now - u.lastDailyAt.getTime() : DAY;
+    if (since < DAY) {
+      const left = DAY - since;
       return ctx.reply(`\u23F3 Daily berikutnya dalam **${Math.floor(left / 36e5)}j ${Math.floor(left % 36e5 / 6e4)}m**.`);
     }
-    const streak = since < 2 * DAY_MS ? Math.min(u.dailyStreak + 1, 30) : 1;
+    const streak = since < 2 * DAY ? Math.min(u.dailyStreak + 1, 30) : 1;
     const reward = 200 + streak * 20;
-    await db.update(wizzyUsers).set({ dailyStreak: streak, lastDailyAt: new Date(now) }).where(eq(wizzyUsers.id, u.id));
-    await db.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${reward}` }).where(eq(wizzyUsers.id, u.id));
-    return ctx.reply({ embeds: [embed(
-      "\u{1F381} Hadiah Harian",
-      `Kamu mendapat **${fmt3(reward)} ${cur(ctx)}**!
-\u{1F525} Streak: **${streak}** hari`
-    )] });
+    await db.update(wizzyUsers).set({ dailyStreak: streak, lastDailyAt: new Date(now), galleons: sql`${wizzyUsers.galleons} + ${reward}` }).where(eq(wizzyUsers.id, u.id));
+    return ctx.reply({ embeds: [embed("\u{1F381} Hadiah Harian", `Kamu mendapat **${fmt3(reward)} ${cur(ctx)}**!
+\u{1F525} Streak: **${streak}** hari`)] });
   }),
-  cmd("cash", "Cek saldo Galleon", async (ctx) => {
+  cmd("cash", "Cek saldo", async (ctx) => {
     const u = await needUser(ctx);
     if (!u) return;
     return ctx.reply(`\u{1F4B0} **${ctx.user.username}**, saldomu: **${fmt3(u.galleons)} ${cur(ctx)}**`);
   }),
+  cmd("give", "Kirim uang ke pemain lain", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const id = mentionId(args.user);
+    if (!id || id === ctx.user.id) return ctx.reply("Pakai: `ggive @user <jumlah>`");
+    if (!await getUser(ctx.botId, id)) return ctx.reply("Pemain itu belum mulai.");
+    const amt = parseAmount(args.amount, u.galleons);
+    if (!amt) return ctx.reply("Masukkan jumlah yang valid.");
+    const tax = Math.floor(amt * num(ctx, "giveTaxPct", 5) / 100), net = amt - tax;
+    await db.transaction(async (tx) => {
+      await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} - ${amt}` }).where(eq(wizzyUsers.id, u.id));
+      await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${net}` }).where(and(eq(wizzyUsers.botId, ctx.botId), eq(wizzyUsers.discordUserId, id)));
+    });
+    return ctx.reply(`\u{1F4B8} Kamu mengirim **${fmt3(amt)} ${cur(ctx)}** ke <@${id}>.
+Pajak ${num(ctx, "giveTaxPct", 5)}%: ${fmt3(tax)} \u2022 Diterima: **${fmt3(net)}**`);
+  }, [userArg2(), strArg("amount", "Jumlah atau all")]),
   cmd("hunt", "Berburu makhluk sihir", async (ctx) => {
     const u = await needUser(ctx);
     if (!u) return;
-    const key2 = `${ctx.botId}:${ctx.user.id}`;
-    const left = (cooldowns.get(key2) ?? 0) - Date.now();
-    if (left > 0) return ctx.reply(`\u23F3 Tunggu **${Math.ceil(left / 1e3)} detik** lagi.`);
-    cooldowns.set(key2, Date.now() + cdMs(ctx));
-    const caught = Array.from({ length: 1 + Math.floor(Math.random() * 3) }, huntOnce);
-    const levelUp = await db.transaction(async (tx) => {
-      for (const c of caught) {
-        await tx.insert(wizzyCreatures).values({ botId: ctx.botId, discordUserId: ctx.user.id, creatureId: c.id });
-      }
-      let xp = u.xp + caught.length * 5, level = u.level;
-      while (xp >= level * 100) {
-        xp -= level * 100;
-        level++;
-      }
-      await tx.update(wizzyUsers).set({ xp, level }).where(eq(wizzyUsers.id, u.id));
-      return level > u.level ? level : 0;
+    const lucky = await hasBuff(ctx.botId, u.discordUserId, "lucky");
+    const caught = hunt(lucky);
+    const total = caught.length;
+    await db.transaction(async (tx) => {
+      for (const c of caught) await tx.insert(wizzyCreatures).values({ botId: ctx.botId, discordUserId: u.discordUserId, creatureId: c.id });
     });
+    const res = await addXp2(ctx.botId, u.discordUserId, total * 5, num(ctx, "maxLevel", 50));
     const lines = caught.map((c) => `${c.emoji} **${c.name}** ${RARITIES[c.rarity].emoji} ${RARITIES[c.rarity].label}`);
-    let desc2 = `${ctx.user.username} berburu dan menemukan:
+    let desc2 = `${ctx.user.username} berburu${lucky ? " \u{1F340}" : ""} dan menemukan:
 
 ${lines.join("\n")}`;
-    if (levelUp) desc2 += `
+    if (res.levelUp) desc2 += `
 
-\u{1F389} **Naik ke level ${levelUp}!**`;
-    return ctx.reply({ embeds: [embed("\u{1F3C6} Hasil Berburu", desc2)] });
+\u{1F389} **Naik ke level ${res.level}!**`;
+    return ctx.reply({ embeds: [embed("\u{1F409} Hasil Berburu", desc2)] });
   }),
+  cmd("autohunt", "Berburu otomatis berkali-kali", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const max = num(ctx, "autohuntMax", 20), costPer = num(ctx, "autohuntCost", 100);
+    const n = Math.min(Number.parseInt(String(args.n ?? ""), 10) || 0, max);
+    if (n < 1) return ctx.reply(`Pakai: \`gautohunt <1-${max}>\`
+Biaya **${fmt3(costPer)} ${cur(ctx)}** per buruan.`);
+    const cost = n * costPer;
+    if (!await spend(ctx.botId, u.discordUserId, cost)) return ctx.reply(`Saldo kurang. Butuh **${fmt3(cost)} ${cur(ctx)}**.`);
+    const lucky = await hasBuff(ctx.botId, u.discordUserId, "lucky");
+    const tally = {}, notable = [];
+    let total = 0;
+    await db.transaction(async (tx) => {
+      for (let i = 0; i < n; i++) for (const c of hunt(lucky)) {
+        await tx.insert(wizzyCreatures).values({ botId: ctx.botId, discordUserId: u.discordUserId, creatureId: c.id });
+        tally[c.rarity] = (tally[c.rarity] ?? 0) + 1;
+        if (["epic", "legendary", "mythic"].includes(c.rarity)) notable.push(`${c.emoji} ${c.name}`);
+        total++;
+      }
+    });
+    const res = await addXp2(ctx.botId, u.discordUserId, total * 5, num(ctx, "maxLevel", 50));
+    const rows = RARITY_KEYS.filter((k) => tally[k]).map((k) => `${RARITIES[k].emoji} ${RARITIES[k].label}: **${tally[k]}**`).join("\n");
+    let desc2 = `${n}x berburu otomatis (-${fmt3(cost)} ${cur(ctx)})${lucky ? " \u{1F340}" : ""}
+Total **${total}** makhluk:
+
+${rows}`;
+    if (notable.length) desc2 += `
+
+\u{1F31F} **Temuan langka:** ${notable.join(", ")}`;
+    if (res.levelUp) desc2 += `
+
+\u{1F389} **Naik ke level ${res.level}!**`;
+    return ctx.reply({ embeds: [embed("\u{1F916} Auto Hunt", desc2)] });
+  }, [strArg("n", `Jumlah buruan (maks ${20})`)]),
   cmd("zoo", "Lihat koleksi makhluk", async (ctx) => {
     const u = await needUser(ctx);
     if (!u) return;
-    const owned = await getCreatures(ctx.botId, ctx.user.id);
+    const owned = await getCreatures(ctx.botId, u.discordUserId);
     if (!owned.length) return ctx.reply("Koleksimu kosong. Ketik `ghunt`!");
     const count = /* @__PURE__ */ new Map();
     for (const o of owned) count.set(o.creatureId, (count.get(o.creatureId) ?? 0) + 1);
-    const sections = Object.keys(RARITIES).map((key2) => {
-      const items = CREATURES.filter((c) => c.rarity === key2 && count.has(c.id)).map((c) => `${c.emoji}x${count.get(c.id)}`).join(" ");
-      return items ? `${RARITIES[key2].emoji} **${RARITIES[key2].label}**: ${items}` : "";
+    const sections = RARITY_KEYS.map((k) => {
+      const items = CREATURES.filter((c) => c.rarity === k && count.has(c.id)).map((c) => `${c.emoji}x${count.get(c.id)}`).join(" ");
+      return items ? `${RARITIES[k].emoji} **${RARITIES[k].label}**: ${items}` : "";
     }).filter(Boolean);
-    return ctx.reply({ embeds: [embed(
-      `\u{1F4DA} Zoo ${ctx.user.username}`,
-      `${sections.join("\n")}
+    return ctx.reply({ embeds: [embed(`\u{1F984} Zoo ${ctx.user.username}`, `${sections.join("\n")}
 
-\u{1F4D6} Dex: **${count.size}/${CREATURES.length}** jenis`
-    )] });
+\u{1F4D6} Dex: **${count.size}/${CREATURES.length}** jenis`)] });
   }),
+  cmd("dex", "Lihat progres koleksi", async (ctx) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const have = new Set((await getCreatures(ctx.botId, u.discordUserId)).map((c) => c.creatureId));
+    const rows = RARITY_KEYS.map((k) => {
+      const list = CREATURES.filter((c) => c.rarity === k);
+      const got = list.filter((c) => have.has(c.id)).length;
+      return `${RARITIES[k].emoji} **${RARITIES[k].label}** ${got}/${list.length}
+${list.map((c) => have.has(c.id) ? c.emoji : "\u2754").join(" ")}`;
+    });
+    const pct = Math.round(have.size / CREATURES.length * 100);
+    return ctx.reply({ embeds: [embed(`\u{1F4D6} Dex ${ctx.user.username} \u2014 ${pct}%`, rows.join("\n\n"))] });
+  }),
+  cmd("info", "Info makhluk", async (ctx, args) => {
+    const t = findCreature(args.q);
+    if (!t) return ctx.reply("Pakai: `ginfo <nama makhluk>` (contoh: `ginfo phoenix`)");
+    const r = RARITIES[t.rarity];
+    const stat = (lv) => {
+      const s = statsFor(t, lv);
+      return `\u2764\uFE0F${s.hp} \u2694\uFE0F${s.atk} \u{1F6E1}\uFE0F${s.def} \u{1F4A8}${s.spd}`;
+    };
+    const skill = t.id === "phoenix" ? "Rebirth \u2014 bangkit sekali dengan 50% HP" : `${SKILLS[t.elements[0]].name} \u2014 ${SKILLS[t.elements[0]].desc}`;
+    const u = await getUser(ctx.botId, ctx.user.id);
+    const mine = u ? (await getCreatures(ctx.botId, u.discordUserId)).filter((c) => c.creatureId === t.id) : [];
+    const e = embed(`${t.emoji} ${t.name}`, `${r.emoji} **${r.label}** \u2022 id: \`${t.id}\``);
+    e.fields = [
+      { name: "Elemen", value: t.elements.join(" / "), inline: true },
+      { name: "Harga jual", value: `\u{1F4B0} ${fmt3(r.price)}`, inline: true },
+      { name: "Skill", value: skill },
+      { name: "Stat Lv1", value: stat(1) },
+      { name: "Stat Lv25", value: stat(25) },
+      { name: "Stat Lv50", value: stat(50) }
+    ];
+    if (mine.length) e.fields.push({ name: "Koleksimu", value: `${mine.length}x (terbaik Lv${Math.max(...mine.map((c) => c.level))})` });
+    return ctx.reply({ embeds: [e] });
+  }, [strArg("q", "Nama makhluk", true)]),
   cmd("sell", "Jual makhluk", async (ctx, args) => {
     const u = await needUser(ctx);
     if (!u) return;
     const target = String(args.target ?? "").trim().toLowerCase();
     if (!target) return ctx.reply("Pakai: `gsell all`, `gsell <rarity>`, atau `gsell <nama makhluk>`");
     const key2 = target.replace(/\s/g, "");
-    const owned = (await getCreatures(ctx.botId, ctx.user.id)).filter((c) => !c.isInTeam);
+    const owned = (await getCreatures(ctx.botId, u.discordUserId)).filter((c) => !c.isInTeam);
     const toSell = owned.filter((c) => {
       const info = byId[c.creatureId];
       if (!info) return false;
       if (target === "all") return true;
       if (target in RARITIES) return info.rarity === target;
-      return info.id === key2 || info.name.toLowerCase().replace(/\s/g, "") === key2;
+      return info.id === key2 || norm(info.name) === key2;
     });
-    if (!toSell.length) return ctx.reply("Tidak ada makhluk yang cocok untuk dijual (makhluk di tim tidak ikut terjual).");
+    if (!toSell.length) return ctx.reply("Tidak ada makhluk yang cocok untuk dijual.");
     const total = toSell.reduce((s, c) => s + RARITIES[byId[c.creatureId].rarity].price, 0);
     await db.transaction(async (tx) => {
-      for (const c of toSell) {
-        await tx.delete(wizzyCreatures).where(eq(wizzyCreatures.id, c.id));
-      }
+      for (const c of toSell) await tx.delete(wizzyCreatures).where(eq(wizzyCreatures.id, c.id));
       await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${total}` }).where(eq(wizzyUsers.id, u.id));
     });
     return ctx.reply(`\u{1F4B0} Menjual **${toSell.length}** makhluk seharga **${fmt3(total)} ${cur(ctx)}**!`);
-  }, { name: "target", description: "all | rarity | nama makhluk", rest: true }),
-  cmd("help", "Daftar command Wizzy", async (ctx) => ctx.reply({ embeds: [embed("\u{1F52E} Bantuan Wizzy", [
-    "**\u{1F9D9} Dasar**",
-    "`gstart` mulai petualangan",
-    "`gprofile [@user]` kartu penyihir",
-    "`gdaily` hadiah harian",
-    "`gcash` cek saldo",
+  }, [strArg("target", "all | rarity | nama", true)]),
+  cmd("feed", "Berikan makan makhluk naik level", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const t = findCreature(args.q);
+    if (!t) return ctx.reply("Pakai: `gfeed <nama makhluk>`.");
+    const owned = (await getCreatures(ctx.botId, u.discordUserId)).filter((c) => c.creatureId === t.id).sort((a, b) => b.level - a.level);
+    const best = owned[0];
+    if (!best) return ctx.reply(`Kamu tidak punya **${t.name}**.`);
+    const max = num(ctx, "maxLevel", 50);
+    if (best.level >= max) return ctx.reply(`${t.emoji} ${t.name} sudah level maksimal (${max}).`);
+    const cost = feedCost(best.level);
+    if (!await spend(ctx.botId, u.discordUserId, cost)) return ctx.reply(`Saldo kurang. Butuh **${fmt3(cost)} ${cur(ctx)}**.`);
+    await db.update(wizzyCreatures).set({ level: best.level + 1 }).where(eq(wizzyCreatures.id, best.id));
+    const s = statsFor(t, best.level + 1);
+    return ctx.reply(`\u{1F356} ${t.emoji} **${t.name}** naik ke **Lv${best.level + 1}** (-${fmt3(cost)} ${cur(ctx)})
+\u2764\uFE0F${s.hp} \u2694\uFE0F${s.atk} \u{1F6E1}\uFE0F${s.def} \u{1F4A8}${s.spd}`);
+  }, [strArg("q", "Nama makhluk", true)]),
+  cmd("fuse", "Gabungkan 3 makhluk jadi rarity berikutnya", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const rarity = String(args.rarity ?? "").toLowerCase();
+    const idx = RARITY_KEYS.indexOf(rarity);
+    if (idx < 0 || idx >= RARITY_KEYS.length - 1)
+      return ctx.reply(`Pakai: \`gfuse <rarity>\` (${RARITY_KEYS.slice(0, -1).join("/")})
+3 makhluk level terendah (di luar tim) \u2192 50% jadi rarity berikutnya. Biaya ${fmt3(num(ctx, "fuseCost", 200))} ${cur(ctx)}.`);
+    const pool2 = (await getCreatures(ctx.botId, u.discordUserId)).filter((c) => !c.isInTeam && byId[c.creatureId]?.rarity === rarity).sort((a, b) => a.level - b.level);
+    if (pool2.length < 3) return ctx.reply(`Butuh 3 makhluk **${rarity}** di luar tim (kamu punya ${pool2.length}).`);
+    const cost = num(ctx, "fuseCost", 200);
+    if (!await spend(ctx.botId, u.discordUserId, cost)) return ctx.reply(`Saldo kurang. Butuh ${fmt3(cost)} ${cur(ctx)}.`);
+    const used = pool2.slice(0, 3), success = Math.random() < 0.5;
+    const result = pickOf(success ? RARITY_KEYS[idx + 1] : rarity);
+    await db.transaction(async (tx) => {
+      for (const c of used) await tx.delete(wizzyCreatures).where(eq(wizzyCreatures.id, c.id));
+      await tx.insert(wizzyCreatures).values({ botId: ctx.botId, discordUserId: u.discordUserId, creatureId: result.id });
+    });
+    return ctx.reply(success ? `\u{1F52E} **Fusion berhasil!** 3 makhluk ${rarity} menjadi ${result.emoji} **${result.name}** (${RARITIES[result.rarity].label})!` : `\u{1F4A8} Fusion gagal... kamu hanya mendapat ${result.emoji} **${result.name}** (${RARITIES[result.rarity].label}).`);
+  }, [strArg("rarity", "common | uncommon | rare | epic | legendary")]),
+  cmd("team", "Atur tim battle", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const sub = String(args.sub ?? "").toLowerCase();
+    if (!sub || sub === "list") {
+      const team2 = await getTeam(ctx.botId, u.discordUserId);
+      const lines = team2.map((c, i) => {
+        const t2 = byId[c.creatureId], s = statsFor(t2, c.level);
+        return `**${i + 1}.** ${t2.emoji} **${t2.name}** Lv${c.level} (${t2.elements.join("/")})
+   \u2764\uFE0F${s.hp} \u2694\uFE0F${s.atk} \u{1F6E1}\uFE0F${s.def} \u{1F4A8}${s.spd}`;
+      });
+      return ctx.reply({ embeds: [embed(`\u{1F6E1}\uFE0F Tim ${ctx.user.username} (${team2.length}/${u.teamSlots})`, lines.join("\n") || "Tim kosong. Pakai `gteam add <nama>`")] });
+    }
+    if (sub === "clear") {
+      await db.update(wizzyCreatures).set({ isInTeam: false }).where(and(eq(wizzyCreatures.botId, ctx.botId), eq(wizzyCreatures.discordUserId, u.discordUserId)));
+      return ctx.reply("\u{1F9F9} Tim dikosongkan.");
+    }
+    if (sub !== "add" && sub !== "remove") return ctx.reply("Pakai: `gteam`, `gteam add <nama>`, `gteam remove <nama>`, `gteam clear`");
+    const t = findCreature(args.q);
+    if (!t) return ctx.reply("Makhluk tidak ditemukan. Cek id-nya dengan `ginfo`.");
+    const team = await getTeam(ctx.botId, u.discordUserId);
+    const owned = (await getCreatures(ctx.botId, u.discordUserId)).filter((c) => c.creatureId === t.id);
+    if (sub === "add") {
+      if (team.length >= u.teamSlots) return ctx.reply(`Tim penuh (${u.teamSlots} slot). Beli slot di \`gshop\`.`);
+      const pick2 = owned.filter((c) => !c.isInTeam).sort((a, b) => b.level - a.level)[0];
+      if (!pick2) return ctx.reply(`Kamu tidak punya **${t.name}** yang bebas.`);
+      await db.update(wizzyCreatures).set({ isInTeam: true }).where(eq(wizzyCreatures.id, pick2.id));
+      return ctx.reply(`\u2705 ${t.emoji} **${t.name}** Lv${pick2.level} masuk tim.`);
+    }
+    const pick = owned.find((c) => c.isInTeam);
+    if (!pick) return ctx.reply(`**${t.name}** tidak ada di timmu.`);
+    await db.update(wizzyCreatures).set({ isInTeam: false }).where(eq(wizzyCreatures.id, pick.id));
+    return ctx.reply(`\u2796 ${t.emoji} **${t.name}** keluar dari tim.`);
+  }, [strArg("sub", "add | remove | clear"), strArg("q", "Nama makhluk", true)]),
+  cmd("shop", "Lihat toko sihir", async (ctx) => {
+    const lines = ITEMS.map((i) => `${i.emoji} **${i.name}** \u2014 \u{1F4B0} ${fmt3(i.price)}
+   ${i.desc} \u2022 id: \`${i.id.split("_").pop()}\``);
+    return ctx.reply({ embeds: [embed("\u{1F6D2} Toko Sihir", `${lines.join("\n\n")}
+
+Beli dengan \`gbuy <id> [jumlah]\` (contoh: \`gbuy lucky 2\`)`)] });
+  }),
+  cmd("buy", "Beli item", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const tokens = String(args.q ?? "").trim().split(/\s+/).filter(Boolean);
+    const last = tokens[tokens.length - 1] ?? "";
+    const hasQty = tokens.length > 1 && /^\d+$/.test(last);
+    const qty = hasQty ? Math.min(Number.parseInt(last, 10), 99) : 1;
+    const item = findItem(hasQty ? tokens.slice(0, -1).join(" ") : tokens.join(" "));
+    if (!item) return ctx.reply("Item tidak ditemukan. Lihat `gshop`.");
+    if (item.type === "wand") {
+      if (await getQty(ctx.botId, u.discordUserId, item.id) > 0) return ctx.reply("Kamu sudah punya wand itu.");
+      if (!await spend(ctx.botId, u.discordUserId, item.price)) return ctx.reply(`Saldo kurang. Butuh **${fmt3(item.price)} ${cur(ctx)}**.`);
+      await addItem(ctx.botId, u.discordUserId, item.id, 1);
+      return ctx.reply(`${item.emoji} Membeli **${item.name}**! Pasang dengan \`gequip ${item.id.split("_").pop()}\`.`);
+    }
+    if (item.type === "upgrade") {
+      if (u.teamSlots >= num(ctx, "maxSlots", 5)) return ctx.reply(`Slot tim sudah maksimal (${num(ctx, "maxSlots", 5)}).`);
+      if (!await spend(ctx.botId, u.discordUserId, item.price)) return ctx.reply(`Saldo kurang. Butuh **${fmt3(item.price)} ${cur(ctx)}**.`);
+      await db.update(wizzyUsers).set({ teamSlots: u.teamSlots + 1 }).where(eq(wizzyUsers.id, u.id));
+      return ctx.reply(`\u2795 Slot tim sekarang **${u.teamSlots + 1}**!`);
+    }
+    const total = item.price * qty;
+    if (!await spend(ctx.botId, u.discordUserId, total)) return ctx.reply(`Saldo kurang. Butuh **${fmt3(total)} ${cur(ctx)}**.`);
+    await addItem(ctx.botId, u.discordUserId, item.id, qty);
+    return ctx.reply(`${item.emoji} Membeli **${qty}x ${item.name}** (-${fmt3(total)} ${cur(ctx)}).`);
+  }, [strArg("q", "id item [jumlah]", true)]),
+  cmd("inv", "Lihat inventori", async (ctx) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const rows = await db.select().from(wizzyInventory).where(and(eq(wizzyInventory.botId, ctx.botId), eq(wizzyInventory.discordUserId, u.discordUserId)));
+    const list = rows.filter((r) => r.quantity > 0).map((r) => {
+      const i = itemById[r.itemId];
+      return i ? `${i.emoji} **${i.name}** x${r.quantity}` : null;
+    }).filter(Boolean);
+    const wand = u.wand ? itemById[u.wand] : null;
+    const buffRows = await db.select().from(wizzyBuffs).where(and(eq(wizzyBuffs.botId, ctx.botId), eq(wizzyBuffs.discordUserId, u.discordUserId), gt(wizzyBuffs.expiresAt, /* @__PURE__ */ new Date())));
+    const buffs = buffRows.map((b) => `\u2022 ${b.buff === "lucky" ? "\u{1F340} Lucky" : b.buff === "hpboost" ? "\u{1F9EA} HP Boost" : b.buff} (${Math.ceil((b.expiresAt.getTime() - Date.now()) / 6e4)} mnt)`);
+    return ctx.reply({ embeds: [embed("\u{1F392} Inventori", `**Wand terpasang:** ${wand ? `${wand.emoji} ${wand.name}` : "\u2014"}
+
+${list.join("\n") || "Kosong. Belanja di `gshop`!"}
+
+**Buff aktif:**
+${buffs.join("\n") || "\u2014"}`)] });
+  }),
+  cmd("use", "Pakai item", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const item = findItem(args.q);
+    if (!item) return ctx.reply("Pakai: `guse <item>` (hp / lucky)");
+    if (item.type === "wand") return ctx.reply(`Wand dipasang dengan \`gequip ${item.id.split("_").pop()}\`.`);
+    if (item.type !== "potion") return ctx.reply("Item ini tidak bisa dipakai.");
+    if (!await removeItem(ctx.botId, u.discordUserId, item.id, 1)) return ctx.reply(`Kamu tidak punya ${item.name}.`);
+    if (item.id === "potion_lucky") {
+      await setBuff(ctx.botId, u.discordUserId, "lucky", 30 * 6e4);
+      return ctx.reply("\u{1F340} Lucky aktif **30 menit**! Peluang rarity tinggi berlipat saat berburu.");
+    }
+    await setBuff(ctx.botId, u.discordUserId, "hpboost", DAY);
+    return ctx.reply("\u{1F9EA} HP tim +25% di **battle berikutnya** (berlaku maks 24 jam).");
+  }, [strArg("q", "Nama item", true)]),
+  cmd("equip", "Pasang tongkat sihir", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const item = findItem(args.q);
+    if (!item || item.type !== "wand") return ctx.reply("Pakai: `gequip <wand>` (wood / elder / element)");
+    if (await getQty(ctx.botId, u.discordUserId, item.id) < 1) return ctx.reply("Kamu belum punya wand itu. Beli di `gshop`.");
+    await db.update(wizzyUsers).set({ wand: item.id }).where(eq(wizzyUsers.id, u.id));
+    return ctx.reply(`${item.emoji} **${item.name}** terpasang! ${item.desc}`);
+  }, [strArg("q", "Nama wand", true)]),
+  cmd("cf", "Coin flip", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const bet = parseAmount(args.amount, Math.min(num(ctx, "maxBet", 1e4), u.galleons));
+    if (!bet) return ctx.reply("Masukkan jumlah taruhan (atau `all`).");
+    const pick = String(args.side ?? "h").toLowerCase().startsWith("t") ? "tail" : "head";
+    const result = Math.random() < 0.5 ? "head" : "tail";
+    await db.transaction(async (tx) => {
+      await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} - ${bet}` }).where(eq(wizzyUsers.id, u.id));
+      if (pick === result) await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${bet * 2}` }).where(eq(wizzyUsers.id, u.id));
+    });
+    return ctx.reply(`\u{1FA99} Koin berputar... **${result.toUpperCase()}**!
+${pick === result ? `\u{1F389} Menang **+${fmt3(bet)} ${cur(ctx)}**!` : `\u{1F480} Kalah **-${fmt3(bet)} ${cur(ctx)}**.`}`);
+  }, [strArg("amount", "Jumlah taruhan"), strArg("side", "head / tail")]),
+  cmd("slots", "Mesin slot", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const bet = parseAmount(args.amount, Math.min(num(ctx, "maxBet", 1e4), u.galleons));
+    if (!bet) return ctx.reply("Masukkan jumlah taruhan (atau `all`).");
+    const syms = ["\u{1F340}", "\u{1F52E}", "\u{1FA84}", "\u{1F409}", "\u2728"];
+    const r = Array.from({ length: 3 }, () => rnd(syms));
+    let mult = 0;
+    if (r[0] === r[1] && r[1] === r[2]) mult = r[0] === "\u2728" ? 10 : 6;
+    else if (r[0] === r[1] || r[1] === r[2] || r[0] === r[2]) mult = 1.5;
+    const payout = Math.floor(bet * mult);
+    await db.transaction(async (tx) => {
+      await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} - ${bet}` }).where(eq(wizzyUsers.id, u.id));
+      if (payout > 0) await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${payout}` }).where(eq(wizzyUsers.id, u.id));
+    });
+    const net = payout - bet;
+    return ctx.reply(`\u{1F3B0} **[ ${r.join(" | ")} ]**
+${mult >= 6 ? "\u{1F389} JACKPOT! " : ""}${net > 0 ? `Menang **+${fmt3(net)}**` : net === 0 ? "Impas" : `Kalah **${fmt3(net)}**`} ${cur(ctx)} (x${mult})`);
+  }, [strArg("amount", "Jumlah taruhan")]),
+  cmd("pray", "Doa: lucky 15 menit", async (ctx) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    await setBuff(ctx.botId, u.discordUserId, "lucky", 15 * 6e4);
+    return ctx.reply("\u{1F64F} Doamu didengar bintang-bintang... **Lucky aktif 15 menit!** \u{1F340}");
+  }),
+  cmd("coven", "Sistem coven / guild", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const sub = String(args.sub ?? "info").toLowerCase(), rest = String(args.q ?? "").trim();
+    const mine = await myCoven(ctx.botId, u.discordUserId);
+    const cost = num(ctx, "covenCost", 5e3), max = num(ctx, "covenMax", 20);
+    if (sub === "create") {
+      if (mine) return ctx.reply("Kamu sudah di dalam coven.");
+      if (!/^[A-Za-z0-9 ]{3,20}$/.test(rest)) return ctx.reply("Nama coven 3-20 karakter (huruf, angka, spasi).");
+      if ((await db.select().from(wizzyCovens).where(and(eq(wizzyCovens.botId, ctx.botId), eq(wizzyCovens.name, rest)))).length) return ctx.reply("Nama coven sudah dipakai.");
+      if (!await spend(ctx.botId, u.discordUserId, cost)) return ctx.reply(`Butuh **${fmt3(cost)} ${cur(ctx)}** untuk membuat coven.`);
+      const [c] = await db.insert(wizzyCovens).values({ botId: ctx.botId, name: rest, ownerId: u.discordUserId }).returning();
+      await db.insert(wizzyCovenMembers).values({ botId: ctx.botId, covenId: c.id, discordUserId: u.discordUserId, role: "owner" });
+      return ctx.reply(`\u{1F3F0} Coven **${rest}** berdiri! (-${fmt3(cost)} ${cur(ctx)})`);
+    }
+    if (sub === "join") {
+      if (mine) return ctx.reply("Kamu sudah di dalam coven. `gcoven leave` dulu.");
+      const [c] = await db.select().from(wizzyCovens).where(and(eq(wizzyCovens.botId, ctx.botId), eq(wizzyCovens.name, rest)));
+      if (!c) return ctx.reply("Coven tidak ditemukan.");
+      const members2 = await db.select().from(wizzyCovenMembers).where(eq(wizzyCovenMembers.covenId, c.id));
+      if (members2.length >= max) return ctx.reply("Coven itu penuh.");
+      await db.insert(wizzyCovenMembers).values({ botId: ctx.botId, covenId: c.id, discordUserId: u.discordUserId });
+      return ctx.reply(`\u2728 Kamu bergabung ke coven **${c.name}**!`);
+    }
+    if (sub === "leave") {
+      if (!mine) return ctx.reply("Kamu tidak punya coven.");
+      await db.delete(wizzyCovenMembers).where(and(eq(wizzyCovenMembers.botId, ctx.botId), eq(wizzyCovenMembers.discordUserId, u.discordUserId)));
+      if (mine.role === "owner") {
+        const next = (await db.select().from(wizzyCovenMembers).where(eq(wizzyCovenMembers.covenId, mine.c.id)).orderBy(wizzyCovenMembers.joinedAt))[0];
+        if (next) {
+          await db.update(wizzyCovenMembers).set({ role: "owner" }).where(and(eq(wizzyCovenMembers.botId, ctx.botId), eq(wizzyCovenMembers.discordUserId, next.discordUserId)));
+          await db.update(wizzyCovens).set({ ownerId: next.discordUserId }).where(eq(wizzyCovens.id, mine.c.id));
+        } else await db.delete(wizzyCovens).where(eq(wizzyCovens.id, mine.c.id));
+      }
+      return ctx.reply(`\u{1F44B} Kamu keluar dari coven **${mine.c.name}**.`);
+    }
+    if (sub === "deposit") {
+      if (!mine) return ctx.reply("Kamu tidak punya coven.");
+      const amt = parseAmount(args.q, u.galleons);
+      if (!amt) return ctx.reply("Pakai: `gcoven deposit <jumlah>`");
+      if (!await spend(ctx.botId, u.discordUserId, amt)) return ctx.reply("Saldo tidak cukup.");
+      await db.update(wizzyCovens).set({ bank: sql`${wizzyCovens.bank} + ${amt}` }).where(eq(wizzyCovens.id, mine.c.id));
+      return ctx.reply(`\u{1F3E6} Menyetor **${fmt3(amt)} ${cur(ctx)}** ke kas coven.`);
+    }
+    if (!mine) return ctx.reply(`Kamu belum punya coven. \`gcoven create <nama>\` (${fmt3(cost)} ${cur(ctx)}) atau \`gcoven join <nama>\``);
+    const members = await db.select().from(wizzyCovenMembers).where(eq(wizzyCovenMembers.covenId, mine.c.id)).orderBy(wizzyCovenMembers.joinedAt);
+    const list = members.slice(0, 15).map((m) => `${m.role === "owner" ? "\u{1F451}" : "\u2022"} <@${m.discordUserId}>`).join("\n");
+    return ctx.reply({ embeds: [embed(`\u{1F3F0} Coven ${mine.c.name}`, `\u{1F3E6} Kas: **${fmt3(mine.c.bank)} ${cur(ctx)}**
+\u{1F465} Anggota: **${members.length}/${max}**
+
+${list}`)] });
+  }, [strArg("sub", "create | join | leave | deposit | info"), strArg("q", "Nama / jumlah", true)]),
+  cmd("lb", "Papan peringkat", async (ctx, args) => {
+    const k = String(args.kind ?? "coins").toLowerCase();
+    return sendBoard(ctx, ["zoo", "battle", "coven"].includes(k) ? k : "coins");
+  }, [strArg("kind", "coins | zoo | battle | coven")]),
+  cmd("rank", "Peringkat battle", async (ctx) => sendBoard(ctx, "battle")),
+  cmd("help", "Daftar command Wizzy", async (ctx) => ctx.reply({ embeds: [embed("\u{1F4D6} Bantuan Wizzy", [
+    "**\u{1FA84} Dasar**",
+    "`start` `profile [@u]` `daily` `cash` `give @u <jml>` (pajak 5%)",
     "",
-    "**\u{1F3C6} Berburu**",
-    "`ghunt` (`gh`) berburu makhluk",
-    "`gzoo` lihat koleksi",
-    "`gsell <all|rarity|nama>` jual makhluk",
+    "**\u{1F409} Berburu & Koleksi**",
+    "`hunt` (`h`) \u2022 `autohunt <1-20>` (100/buruan)",
+    "`zoo` \u2022 `dex` \u2022 `info <nama>`",
+    "`sell <all|rarity|nama>` \u2022 `feed <nama>` \u2022 `fuse <rarity>`",
+    "`trade @u <makhlukku> <makhluk dia>`",
     "",
-    "*Battle, shop, dan lainnya segera hadir!*"
+    "**\u2694\uFE0F Battle**",
+    "`team` \u2022 `team add/remove <nama>` \u2022 `team clear`",
+    "`battle @u [taruhan]` (`b`) \u2022 `dungeon` \u2022 `rank`",
+    "",
+    "**\u{1F392} Item**",
+    "`shop` \u2022 `buy <id> [jml]` \u2022 `inv` \u2022 `use <item>` \u2022 `equip <wand>`",
+    "",
+    "**\u{1F3B0} Mini game**",
+    "`cf <jml> [h/t]` \u2022 `slots <jml>` \u2022 `pray`",
+    "",
+    "**\u{1F3F0} Sosial**",
+    "`coven create/join/leave/deposit/info` \u2022 `lb [coins/zoo/battle/coven]`",
+    "",
+    `Awali command dengan prefix bot (\`g\`). Contoh: \`ghunt\``
   ].join("\n"))] }))
 ];
-var cooldowns = /* @__PURE__ */ new Map();
+var prefixCommands = [
+  cmd("battle", "Tantang battle pemain lain", async (ctx, args) => {
+    if (!await needUser(ctx)) return;
+    const target = mentionId(args.user);
+    if (!target || target === ctx.user.id) return ctx.reply("Pakai: `gbattle @user [taruhan]`");
+    const rival = await getUser(ctx.botId, target);
+    if (!rival) return ctx.reply("Lawanmu belum mulai.");
+    const me = await getUser(ctx.botId, ctx.user.id);
+    const cap2 = (u) => Math.min(num(ctx, "maxBet", 1e4), Math.floor(u.galleons * 0.5));
+    const bet = Math.max(0, Number.parseInt(String(args.bet ?? ""), 10) || 0);
+    if (bet > cap2(me) || bet > cap2(rival)) return ctx.reply(`Taruhan maksimal **${fmt3(Math.min(cap2(me), cap2(rival)))} ${cur(ctx)}** (50% saldo).`);
+    if (!(await getTeam(ctx.botId, me.discordUserId)).length || !(await getTeam(ctx.botId, rival.discordUserId)).length)
+      return ctx.reply("Tim kosong. `gteam add <nama>` dulu.");
+    if (busy.has(me.discordUserId) || busy.has(rival.discordUserId)) return ctx.reply("Salah satu pemain sedang battle.");
+    busy.add(me.discordUserId);
+    busy.add(rival.discordUserId);
+    const kid = newKid();
+    const e = embed("\u2694\uFE0F Tantangan Battle!", `**${ctx.user.username}** menantang <@${target}>!
+\u{1F4B0} Taruhan: **${fmt3(bet)} ${cur(ctx)}**
+
+Waktu 60 detik untuk merespon.`);
+    const msg = await sendWithButtons(ctx, "b", kid, [e], `<@${target}>`);
+    const p = {
+      kind: "b",
+      challenger: me.discordUserId,
+      challengerName: ctx.user.username,
+      target,
+      bet,
+      msg
+    };
+    pending.set(kid, p);
+    arm(kid, msg, p);
+  }, [userArg2(), strArg("bet", "Taruhan (opsional)")]),
+  cmd("dungeon", "Petualangan dungeon PvE", async (ctx) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const A = await prepare(ctx.botId, u.discordUserId, "A", true);
+    if (!A.length) return ctx.reply("Timmu kosong. `gteam add <nama>`");
+    const floor = u.dungeonFloor, boss = floor % 5 === 0;
+    const tier = Math.min(Math.floor(floor / 4), 4);
+    const pickTier = (t) => pickOf(RARITY_KEYS[Math.max(0, Math.min(5, t))]);
+    const enemies = boss ? [makeFighter(pickTier(tier + 1), floor * 2 + 5, "B")] : Array.from({ length: 3 }, () => makeFighter(pickTier(tier - Math.floor(Math.random() * 2)), 1 + Math.floor(floor * 1.5), "B"));
+    const res = simulate(A, enemies);
+    const win = res.winner === "A";
+    let reward = Math.min(500, 100 + floor * 25);
+    if (boss) reward = Math.min(500, Math.round(reward * 1.5));
+    await db.transaction(async (tx) => {
+      if (win) {
+        await tx.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${reward}`, dungeonFloor: floor + 1 }).where(eq(wizzyUsers.id, u.id));
+      }
+    });
+    await addXp2(ctx.botId, u.discordUserId, win ? 20 + floor * 2 : 5, num(ctx, "maxLevel", 50));
+    const foot = win ? `\u{1F3C6} Lantai ${floor} ${boss ? "(BOSS) " : ""}selesai! +${fmt3(reward)} ${cur(ctx)}, +${20 + floor * 2} XP
+Lanjut ke lantai ${floor + 1}.` : res.winner === "draw" ? "\u{1F91D} Seri, lantai belum selesai." : "\u{1F480} Kamu kalah. Perkuat tim (`gfeed`, wand) lalu coba lagi.";
+    const e = embed(`\u{1F3F0} Dungeon Lantai ${floor}${boss ? " \u{1F451}" : ""}`, renderLog(res.log));
+    e.fields = [{ name: "\u{1F535} Timmu", value: summary(A), inline: true }, { name: "\u{1F534} Musuh", value: summary(enemies), inline: true }, { name: "Hasil", value: foot }];
+    return ctx.reply({ embeds: [e] });
+  }),
+  cmd("trade", "Tukar makhluk dengan pemain lain", async (ctx, args) => {
+    if (!await needUser(ctx)) return;
+    const target = mentionId(args.user);
+    const mine = findCreature(args.mine), theirs = findCreature(args.theirs);
+    if (!target || target === ctx.user.id || !mine || !theirs)
+      return ctx.reply("Pakai: `gtrade @user <makhlukku> <makhluk dia>`\nGunakan id tanpa spasi (contoh: `gtrade @budi firecrab unicorn`). Biaya admin 50 Galleon per pihak.");
+    if (!await getUser(ctx.botId, target)) return ctx.reply("Pemain itu belum mulai.");
+    const free = async (id, t) => (await getCreatures(ctx.botId, id)).filter((c) => !c.isInTeam && c.creatureId === t.id)[0];
+    if (!await free(ctx.user.id, mine)) return ctx.reply(`Kamu tidak punya ${mine.name} yang bebas (di luar tim).`);
+    if (!await free(target, theirs)) return ctx.reply(`<@${target}> tidak punya ${theirs.name} yang bebas.`);
+    const kid = newKid();
+    const e = embed("\u{1F501} Tawaran Tukar", `**${ctx.user.username}** memberi ${mine.emoji} **${mine.name}**
+untuk ${theirs.emoji} **${theirs.name}** milik <@${target}>.
+
+Biaya admin: 50 ${cur(ctx)} per pihak.`);
+    const msg = await sendWithButtons(ctx, "t", kid, [e], `<@${target}>`);
+    const p = {
+      kind: "t",
+      challenger: ctx.user.id,
+      challengerName: ctx.user.username,
+      target,
+      mine: mine.id,
+      theirs: theirs.id,
+      msg
+    };
+    pending.set(kid, p);
+    arm(kid, msg, p);
+  }, [userArg2(), strArg("mine", "Makhlukmu"), strArg("theirs", "Makhluk lawan")]),
+  cmd("spawn", "Munculkan makhluk liar (admin server)", async (ctx) => {
+    if (!ctx.member?.permissions.has("ManageGuild")) return ctx.reply("Hanya yang punya izin **Manage Server**.");
+    const roll = Math.random() * 100;
+    const t = pickOf(roll < 70 ? "rare" : roll < 95 ? "epic" : "legendary");
+    const r = RARITIES[t.rarity];
+    const kid = newKid();
+    const e = embed("\u{1F31F} Makhluk liar muncul!", `${t.emoji} **${t.name}** (${r.emoji} ${r.label}) muncul!
+Tekan tombol untuk menangkapnya \u2014 yang tercepat menang! (60 detik)`);
+    const msg = await ctx.sourceMessage.reply({ embeds: [e], components: [buttonRow("s", kid)], allowedMentions: { parse: [] } });
+    const p = { kind: "s", creatureId: t.id, msg };
+    pending.set(kid, p);
+    arm(kid, msg, p);
+  })
+];
+var allCommands = [...commands, ...prefixCommands];
 var ALIASES2 = {
-  h: "hunt",
-  bal: "cash",
-  balance: "cash",
   p: "profile",
   profil: "profile",
+  h: "hunt",
   z: "zoo",
   koleksi: "zoo",
-  s: "sell",
+  d: "dex",
+  i: "info",
+  f: "feed",
+  bal: "cash",
+  balance: "cash",
+  store: "shop",
+  inventory: "inv",
+  bag: "inv",
+  coinflip: "cf",
+  slot: "slots",
+  guild: "coven",
+  cv: "coven",
+  leaderboard: "lb",
+  top: "lb",
+  b: "battle",
+  fight: "battle",
+  pve: "dungeon",
+  dg: "dungeon",
+  tr: "trade",
   commands: "help"
 };
 var wizzyModule = {
@@ -110022,17 +110869,76 @@ var wizzyModule = {
   intents: [import_discord12.GatewayIntentBits.Guilds, import_discord12.GatewayIntentBits.GuildMessages, import_discord12.GatewayIntentBits.MessageContent],
   commands,
   async onPrefixCommand(ctx, name, rest) {
-    const canonical = ALIASES2[name];
+    const canonical = ALIASES2[name] ?? (allCommands.some((c2) => c2.name === name) ? name : null);
     if (!canonical) return false;
-    const cmd2 = commands.find((c) => c.name === canonical);
-    if (!cmd2) return false;
+    const c = allCommands.find((x) => x.name === canonical);
+    if (!c) return false;
     const args = {};
-    if (cmd2.args[0]) args[cmd2.args[0].name] = cmd2.args[0].rest ? rest.join(" ") : rest[0] ?? "";
-    await cmd2.execute(ctx, args);
+    let i = 0;
+    for (const a of c.args) {
+      if (a.rest) {
+        args[a.name] = rest.slice(i).join(" ");
+        i = rest.length;
+      } else args[a.name] = rest[i++] ?? "";
+    }
+    await c.execute(ctx, args);
     return true;
   },
+  async onInteraction(ctx, interaction) {
+    if (!interaction.isButton()) return;
+    const m = interaction.customId.match(/^wiz:([bts]):([a-z]+):(\d+)$/);
+    if (!m) return;
+    const [, kind, action, kid] = m;
+    const p = pending.get(kid);
+    if (!p) return void interaction.reply({ content: "Tawaran ini sudah kedaluwarsa.", ephemeral: true }).catch(() => {
+    });
+    clearTimeout(p.timer);
+    pending.delete(kid);
+    const finish = async (e) => {
+      await interaction.update({ components: [buttonRow(kind, kid, true)], embeds: [e] }).catch(() => {
+      });
+      unbusy(p);
+    };
+    const notForYou = async () => {
+      unbusy(p);
+      await interaction.reply({ content: "Tawaran ini bukan untukmu!", ephemeral: true }).catch(() => {
+      });
+    };
+    const cmdCtx = {
+      client: ctx.client,
+      botId: ctx.botId,
+      guild: ctx.guild,
+      member: interaction.member,
+      user: interaction.user,
+      channel: interaction.channel,
+      config: ctx.config,
+      reply: async () => void 0
+    };
+    try {
+      if (p.kind === "b") {
+        if (interaction.user.id !== p.target) return void notForYou();
+        const e = await resolveBattle(cmdCtx, p, action === "acc");
+        await finish(e);
+      } else if (p.kind === "t") {
+        if (interaction.user.id !== p.target) return void notForYou();
+        const e = await resolveTrade(cmdCtx, p, action === "ok");
+        await finish(e);
+      } else {
+        if (!await getUser(ctx.botId, interaction.user.id)) return void interaction.reply({ content: "Ketik `gstart` dulu!", ephemeral: true }).catch(() => {
+        });
+        const c = byId[p.creatureId];
+        await addCreature(ctx.botId, interaction.user.id, c.id);
+        await finish(embed("\u{1F3AF} Tertangkap!", `<@${interaction.user.id}> menangkap ${c.emoji} **${c.name}** (${RARITIES[c.rarity].emoji} ${RARITIES[c.rarity].label})!`));
+      }
+    } catch {
+      await interaction.reply({ content: "Sihirnya gagal!", ephemeral: true }).catch(() => {
+      });
+    }
+  },
   stop() {
-    cooldowns.clear();
+    for (const p of pending.values()) clearTimeout(p.timer);
+    pending.clear();
+    busy.clear();
   }
 };
 
@@ -110203,8 +111109,8 @@ var BotRunner = class {
   }
   async guildConfig(bot, moduleName, guildId) {
     const key2 = `${bot.id}:${guildId}:${moduleName}`;
-    const hit = this.cfgCache.get(key2);
-    if (hit && hit.exp > Date.now()) return hit.v;
+    const hit2 = this.cfgCache.get(key2);
+    if (hit2 && hit2.exp > Date.now()) return hit2.v;
     const strip = moduleName === "quiz" ? sql` #- '{questions}'` : moduleName === "quotes" ? sql` #- '{quotes}'` : sql``;
     const [row] = await db.select({
       cfg: sql`(${botConfigs.data} -> ${moduleName})${strip}`.as("cfg")

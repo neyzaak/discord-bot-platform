@@ -51858,7 +51858,17 @@ var quotesConfigSchema = external_exports.object({
 var wizzyConfigSchema = external_exports.object({
   enabled: external_exports.boolean().default(true),
   currency: external_exports.string().trim().min(1).max(16).default("Galleon"),
-  huntCooldownSec: external_exports.number().int().min(1).max(3600).default(15)
+  huntCooldownSec: external_exports.number().int().min(1).max(3600).default(15),
+  maxLevel: external_exports.number().int().min(2).max(200).default(50),
+  startingSlots: external_exports.number().int().min(1).max(5).default(3),
+  maxSlots: external_exports.number().int().min(1).max(10).default(5),
+  giveTaxPct: external_exports.number().int().min(0).max(50).default(5),
+  maxBet: external_exports.number().int().min(1).max(1e6).default(1e4),
+  fuseCost: external_exports.number().int().min(0).max(1e6).default(200),
+  autohuntCost: external_exports.number().int().min(0).max(1e6).default(100),
+  autohuntMax: external_exports.number().int().min(1).max(100).default(20),
+  covenCost: external_exports.number().int().min(0).max(1e6).default(5e3),
+  covenMax: external_exports.number().int().min(1).max(200).default(20)
 }).passthrough();
 var moduleSchemas = {
   welcome: welcomeConfigSchema,
@@ -54830,6 +54840,12 @@ var pgTable = (name, columns, extraConfig) => {
 };
 
 // node_modules/.pnpm/drizzle-orm@0.36.4_@types+pg@8.23.1_@types+react@19.3.0_pg@8.23.1_react@19.3.1/node_modules/drizzle-orm/pg-core/primary-keys.js
+function primaryKey(...config2) {
+  if (config2[0].columns) {
+    return new PrimaryKeyBuilder(config2[0].columns, config2[0].name);
+  }
+  return new PrimaryKeyBuilder(config2);
+}
 var PrimaryKeyBuilder = class {
   static [entityKind] = "PgPrimaryKeyBuilder";
   /** @internal */
@@ -55109,19 +55125,19 @@ function extractTablesRelationalConfig(schema, configHelpers) {
       const relations2 = value.config(
         configHelpers(value.table)
       );
-      let primaryKey;
+      let primaryKey2;
       for (const [relationName, relation] of Object.entries(relations2)) {
         if (tableName) {
           const tableConfig = tablesConfig[tableName];
           tableConfig.relations[relationName] = relation;
-          if (primaryKey) {
-            tableConfig.primaryKey.push(...primaryKey);
+          if (primaryKey2) {
+            tableConfig.primaryKey.push(...primaryKey2);
           }
         } else {
           if (!(dbName in relationsBuffer)) {
             relationsBuffer[dbName] = {
               relations: {},
-              primaryKey
+              primaryKey: primaryKey2
             };
           }
           relationsBuffer[dbName].relations[relationName] = relation;
@@ -58591,7 +58607,12 @@ __export(schema_exports, {
   tickets: () => tickets,
   users: () => users,
   webhooks: () => webhooks,
+  wizzyBattles: () => wizzyBattles,
+  wizzyBuffs: () => wizzyBuffs,
+  wizzyCovenMembers: () => wizzyCovenMembers,
+  wizzyCovens: () => wizzyCovens,
   wizzyCreatures: () => wizzyCreatures,
+  wizzyInventory: () => wizzyInventory,
   wizzyUsers: () => wizzyUsers
 });
 var users = pgTable("users", {
@@ -58684,6 +58705,9 @@ var wizzyUsers = pgTable("wizzy_users", {
   wins: integer("wins").notNull().default(0),
   losses: integer("losses").notNull().default(0),
   rankPoints: integer("rank_points").notNull().default(0),
+  teamSlots: integer("team_slots").notNull().default(3),
+  wand: text("wand").notNull().default(""),
+  dungeonFloor: integer("dungeon_floor").notNull().default(1),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [uniqueIndex("wizzy_users_uq").on(t.botId, t.discordUserId)]);
 var wizzyCreatures = pgTable("wizzy_creatures", {
@@ -58696,6 +58720,43 @@ var wizzyCreatures = pgTable("wizzy_creatures", {
   isInTeam: boolean("is_in_team").notNull().default(false),
   caughtAt: timestamp("caught_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("wizzy_creatures_user_idx").on(t.botId, t.discordUserId)]);
+var wizzyInventory = pgTable("wizzy_inventory", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  discordUserId: text("discord_user_id").notNull(),
+  itemId: text("item_id").notNull(),
+  quantity: integer("quantity").notNull().default(0)
+}, (t) => [uniqueIndex("wizzy_inventory_uq").on(t.botId, t.discordUserId, t.itemId)]);
+var wizzyBuffs = pgTable("wizzy_buffs", {
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  discordUserId: text("discord_user_id").notNull(),
+  buff: text("buff").notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull()
+}, (t) => [primaryKey({ columns: [t.botId, t.discordUserId, t.buff] })]);
+var wizzyCovens = pgTable("wizzy_covens", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  ownerId: text("owner_id").notNull(),
+  bank: integer("bank").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("wizzy_covens_uq").on(t.botId, t.name)]);
+var wizzyCovenMembers = pgTable("wizzy_coven_members", {
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  covenId: integer("coven_id").notNull().references(() => wizzyCovens.id, { onDelete: "cascade" }),
+  discordUserId: text("discord_user_id").notNull(),
+  role: text("role").notNull().default("member"),
+  joinedAt: timestamp("joined_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [primaryKey({ columns: [t.botId, t.discordUserId] })]);
+var wizzyBattles = pgTable("wizzy_battles", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  p1: text("p1").notNull(),
+  p2: text("p2").notNull(),
+  winner: text("winner"),
+  bet: integer("bet").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+});
 var webhooks = pgTable("webhooks", {
   id: serial("id").primaryKey(),
   botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),

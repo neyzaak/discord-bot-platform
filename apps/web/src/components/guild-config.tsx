@@ -24,8 +24,18 @@ export interface GuildConfigData {
     font: 'poppins' | 'playfair'; textSize: 'kecil' | 'sedang' | 'besar'; photoPosition: 'kiri' | 'kanan';
     quotes: QuoteEntry[];
   };
-  wizzy?: { enabled: boolean; currency: string; huntCooldownSec: number };
+  wizzy?: {
+    enabled: boolean; currency: string; huntCooldownSec: number; maxLevel: number; startingSlots: number;
+    maxSlots: number; giveTaxPct: number; maxBet: number; fuseCost: number; autohuntCost: number;
+    autohuntMax: number; covenCost: number; covenMax: number;
+  };
 }
+
+const WIZZY_DEFAULTS: NonNullable<GuildConfigData['wizzy']> = {
+  enabled: true, currency: 'Galleon', huntCooldownSec: 15, maxLevel: 50, startingSlots: 3,
+  maxSlots: 5, giveTaxPct: 5, maxBet: 10_000, fuseCost: 200, autohuntCost: 100,
+  autohuntMax: 20, covenCost: 5_000, covenMax: 20,
+};
 
 const inputCls = 'w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-indigo-400';
 const labelCls = 'mb-1 block text-sm text-slate-300';
@@ -64,6 +74,8 @@ export function GuildConfigPanel({ cfg, channels, roles, modules, onChange }: {
   const [showSoal, setShowSoal] = useState(25);
   const [showQuote, setShowQuote] = useState(25);
   const set = <K extends keyof GuildConfigData>(k: K, v: GuildConfigData[K]) => onChange({ ...cfg, [k]: v });
+  const wizzy = { ...WIZZY_DEFAULTS, ...cfg.wizzy };
+  const setWizzy = (patch: Partial<typeof wizzy>) => set('wizzy', { ...wizzy, ...patch });
   // Tampilkan hanya config modul yang aktif di bot ini — bot game tidak perlu panel Quotes/Moderasi.
   const show = (m: string) => !modules || modules.includes(m);
   const secCls = (m: string) => `rounded-xl border border-slate-800 p-4 ${show(m) ? '' : 'hidden'}`;
@@ -518,13 +530,29 @@ export function GuildConfigPanel({ cfg, channels, roles, modules, onChange }: {
         <p className="mb-3 text-xs text-slate-500">{t('mod.wizzy.commands')}</p>
         <div className="mb-3">
           <label className={labelCls}>{t('mod.wizzy.currency')}</label>
-          <input value={cfg.wizzy?.currency ?? 'Galleon'} maxLength={16}
-            onChange={(e) => set('wizzy', { enabled: cfg.wizzy?.enabled ?? true, currency: e.target.value, huntCooldownSec: cfg.wizzy?.huntCooldownSec ?? 15 })}
-            className={`${inputCls} max-w-[200px]`} />
+          <input value={wizzy.currency} maxLength={16}
+            onChange={(e) => setWizzy({ currency: e.target.value })} className={`${inputCls} max-w-[200px]`} />
         </div>
-        <label className={labelCls}>{t('mod.wizzy.cooldown')}</label>
-        <Num value={cfg.wizzy?.huntCooldownSec ?? 15} min={1} max={3600}
-          onChange={(v) => set('wizzy', { enabled: cfg.wizzy?.enabled ?? true, currency: cfg.wizzy?.currency ?? 'Galleon', huntCooldownSec: v })} />
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {([
+            ['huntCooldownSec', 'mod.wizzy.cooldown', 1, 3600],
+            ['maxLevel', 'mod.wizzy.maxLevel', 2, 200],
+            ['startingSlots', 'mod.wizzy.startingSlots', 1, 5],
+            ['maxSlots', 'mod.wizzy.maxSlots', 1, 10],
+            ['giveTaxPct', 'mod.wizzy.giveTaxPct', 0, 50],
+            ['maxBet', 'mod.wizzy.maxBet', 1, 1_000_000],
+            ['fuseCost', 'mod.wizzy.fuseCost', 0, 1_000_000],
+            ['autohuntCost', 'mod.wizzy.autohuntCost', 0, 1_000_000],
+            ['autohuntMax', 'mod.wizzy.autohuntMax', 1, 100],
+            ['covenCost', 'mod.wizzy.covenCost', 0, 1_000_000],
+            ['covenMax', 'mod.wizzy.covenMax', 1, 200],
+          ] as const).map(([key, label, min, max]) => (
+            <div key={key}>
+              <label className={labelCls}>{t(label)}</label>
+              <Num value={wizzy[key]} min={min} max={max} onChange={(v) => setWizzy({ [key]: v })} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

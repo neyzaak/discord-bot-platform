@@ -1,5 +1,5 @@
 import {
-  boolean, index, integer, jsonb, pgTable, serial, text, timestamp, uniqueIndex, varchar,
+  boolean, index, integer, jsonb, pgTable, primaryKey, serial, text, timestamp, uniqueIndex, varchar,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -103,6 +103,9 @@ export const wizzyUsers = pgTable('wizzy_users', {
   wins: integer('wins').notNull().default(0),
   losses: integer('losses').notNull().default(0),
   rankPoints: integer('rank_points').notNull().default(0),
+  teamSlots: integer('team_slots').notNull().default(3),
+  wand: text('wand').notNull().default(''),
+  dungeonFloor: integer('dungeon_floor').notNull().default(1),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [uniqueIndex('wizzy_users_uq').on(t.botId, t.discordUserId)]);
 
@@ -116,6 +119,48 @@ export const wizzyCreatures = pgTable('wizzy_creatures', {
   isInTeam: boolean('is_in_team').notNull().default(false),
   caughtAt: timestamp('caught_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [index('wizzy_creatures_user_idx').on(t.botId, t.discordUserId)]);
+
+export const wizzyInventory = pgTable('wizzy_inventory', {
+  id: serial('id').primaryKey(),
+  botId: integer('bot_id').notNull().references(() => bots.id, { onDelete: 'cascade' }),
+  discordUserId: text('discord_user_id').notNull(),
+  itemId: text('item_id').notNull(),
+  quantity: integer('quantity').notNull().default(0),
+}, (t) => [uniqueIndex('wizzy_inventory_uq').on(t.botId, t.discordUserId, t.itemId)]);
+
+export const wizzyBuffs = pgTable('wizzy_buffs', {
+  botId: integer('bot_id').notNull().references(() => bots.id, { onDelete: 'cascade' }),
+  discordUserId: text('discord_user_id').notNull(),
+  buff: text('buff').notNull(),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+}, (t) => [primaryKey({ columns: [t.botId, t.discordUserId, t.buff] })]);
+
+export const wizzyCovens = pgTable('wizzy_covens', {
+  id: serial('id').primaryKey(),
+  botId: integer('bot_id').notNull().references(() => bots.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  ownerId: text('owner_id').notNull(),
+  bank: integer('bank').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [uniqueIndex('wizzy_covens_uq').on(t.botId, t.name)]);
+
+export const wizzyCovenMembers = pgTable('wizzy_coven_members', {
+  botId: integer('bot_id').notNull().references(() => bots.id, { onDelete: 'cascade' }),
+  covenId: integer('coven_id').notNull().references(() => wizzyCovens.id, { onDelete: 'cascade' }),
+  discordUserId: text('discord_user_id').notNull(),
+  role: text('role').notNull().default('member'),
+  joinedAt: timestamp('joined_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [primaryKey({ columns: [t.botId, t.discordUserId] })]);
+
+export const wizzyBattles = pgTable('wizzy_battles', {
+  id: serial('id').primaryKey(),
+  botId: integer('bot_id').notNull().references(() => bots.id, { onDelete: 'cascade' }),
+  p1: text('p1').notNull(),
+  p2: text('p2').notNull(),
+  winner: text('winner'),
+  bet: integer('bet').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
 
 /** Endpoint ingest webhook eksternal per kanal target. Token = kredensial. */
 export const webhooks = pgTable('webhooks', {

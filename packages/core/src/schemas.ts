@@ -160,6 +160,16 @@ export const wizzyConfigSchema = z.object({
   enabled: z.boolean().default(true),
   currency: z.string().trim().min(1).max(16).default('Galleon'),
   huntCooldownSec: z.number().int().min(1).max(3600).default(15),
+  maxLevel: z.number().int().min(2).max(200).default(50),
+  startingSlots: z.number().int().min(1).max(5).default(3),
+  maxSlots: z.number().int().min(1).max(10).default(5),
+  giveTaxPct: z.number().int().min(0).max(50).default(5),
+  maxBet: z.number().int().min(1).max(1_000_000).default(10_000),
+  fuseCost: z.number().int().min(0).max(1_000_000).default(200),
+  autohuntCost: z.number().int().min(0).max(1_000_000).default(100),
+  autohuntMax: z.number().int().min(1).max(100).default(20),
+  covenCost: z.number().int().min(0).max(1_000_000).default(5_000),
+  covenMax: z.number().int().min(1).max(200).default(20),
 }).passthrough();
 
 export const moduleSchemas = {
