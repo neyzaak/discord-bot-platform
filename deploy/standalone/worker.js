@@ -107929,6 +107929,7 @@ __export(schema_exports, {
   wizzyCovenMembers: () => wizzyCovenMembers,
   wizzyCovens: () => wizzyCovens,
   wizzyCreatures: () => wizzyCreatures,
+  wizzyFishing: () => wizzyFishing,
   wizzyInventory: () => wizzyInventory,
   wizzyUsers: () => wizzyUsers
 });
@@ -108074,6 +108075,13 @@ var wizzyBattles = pgTable("wizzy_battles", {
   bet: integer("bet").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 });
+var wizzyFishing = pgTable("wizzy_fishing", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  discordUserId: text("discord_user_id").notNull(),
+  data: jsonb("data").notNull().default({}),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("wizzy_fishing_bot_user_uq").on(t.botId, t.discordUserId)]);
 var webhooks = pgTable("webhooks", {
   id: serial("id").primaryKey(),
   botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
@@ -109894,6 +109902,82 @@ var findCreature = (s) => {
 var HOUSES = ["Ignis \u{1F525}", "Aqua \u{1F4A7}", "Ventus \u{1F32A}\uFE0F", "Terra \u{1FAA8}"];
 var fmt3 = (n) => n.toLocaleString("id-ID");
 var embed = (title, description, color = COLOR) => ({ title, description, color, footer: { text: FOOTER } });
+var FISH_COOLDOWN_MS = 8e3;
+var PULL_WINDOW_MS = 4e3;
+var TRASH_CHANCE = 0.08;
+var REPAIR_COST_PER_POINT = 2;
+var FRARITY = {
+  common: { label: "Biasa", color: 9807270, weight: 60, xp: 10, luckMul: 0 },
+  uncommon: { label: "Tidak Umum", color: 3066993, weight: 25, xp: 25, luckMul: 1 },
+  rare: { label: "Langka", color: 3447003, weight: 10, xp: 60, luckMul: 2 },
+  epic: { label: "Epik", color: 10181046, weight: 4, xp: 150, luckMul: 3 },
+  legendary: { label: "Legendaris", color: 15844367, weight: 1, xp: 400, luckMul: 4 },
+  trash: { label: "Sampah", color: 8359053, weight: 0, xp: 2, luckMul: 0 }
+};
+var FLOCATIONS = {
+  kolam: { name: "Kolam", emoji: "\u{1FAB7}", level: 1 },
+  sungai: { name: "Sungai", emoji: "\u{1F3DE}\uFE0F", level: 3 },
+  danau: { name: "Danau", emoji: "\u{1F304}", level: 6 },
+  laut: { name: "Laut", emoji: "\u{1F30A}", level: 10 },
+  dalam: { name: "Laut Dalam", emoji: "\u{1F30C}", level: 15 }
+};
+var FISH = {
+  lele: { name: "Ikan Lele", emoji: "\u{1F41F}", rarity: "common", min: 0.3, max: 1.5, price: 12, loc: ["kolam", "sungai"] },
+  mujair: { name: "Ikan Mujair", emoji: "\u{1F41F}", rarity: "common", min: 0.2, max: 1, price: 14, loc: ["kolam", "danau"] },
+  nila: { name: "Ikan Nila", emoji: "\u{1F420}", rarity: "uncommon", min: 0.4, max: 2, price: 22, loc: ["kolam", "sungai"] },
+  koi: { name: "Ikan Koi", emoji: "\u{1F38F}", rarity: "rare", min: 1, max: 4, price: 55, loc: ["kolam"] },
+  koiemas: { name: "Koi Emas", emoji: "\u2728", rarity: "epic", min: 2, max: 6, price: 120, loc: ["kolam"] },
+  naga: { name: "Ikan Naga Kolam", emoji: "\u{1F409}", rarity: "legendary", min: 5, max: 12, price: 300, loc: ["kolam"] },
+  gabus: { name: "Ikan Gabus", emoji: "\u{1F41F}", rarity: "common", min: 0.5, max: 2.5, price: 18, loc: ["sungai"] },
+  patin: { name: "Ikan Patin", emoji: "\u{1F420}", rarity: "uncommon", min: 1, max: 4, price: 28, loc: ["sungai", "danau"] },
+  arwana: { name: "Arwana", emoji: "\u{1F432}", rarity: "epic", min: 2, max: 5, price: 150, loc: ["sungai"] },
+  belida: { name: "Ikan Belida", emoji: "\u{1F421}", rarity: "rare", min: 1.5, max: 5, price: 70, loc: ["sungai"] },
+  bawal: { name: "Ikan Bawal", emoji: "\u{1F420}", rarity: "common", min: 0.4, max: 2, price: 20, loc: ["danau"] },
+  mas: { name: "Ikan Mas", emoji: "\u{1F41F}", rarity: "uncommon", min: 0.8, max: 3, price: 32, loc: ["danau"] },
+  toman: { name: "Ikan Toman", emoji: "\u{1F40A}", rarity: "rare", min: 3, max: 9, price: 85, loc: ["danau"] },
+  pesut: { name: "Pesut Danau", emoji: "\u{1F42C}", rarity: "legendary", min: 20, max: 60, price: 260, loc: ["danau"] },
+  kembung: { name: "Ikan Kembung", emoji: "\u{1F41F}", rarity: "common", min: 0.2, max: 1, price: 25, loc: ["laut"] },
+  kakap: { name: "Ikan Kakap", emoji: "\u{1F420}", rarity: "uncommon", min: 1, max: 6, price: 45, loc: ["laut"] },
+  tuna: { name: "Ikan Tuna", emoji: "\u{1F41F}", rarity: "rare", min: 10, max: 80, price: 40, loc: ["laut", "dalam"] },
+  hiu: { name: "Hiu Kecil", emoji: "\u{1F988}", rarity: "epic", min: 20, max: 120, price: 35, loc: ["laut"] },
+  gurita: { name: "Gurita", emoji: "\u{1F419}", rarity: "rare", min: 2, max: 12, price: 60, loc: ["laut"] },
+  lanternfish: { name: "Ikan Lentera", emoji: "\u{1F526}", rarity: "common", min: 0.1, max: 0.8, price: 60, loc: ["dalam"] },
+  anglerfish: { name: "Ikan Pemancing", emoji: "\u{1F479}", rarity: "uncommon", min: 0.5, max: 4, price: 85, loc: ["dalam"] },
+  cumicumi: { name: "Cumi Raksasa", emoji: "\u{1F991}", rarity: "epic", min: 50, max: 250, price: 25, loc: ["dalam"] },
+  paus: { name: "Paus Mini", emoji: "\u{1F40B}", rarity: "legendary", min: 300, max: 900, price: 6, loc: ["laut", "dalam"] },
+  kraken: { name: "Kraken Bayi", emoji: "\u{1F991}", rarity: "legendary", min: 100, max: 400, price: 14, loc: ["dalam"] }
+};
+var TRASH = {
+  sepatu: { name: "Sepatu Bot Bekas", emoji: "\u{1F462}", rarity: "trash", min: 0.3, max: 0.9, price: 3, loc: [] },
+  kaleng: { name: "Kaleng Karatan", emoji: "\u{1F96B}", rarity: "trash", min: 0.1, max: 0.3, price: 4, loc: [] },
+  ranting: { name: "Ranting Basah", emoji: "\u{1FAB5}", rarity: "trash", min: 0.2, max: 1, price: 2, loc: [] },
+  botol: { name: "Botol Plastik", emoji: "\u{1F37C}", rarity: "trash", min: 0.05, max: 0.2, price: 5, loc: [] }
+};
+var ALL_FISH = { ...FISH, ...TRASH };
+var RODS = {
+  bambu: { name: "Joran Bambu", emoji: "\u{1F38B}", price: 0, level: 1, dur: 50, luck: 0 },
+  fiberglass: { name: "Joran Fiberglass", emoji: "\u{1F3A3}", price: 500, level: 3, dur: 100, luck: 0.15 },
+  karbon: { name: "Joran Karbon", emoji: "\u26A1", price: 2500, level: 8, dur: 200, luck: 0.35 },
+  emas: { name: "Joran Emas", emoji: "\u{1F451}", price: 15e3, level: 15, dur: 400, luck: 0.7 }
+};
+var BAITS = {
+  cacing: { name: "Cacing", emoji: "\u{1FAB1}", price: 10, luck: 0.05 },
+  udang: { name: "Udang Segar", emoji: "\u{1F990}", price: 35, luck: 0.2 },
+  emas: { name: "Umpan Emas", emoji: "\u{1F31F}", price: 150, luck: 0.5 }
+};
+var kg = (n) => `${n.toFixed(2)} kg`;
+var rand = (a, b) => Math.random() * (b - a) + a;
+var findFish = (s) => {
+  const n = norm(s);
+  return n ? Object.entries(ALL_FISH).find(([id, f]) => id === n || norm(f.name) === n) ?? null : null;
+};
+var newFishingData = () => ({
+  rod: "bambu",
+  rodDur: RODS.bambu.dur,
+  bait: {},
+  inv: {},
+  stats: { caught: 0, escaped: 0, biggest: 0, biggestName: "-" }
+});
 var num = (ctx, key2, def) => {
   const v = Number(ctx.config[key2]);
   return Number.isFinite(v) && v > 0 ? v : def;
@@ -109903,6 +109987,7 @@ var getUser = async (botId, id) => (await db.select().from(wizzyUsers).where(and
 var getCreatures = async (botId, id) => db.select().from(wizzyCreatures).where(and(eq(wizzyCreatures.botId, botId), eq(wizzyCreatures.discordUserId, id)));
 var getTeam = async (botId, id) => db.select().from(wizzyCreatures).where(and(eq(wizzyCreatures.botId, botId), eq(wizzyCreatures.discordUserId, id), eq(wizzyCreatures.isInTeam, true))).orderBy(wizzyCreatures.id);
 var addCreature = (botId, id, creatureId) => db.insert(wizzyCreatures).values({ botId, discordUserId: id, creatureId });
+var addGalleons = (botId, id, amount) => db.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} + ${amount}` }).where(and(eq(wizzyUsers.botId, botId), eq(wizzyUsers.discordUserId, id)));
 var spend = async (botId, id, amount) => {
   const r = await db.update(wizzyUsers).set({ galleons: sql`${wizzyUsers.galleons} - ${amount}` }).where(and(eq(wizzyUsers.botId, botId), eq(wizzyUsers.discordUserId, id), sql`${wizzyUsers.galleons} >= ${amount}`)).returning({ id: wizzyUsers.id });
   return r.length > 0;
@@ -109951,6 +110036,16 @@ var setBuff = (botId, id, buff, ms) => db.insert(wizzyBuffs).values({ botId, dis
 });
 var clearBuff = (botId, id, buff) => db.delete(wizzyBuffs).where(and(eq(wizzyBuffs.botId, botId), eq(wizzyBuffs.discordUserId, id), eq(wizzyBuffs.buff, buff)));
 var myCoven = async (botId, id) => (await db.select({ c: wizzyCovens, role: wizzyCovenMembers.role }).from(wizzyCovenMembers).innerJoin(wizzyCovens, eq(wizzyCovens.id, wizzyCovenMembers.covenId)).where(and(eq(wizzyCovenMembers.botId, botId), eq(wizzyCovenMembers.discordUserId, id))).limit(1))[0];
+var getFishing = async (botId, id) => {
+  const row = (await db.select().from(wizzyFishing).where(and(eq(wizzyFishing.botId, botId), eq(wizzyFishing.discordUserId, id))).limit(1))[0];
+  const d = row?.data ?? {};
+  const base = newFishingData();
+  return { ...base, ...d, bait: { ...d.bait }, inv: { ...d.inv }, stats: { ...base.stats, ...d.stats } };
+};
+var saveFishing = (botId, id, data) => db.insert(wizzyFishing).values({ botId, discordUserId: id, data, updatedAt: /* @__PURE__ */ new Date() }).onConflictDoUpdate({
+  target: [wizzyFishing.botId, wizzyFishing.discordUserId],
+  set: { data, updatedAt: /* @__PURE__ */ new Date() }
+});
 var CYCLE = { Api: "Angin", Angin: "Tanah", Tanah: "Air", Air: "Api" };
 var SKILLS = {
   Api: { name: "Semburan Api", desc: "Serangan x1,8" },
@@ -110169,24 +110264,35 @@ var sendBoard = async (ctx, kind) => {
 };
 var pending = /* @__PURE__ */ new Map();
 function buttonRow(kind, kid, disabled = false) {
-  const specs = kind === "b" ? [["acc", "Terima", import_discord12.ButtonStyle.Success], ["dec", "Tolak", import_discord12.ButtonStyle.Danger]] : kind === "t" ? [["ok", "Setuju", import_discord12.ButtonStyle.Success], ["no", "Tolak", import_discord12.ButtonStyle.Danger]] : [["catch", "Tangkap!", import_discord12.ButtonStyle.Primary]];
+  const specs = kind === "b" ? [["acc", "Terima", import_discord12.ButtonStyle.Success], ["dec", "Tolak", import_discord12.ButtonStyle.Danger]] : kind === "t" ? [["ok", "Setuju", import_discord12.ButtonStyle.Success], ["no", "Tolak", import_discord12.ButtonStyle.Danger]] : kind === "f" ? [["pull", "TARIK!", import_discord12.ButtonStyle.Success]] : [["catch", "Tangkap!", import_discord12.ButtonStyle.Primary]];
   return new import_discord12.ActionRowBuilder().addComponents(...specs.map(([id, label, style]) => new import_discord12.ButtonBuilder().setCustomId(`wiz:${kind}:${id}:${kid}`).setLabel(String(label)).setStyle(style).setDisabled(disabled)));
 }
 var sendWithButtons = (ctx, kind, kid, embeds, mention = "") => ctx.sourceMessage.reply({ ...mention ? { content: mention } : {}, embeds, components: [buttonRow(kind, kid)], allowedMentions: { parse: [] } });
 var busy = /* @__PURE__ */ new Set();
+var fishingInProgress = /* @__PURE__ */ new Set();
+var fishCooldowns = /* @__PURE__ */ new Map();
 var unbusy = (p) => {
-  if (p.kind === "s") return;
+  if (p.kind === "s" || p.kind === "f") return;
   busy.delete(p.challenger);
   busy.delete(p.target);
 };
-var armTimeout = (kid, msg, kind, p) => {
+var armTimeout = (kid, msg, kind, p, ms = 6e4, expired = embed("\u23F3 Kedaluwarsa", "Tawaran tidak dijawab dalam 60 detik.")) => {
   const timer = setTimeout(async () => {
     if (!pending.has(kid)) return;
     pending.delete(kid);
     unbusy(p);
-    await msg.edit({ components: [buttonRow(kind, kid, true)], embeds: [embed("\u23F3 Kedaluwarsa", "Tawaran tidak dijawab dalam 60 detik.")] }).catch(() => {
+    if (p.kind === "f") {
+      fishingInProgress.delete(p.fisher);
+      fishCooldowns.set(p.fisher, Date.now() + FISH_COOLDOWN_MS);
+      void getFishing(p.botId, p.fisher).then(async (f) => {
+        f.stats.escaped++;
+        await saveFishing(p.botId, p.fisher, f);
+      }).catch(() => {
+      });
+    }
+    await msg.edit({ components: [buttonRow(kind, kid, true)], embeds: [expired] }).catch(() => {
     });
-  }, 6e4);
+  }, ms);
   timer.unref?.();
   return timer;
 };
@@ -110195,6 +110301,56 @@ var arm = (kid, msg, p) => {
   p.timer = armTimeout(kid, msg, p.kind, p);
   return p.timer;
 };
+async function resolveFishing(ctx, p) {
+  fishCooldowns.set(p.fisher, Date.now() + FISH_COOLDOWN_MS);
+  fishingInProgress.delete(p.fisher);
+  const f = await getFishing(ctx.botId, p.fisher);
+  let item;
+  if (Math.random() < TRASH_CHANCE) {
+    const keys = Object.keys(TRASH);
+    const id2 = keys[Math.floor(Math.random() * keys.length)];
+    item = [id2, TRASH[id2]];
+  } else {
+    const luck = RODS[p.rod].luck + (p.bait ? BAITS[p.bait].luck : 0);
+    const pool2 = Object.entries(FISH).filter(([, d]) => d.loc.includes(p.loc));
+    const weights = Object.keys(FRARITY).filter((k) => k !== "trash").map((k) => [k, FRARITY[k].weight * (1 + luck * FRARITY[k].luckMul)]).filter(([k]) => pool2.some(([, d]) => d.rarity === k));
+    const total = weights.reduce((s, [, w]) => s + w, 0);
+    let roll = Math.random() * total;
+    let chosen = weights[0][0];
+    for (const [k, w] of weights) {
+      roll -= w;
+      if (roll <= 0) {
+        chosen = k;
+        break;
+      }
+    }
+    const candidates = pool2.filter(([, d]) => d.rarity === chosen);
+    item = candidates[Math.floor(Math.random() * candidates.length)];
+  }
+  const [id, def] = item;
+  const weight = Math.round(rand(def.min, def.max) * 100) / 100;
+  const old = f.inv[id] ?? { count: 0, kg: 0 };
+  f.inv[id] = { count: old.count + 1, kg: Math.round((old.kg + weight) * 100) / 100 };
+  f.stats.caught++;
+  const isRecord = def.rarity !== "trash" && weight > f.stats.biggest;
+  if (isRecord) {
+    f.stats.biggest = weight;
+    f.stats.biggestName = def.name;
+  }
+  await saveFishing(ctx.botId, p.fisher, f);
+  const leveled = await addXp2(ctx.botId, p.fisher, FRARITY[def.rarity].xp, num(ctx, "maxLevel", 50));
+  const r = FRARITY[def.rarity];
+  const e = embed(`${def.emoji} Kamu mendapat ${def.name}!`, isRecord ? "\u{1F3C6} **Rekor pribadi baru!**" : "", r.color);
+  e.fields = [
+    { name: "Kelangkaan", value: r.label, inline: true },
+    { name: "Berat", value: kg(weight), inline: true },
+    { name: "Nilai Jual", value: `${fmt3(Math.ceil(weight * def.price))} ${cur(ctx)}`, inline: true },
+    { name: "XP", value: `+${r.xp}`, inline: true },
+    { name: "Durabilitas joran", value: `${f.rodDur}/${RODS[f.rod].dur}`, inline: true }
+  ];
+  if (leveled.levelUp) e.fields.push({ name: "\u{1F389} Naik Level!", value: `Sekarang level **${leveled.level}**` });
+  return e;
+}
 async function resolveBattle(ctx, p, accepted) {
   if (!accepted) return embed("\u2694\uFE0F Battle", "Tantangan ditolak.");
   const [a, b] = await Promise.all([getUser(ctx.botId, p.challenger), getUser(ctx.botId, p.target)]);
@@ -110710,6 +110866,208 @@ ${list}`)] });
     return sendBoard(ctx, ["zoo", "battle", "coven"].includes(k) ? k : "coins");
   }, [strArg("kind", "coins | zoo | battle | coven")]),
   cmd("rank", "Peringkat battle", async (ctx) => sendBoard(ctx, "battle")),
+  // ---- memancing ----
+  cmd("mancing", "Mulai memancing ikan", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const uid = u.discordUserId;
+    const f = await getFishing(ctx.botId, uid);
+    const rawLoc = String(args.lokasi ?? "").trim().toLowerCase();
+    const locKey = rawLoc in FLOCATIONS ? rawLoc : "kolam";
+    const rawBait = String(args.umpan ?? "").trim().toLowerCase();
+    const baitKey = rawBait in BAITS ? rawBait : null;
+    const loc = FLOCATIONS[locKey];
+    if (fishingInProgress.has(uid)) return ctx.reply("\u23F3 Kamu masih memancing!");
+    const left = (fishCooldowns.get(uid) ?? 0) - Date.now();
+    if (left > 0) return ctx.reply(`\u23F3 Tunggu **${Math.ceil(left / 1e3)} detik** lagi.`);
+    if (u.level < loc.level) return ctx.reply(`\u{1F512} ${loc.name} butuh **level ${loc.level}**. Levelmu ${u.level}.`);
+    if (f.rodDur <= 0) return ctx.reply("\u{1FA9D} Jorannmu rusak! `gperbaiki` atau beli di `gtoko`.");
+    if (baitKey && !(f.bait[baitKey] > 0)) return ctx.reply(`\u{1F6AB} Kamu tidak punya **${BAITS[baitKey].name}**. Beli di \`gtoko\`.`);
+    fishingInProgress.add(uid);
+    try {
+      if (baitKey) {
+        f.bait[baitKey] = (f.bait[baitKey] ?? 0) - 1;
+        if (f.bait[baitKey] <= 0) delete f.bait[baitKey];
+      }
+      f.rodDur--;
+      await saveFishing(ctx.botId, uid, f);
+      const rod = RODS[f.rod];
+      const msg = await ctx.reply({ embeds: [embed(
+        `${loc.emoji} Memancing di ${loc.name}`,
+        `${rod.emoji} Kamu melempar kail${baitKey ? ` dengan ${BAITS[baitKey].emoji} **${BAITS[baitKey].name}**` : ""}...
+
+*Tunggu sampai ada gigitan\u2026*`,
+        3447003
+      )] });
+      await new Promise((r) => setTimeout(r, rand(2e3, 6e3)));
+      const kid = newKid();
+      const p = { kind: "f", botId: ctx.botId, fisher: uid, rod: f.rod, bait: baitKey, loc: locKey, msg };
+      pending.set(kid, p);
+      await msg.edit({
+        embeds: [embed("\u2757 ADA GIGITAN!", `Tekan **TARIK!** dalam ${PULL_WINDOW_MS / 1e3} detik!`, 15105570)],
+        components: [buttonRow("f", kid)]
+      });
+      p.timer = armTimeout(
+        kid,
+        msg,
+        "f",
+        p,
+        PULL_WINDOW_MS,
+        embed("\u{1F4A8} Ikan kabur!", "Kamu terlalu lambat menarik kail.", 15158332)
+      );
+    } catch {
+      fishingInProgress.delete(uid);
+      for (const [k, p] of pending) if (p.kind === "f" && p.fisher === uid) pending.delete(k);
+    }
+  }, [strArg("lokasi", "kolam | sungai | danau | laut | dalam"), strArg("umpan", "cacing | udang | emas")]),
+  cmd("tas", "Lihat tas ikan, umpan, dan joranmu", async (ctx) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const f = await getFishing(ctx.botId, u.discordUserId);
+    const rod = RODS[f.rod];
+    const fishLines = Object.entries(f.inv).map(([id, d]) => `${ALL_FISH[id]?.emoji ?? "\u2753"} **${ALL_FISH[id]?.name ?? id}** \xD7${d.count} \u2014 ${kg(d.kg)} (\`${id}\`)`);
+    const baitLines = Object.entries(f.bait).map(([id, n]) => `${BAITS[id]?.emoji ?? ""} ${BAITS[id]?.name ?? id} \xD7${n}`);
+    const total = Object.entries(f.inv).reduce((s, [id, d]) => s + Math.ceil(d.kg * (ALL_FISH[id]?.price ?? 0)), 0);
+    const e = embed(`\u{1F392} Tas ${ctx.user.username}`, "", 1752220);
+    e.fields = [
+      { name: "Joran", value: `${rod.emoji} ${rod.name} (${f.rodDur}/${rod.dur})`, inline: true },
+      { name: "Koin", value: `${fmt3(u.galleons)} ${cur(ctx)}`, inline: true },
+      { name: "Tangkapan", value: fishLines.join("\n").slice(0, 1020) || "*Kosong*" },
+      { name: "Umpan", value: baitLines.join("\n") || "*Tidak ada*" }
+    ];
+    e.footer = { text: `Perkiraan nilai semua tangkapan: ${fmt3(total)} koin` };
+    await ctx.reply({ embeds: [e] });
+  }),
+  cmd("jual", "Jual hasil tangkapan", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const f = await getFishing(ctx.botId, u.discordUserId);
+    const target = String(args.ikan ?? "").trim().toLowerCase();
+    let ids;
+    if (!target) ids = Object.keys(f.inv);
+    else {
+      const hit2 = findFish(target);
+      const id = hit2?.[0] ?? (target in ALL_FISH ? target : null);
+      if (!id || !f.inv[id]) return ctx.reply("\u274C Kamu tidak punya item itu.");
+      ids = [id];
+    }
+    if (!ids.length) return ctx.reply("\u{1F392} Tasmu kosong.");
+    let total = 0, count = 0;
+    for (const id of ids) {
+      const d = f.inv[id];
+      total += Math.ceil(d.kg * (ALL_FISH[id]?.price ?? 0));
+      count += d.count;
+      delete f.inv[id];
+    }
+    await saveFishing(ctx.botId, u.discordUserId, f);
+    await addGalleons(ctx.botId, u.discordUserId, total);
+    await ctx.reply({ embeds: [embed(
+      "\u{1F4B0} Penjualan Berhasil",
+      `Menjual **${count}** item seharga **${fmt3(total)} ${cur(ctx)}**
+Saldo: **${fmt3(u.galleons + total)} ${cur(ctx)}**`,
+      15844367
+    )] });
+  }, [strArg("ikan", "ID/nama ikan (kosong = jual semua)")]),
+  cmd("toko", "Lihat toko joran & umpan", async (ctx) => {
+    const rods = Object.entries(RODS).filter(([k]) => k !== "bambu").map(([k, r]) => `${r.emoji} **${r.name}** \u2014 ${fmt3(r.price)} ${cur(ctx)}
+\u2517 Lv ${r.level} \u2022 Durabilitas ${r.dur} \u2022 Luck +${Math.round(r.luck * 100)}% (\`${k}\`)`).join("\n");
+    const baits = Object.entries(BAITS).map(([k, b]) => `${b.emoji} **${b.name}** \u2014 ${fmt3(b.price)} ${cur(ctx)}
+\u2517 Luck +${Math.round(b.luck * 100)}% (\`${k}\`)`).join("\n");
+    const e = embed("\u{1F3EA} Toko Pancing", "", 15105570);
+    e.fields = [{ name: "Joran", value: rods }, { name: "Umpan", value: baits }];
+    e.footer = { text: "Beli: `gbeli rod:karbon` / `gbeli bait:udang 5` \u2022 Perbaiki: `gperbaiki`" };
+    await ctx.reply({ embeds: [e] });
+  }),
+  cmd("beli", "Beli joran atau umpan", async (ctx, args) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const [type, key2] = String(args.item ?? "").split(":");
+    const qty = Math.max(1, Number.parseInt(String(args.jumlah ?? ""), 10) || 1);
+    const f = await getFishing(ctx.botId, u.discordUserId);
+    if (type === "rod") {
+      const rod = RODS[key2];
+      if (!rod || key2 === "bambu") return ctx.reply("Joran tidak ditemukan. Cek `gtoko`.");
+      if (u.level < rod.level) return ctx.reply(`\u{1F512} Butuh level ${rod.level}.`);
+      if (f.rod === key2) return ctx.reply("Kamu sudah memakai joran ini.");
+      if (u.galleons < rod.price) return ctx.reply(`\u{1F4B8} Koin kurang. Butuh ${fmt3(rod.price)} ${cur(ctx)}.`);
+      if (!await spend(ctx.botId, u.discordUserId, rod.price)) return ctx.reply("\u{1F4B8} Koin kurang.");
+      f.rod = key2;
+      f.rodDur = rod.dur;
+      await saveFishing(ctx.botId, u.discordUserId, f);
+      return ctx.reply(`\u2705 Membeli ${rod.emoji} **${rod.name}** dan langsung memakainya! Sisa: ${fmt3(u.galleons - rod.price)} ${cur(ctx)}`);
+    }
+    const bait = BAITS[key2];
+    if (!bait) return ctx.reply("Item tidak ditemukan. Contoh: `gbeli rod:karbon` / `gbeli bait:udang 5`.");
+    const cost = bait.price * qty;
+    if (!await spend(ctx.botId, u.discordUserId, cost)) return ctx.reply(`\u{1F4B8} Koin kurang. Butuh ${fmt3(cost)} ${cur(ctx)}.`);
+    f.bait[key2] = (f.bait[key2] ?? 0) + qty;
+    await saveFishing(ctx.botId, u.discordUserId, f);
+    return ctx.reply(`\u2705 Membeli ${bait.emoji} **${bait.name}** \xD7${qty} seharga ${fmt3(cost)} ${cur(ctx)}. Sisa: ${fmt3(u.galleons - cost)} ${cur(ctx)}`);
+  }, [strArg("item", "rod:karbon | bait:udang"), { name: "jumlah", description: "Jumlah umpan", type: "int" }]),
+  cmd("perbaiki", "Perbaiki joranmu", async (ctx) => {
+    const u = await needUser(ctx);
+    if (!u) return;
+    const f = await getFishing(ctx.botId, u.discordUserId);
+    const rod = RODS[f.rod];
+    const missing = rod.dur - f.rodDur;
+    if (missing <= 0) return ctx.reply("\u{1F527} Jorannmu masih prima.");
+    const cost = missing * REPAIR_COST_PER_POINT;
+    if (!await spend(ctx.botId, u.discordUserId, cost)) return ctx.reply(`\u{1F4B8} Biaya perbaikan ${fmt3(cost)} ${cur(ctx)}, koinmu kurang.`);
+    f.rodDur = rod.dur;
+    await saveFishing(ctx.botId, u.discordUserId, f);
+    return ctx.reply(`\u{1F527} ${rod.emoji} **${rod.name}** diperbaiki penuh seharga ${fmt3(cost)} ${cur(ctx)}. Sisa: ${fmt3(u.galleons - cost)} ${cur(ctx)}`);
+  }),
+  cmd("ensiklopedia", "Daftar ikan di tiap lokasi", async (ctx, args) => {
+    const key2 = String(args.lokasi ?? "").trim().toLowerCase();
+    const loc = FLOCATIONS[key2];
+    if (!loc) return ctx.reply("Lokasi: `kolam`, `sungai`, `danau`, `laut`, `dalam`.");
+    const lines = Object.entries(FISH).filter(([, d]) => d.loc.includes(key2)).sort((a, b) => Object.keys(FRARITY).indexOf(a[1].rarity) - Object.keys(FRARITY).indexOf(b[1].rarity)).map(([, d]) => `${d.emoji} **${d.name}** \u2014 ${FRARITY[d.rarity].label} \u2022 ${kg(d.min)}\u2013${kg(d.max)} \u2022 ${d.price} ${cur(ctx)}/kg`);
+    await ctx.reply({ embeds: [embed(`\u{1F4D6} ${loc.emoji} ${loc.name} (Lv ${loc.level})`, lines.join("\n"), 10181046)] });
+  }, [strArg("lokasi", "kolam | sungai | danau | laut | dalam")]),
+  cmd("profilikan", "Profil pemancing", async (ctx, args) => {
+    const id = mentionId(args.user) ?? ctx.user.id;
+    const u = await getUser(ctx.botId, id);
+    if (!u) return ctx.reply("Pemain itu belum mulai.");
+    const f = await getFishing(ctx.botId, id);
+    const rod = RODS[f.rod];
+    const unlocked = Object.entries(FLOCATIONS).filter(([, l]) => u.level >= l.level).map(([, l]) => `${l.emoji} ${l.name}`).join(", ");
+    const need = u.level * 100;
+    const filled = Math.max(0, Math.min(10, Math.round(u.xp / need * 10)));
+    const e = embed(`\u{1F3A3} Profil <@${id}>`, "", 3447003);
+    e.fields = [
+      { name: "Level", value: `**${u.level}**
+${"\u25B0".repeat(filled)}${"\u25B1".repeat(10 - filled)} ${u.xp}/${need} XP` },
+      { name: "Koin", value: `${fmt3(u.galleons)} ${cur(ctx)}`, inline: true },
+      { name: "Joran", value: `${rod.emoji} ${rod.name}
+${f.rodDur}/${rod.dur}`, inline: true },
+      { name: "Tangkapan", value: fmt3(f.stats.caught), inline: true },
+      { name: "Kabur", value: fmt3(f.stats.escaped), inline: true },
+      { name: "Rekor Terberat", value: f.stats.biggest ? `${f.stats.biggestName} \u2014 ${kg(f.stats.biggest)}` : "-" },
+      { name: "Lokasi Terbuka", value: unlocked }
+    ];
+    await ctx.reply({ embeds: [e] });
+  }, [userArg2("user", "Pemancing lain")]),
+  cmd("topikan", "Papan peringkat pemancing", async (ctx, args) => {
+    const cat = String(args.kategori ?? "coins").trim().toLowerCase();
+    const kind = ["coins", "level", "caught", "biggest"].includes(cat) ? cat : "coins";
+    const [fishRows, userRows] = await Promise.all([
+      db.select().from(wizzyFishing).where(eq(wizzyFishing.botId, ctx.botId)),
+      db.select().from(wizzyUsers).where(eq(wizzyUsers.botId, ctx.botId))
+    ]);
+    const usersById = new Map(userRows.map((r) => [r.discordUserId, r]));
+    const value = (id, d) => kind === "coins" ? usersById.get(id)?.galleons ?? 0 : kind === "level" ? usersById.get(id)?.level ?? 0 : kind === "caught" ? d.stats.caught : d.stats.biggest;
+    const top = fishRows.map((r) => {
+      const base = newFishingData(), d = r.data ?? {};
+      return { id: r.discordUserId, d: { ...base, ...d, stats: { ...base.stats, ...d.stats } } };
+    }).sort((a, b) => value(b.id, b.d) - value(a.id, a.d)).slice(0, 10);
+    const titles = { coins: "\u{1F4B0} Terkaya", level: "\u2B50 Level Tertinggi", caught: "\u{1F41F} Paling Banyak Menangkap", biggest: "\u{1F3C6} Ikan Terbesar" };
+    const medal = (i) => ["\u{1F947}", "\u{1F948}", "\u{1F949}"][i] ?? `**${i + 1}.**`;
+    const lines = top.map((r, i) => {
+      const v = value(r.id, r.d);
+      return `${medal(i)} <@${r.id}> \u2014 ${kind === "biggest" ? kg(v) : fmt3(v)}`;
+    });
+    await ctx.reply({ embeds: [embed(`\u{1F3C5} Top Pemancing \u2014 ${titles[kind]}`, lines.join("\n") || "Belum ada data.", 15844367)] });
+  }, [strArg("kategori", "coins | level | caught | biggest")]),
   cmd("help", "Daftar command Wizzy", async (ctx) => ctx.reply({ embeds: [embed("\u{1F4D6} Bantuan Wizzy", [
     "**\u{1FA84} Dasar**",
     "`start` `profile [@u]` `daily` `cash` `give @u <jml>` (pajak 5%)",
@@ -110733,9 +111091,15 @@ ${list}`)] });
     "**\u{1F3F0} Sosial**",
     "`coven create/join/leave/deposit/info` \u2022 `lb [coins/zoo/battle/coven]`",
     "",
+    "**\u{1F3A3} Memancing**",
+    "`mancing [lokasi] [umpan]` \u2022 `tas` \u2022 `jual [ikan]` \u2022 `toko`",
+    "`beli <rod:id|bait:id> [jml]` \u2022 `perbaiki` \u2022 `ensiklopedia <lokasi>`",
+    "`profilikan [@u]` \u2022 `topikan [coins/level/caught/biggest]`",
+    "",
     `Awali command dengan prefix bot (\`g\`). Contoh: \`ghunt\``
   ].join("\n"))] }))
 ];
+commands.find((c) => c.name === "mancing").publicReply = true;
 var prefixCommands = [
   cmd("battle", "Tantang battle pemain lain", async (ctx, args) => {
     if (!await needUser(ctx)) return;
@@ -110862,7 +111226,14 @@ var ALIASES2 = {
   pve: "dungeon",
   dg: "dungeon",
   tr: "trade",
-  commands: "help"
+  commands: "help",
+  pancing: "mancing",
+  kail: "mancing",
+  fp: "profilikan",
+  fprofil: "profilikan",
+  ft: "topikan",
+  ftop: "topikan",
+  enso: "ensiklopedia"
 };
 var wizzyModule = {
   name: "wizzy",
@@ -110886,7 +111257,7 @@ var wizzyModule = {
   },
   async onInteraction(ctx, interaction) {
     if (!interaction.isButton()) return;
-    const m = interaction.customId.match(/^wiz:([bts]):([a-z]+):(\d+)$/);
+    const m = interaction.customId.match(/^wiz:([btfs]):([a-z]+):(\d+)$/);
     if (!m) return;
     const [, kind, action, kid] = m;
     const p = pending.get(kid);
@@ -110923,6 +111294,10 @@ var wizzyModule = {
         if (interaction.user.id !== p.target) return void notForYou();
         const e = await resolveTrade(cmdCtx, p, action === "ok");
         await finish(e);
+      } else if (p.kind === "f") {
+        if (interaction.user.id !== p.fisher) return void notForYou();
+        const e = await resolveFishing(cmdCtx, p);
+        await finish(e);
       } else {
         if (!await getUser(ctx.botId, interaction.user.id)) return void interaction.reply({ content: "Ketik `gstart` dulu!", ephemeral: true }).catch(() => {
         });
@@ -110939,6 +111314,8 @@ var wizzyModule = {
     for (const p of pending.values()) clearTimeout(p.timer);
     pending.clear();
     busy.clear();
+    fishingInProgress.clear();
+    fishCooldowns.clear();
   }
 };
 

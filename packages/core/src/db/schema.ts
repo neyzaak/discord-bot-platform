@@ -162,6 +162,15 @@ export const wizzyBattles = pgTable('wizzy_battles', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** Data minancing Wizzy per bot+user: rod, umpan, tas ikan, dan statistik. */
+export const wizzyFishing = pgTable('wizzy_fishing', {
+  id: serial('id').primaryKey(),
+  botId: integer('bot_id').notNull().references(() => bots.id, { onDelete: 'cascade' }),
+  discordUserId: text('discord_user_id').notNull(),
+  data: jsonb('data').notNull().default({}),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [uniqueIndex('wizzy_fishing_bot_user_uq').on(t.botId, t.discordUserId)]);
+
 /** Endpoint ingest webhook eksternal per kanal target. Token = kredensial. */
 export const webhooks = pgTable('webhooks', {
   id: serial('id').primaryKey(),
