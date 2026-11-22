@@ -42,8 +42,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     .filter((n) => pathname === n.href || pathname?.startsWith(`${n.href}/`))
     .sort((a, b) => b.href.length - a.href.length)[0];
   const active = (href: string) => best?.href === href;
-  const pill = (on: boolean) =>
-    `flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium transition ${on ? 'bg-indigo-500/15 text-indigo-300' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}`;
+  const tab = (on: boolean) =>
+    `flex items-center gap-2 self-stretch border-b-2 px-2 py-3 text-sm font-medium transition ${on ? 'border-indigo-400 text-indigo-300' : 'border-transparent text-slate-400 hover:text-slate-200'}`;
 
   const avatar = me ? (
     me.avatar ? (
@@ -72,9 +72,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <span className="hidden sm:inline">{t('app.title')}</span>
           </Link>
 
-          <nav className="ml-2 hidden items-center gap-1 md:flex" aria-label={t('bots.title')}>
+          <nav className="ml-2 hidden gap-2 self-stretch md:flex" aria-label={t('bots.title')}>
             {mainNav.map((n) => (
-              <Link key={n.href} href={n.href} className={pill(active(n.href))}>
+              <Link key={n.href} href={n.href} className={tab(active(n.href))}>
                 <Icon name={n.icon} className="h-3.5 w-3.5" /> {n.label}
               </Link>
             ))}
@@ -112,10 +112,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Baris tab konteks bot — tampil hanya saat membuka bot */}
         {botNav.length > 0 && (
           <div className="border-t border-slate-800/60">
-            <div className="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-4 py-2 sm:px-6" role="tablist">
+            <div className="mx-auto flex max-w-6xl gap-2 self-stretch overflow-x-auto px-4 sm:px-6" role="tablist">
               {botNav.map((n) => (
                 <Link key={n.href} href={n.href} role="tab" aria-current={active(n.href) ? 'page' : undefined}
-                  className={pill(active(n.href))}>
+                  className={tab(active(n.href))}>
                   <Icon name={n.icon} className="h-3.5 w-3.5" /> {n.label}
                 </Link>
               ))}
