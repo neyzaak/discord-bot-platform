@@ -27,7 +27,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const mainNav: Array<{ href: string; icon: IconName; label: string }> = [
     { href: '/dashboard', icon: 'dashboard', label: t('bots.title') },
-    { href: '/dashboard/bots/new', icon: 'plus', label: t('bots.create') },
   ];
   const botNav = botId
     ? [
