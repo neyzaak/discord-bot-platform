@@ -48,12 +48,12 @@
   }
 
   const fail = (e) => { if (e?.message !== 'Belum login') toast('error', 'API', e?.message || 'Gagal memuat data'); };
-  const guildName = () => bot?.guilds.find((g) => g.discordGuildId === guildId)?.name || bot?.name || 'server';
+  const guildName = () => bot?.guilds?.find((g) => g.discordGuildId === guildId)?.name || bot?.name || 'server';
 
   function renderServers() {
     const list = $('.server-list');
     if (!list) return;
-    const items = bots.flatMap((b) => b.guilds.length
+    const items = bots.flatMap((b) => b.guilds?.length
       ? b.guilds.map((g) => ({ b, g, label: g.name, sub: b.name }))
       : [{ b, g: null, label: b.name, sub: 'belum ada server' }]);
     list.innerHTML = items.length ? items.map(({ b, g, label, sub }) => `
@@ -85,7 +85,7 @@
     const label = guildName();
     if (cur) {
       $('.server-name', cur).textContent = label;
-      $('.server-members', cur).innerHTML = `<i class="fas fa-users"></i> ${bot.guilds.length} server`;
+      $('.server-members', cur).innerHTML = `<i class="fas fa-users"></i> ${bot.guilds?.length ?? 0} server`;
       $('.server-avatar', cur).textContent = label[0]?.toUpperCase() || 'B';
     }
     const previewName = $('.discord-bot-name');
@@ -99,7 +99,7 @@
   function renderStats() {
     const cards = $$('.stat-card');
     const values = [
-      ['Server Terhubung', bot?.guilds.length ?? 0, `prefix ${bot?.prefix ?? '-'}`],
+      ['Server Terhubung', bot?.guilds?.length ?? 0, `prefix ${bot?.prefix ?? '-'}`],
       ['Perintah 24 Jam', stats.commands24h, 'dari commandLogs'],
       ['Modul Aktif', bot?.modules.length ?? 0, (bot?.modules || []).slice(0, 4).join(', ') || 'tidak ada'],
       ['Status Bot', bot?.runtimeStatus === 'online' ? 'Online' : 'Offline', bot?.status || '-'],
@@ -113,7 +113,7 @@
       if (change) change.textContent = v[2];
     });
     $('#page-dashboard .welcome-content h2').textContent = `Halo, ${$('.user-name')?.textContent || 'Admin'}! 👋`;
-    $('#page-dashboard .welcome-content p').innerHTML = `Bot <strong>${esc(bot?.name || '-')}</strong> terhubung ke <strong>${esc(bot?.guilds.length ?? 0)}</strong> server.`;
+    $('#page-dashboard .welcome-content p').innerHTML = `Bot <strong>${esc(bot?.name || '-')}</strong> terhubung ke <strong>${esc(bot?.guilds?.length ?? 0)}</strong> server.`;
   }
 
   function renderChart() {
@@ -299,7 +299,7 @@
 
   async function loadDetail() {
     if (!bot) return;
-    guildId = guildId || bot.guilds[0]?.discordGuildId || '';
+    guildId = guildId || bot.guilds?.[0]?.discordGuildId || '';
     if (!guildId) {
       config = {}; channels = []; stats = { topCommands: [], commands24h: 0 }; errors = [];
       toast('warning', 'Bot', 'Bot belum tergabung di server mana pun');
@@ -357,11 +357,14 @@
       const avatar = $('.user-avatar');
       if (avatar && u.avatar) avatar.src = `https://cdn.discordapp.com/avatars/${u.discordId}/${u.avatar}.png?size=64`;
       const data = await api('/bots');
-      bots = data.bots;
+      bots = await Promise.all(data.bots.map(async (b) => {
+        try { return (await api(`/bots/${b.id}`)).bot; }
+        catch { return { ...b, guilds: [] }; }
+      }));
       if (!bots.length) toast('warning', 'Belum ada bot', `Akun ${u.discordId} bukan owner/manager bot. Login dengan akun pemilik bot.`);
       const saved = JSON.parse(localStorage.getItem('botcaches.selection') || '{}');
       bot = bots.find((b) => b.id === saved.botId) || bots[0] || null;
-      guildId = saved.guildId || bot?.guilds[0]?.discordGuildId || '';
+      guildId = saved.guildId || bot?.guilds?.[0]?.discordGuildId || '';
       renderServers();
       await loadDetail();
     } catch (e) { fail(e); }
