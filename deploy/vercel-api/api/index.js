@@ -58612,6 +58612,7 @@ __export(schema_exports, {
   wizzyCovenMembers: () => wizzyCovenMembers,
   wizzyCovens: () => wizzyCovens,
   wizzyCreatures: () => wizzyCreatures,
+  wizzyFishing: () => wizzyFishing,
   wizzyInventory: () => wizzyInventory,
   wizzyUsers: () => wizzyUsers
 });
@@ -58757,6 +58758,13 @@ var wizzyBattles = pgTable("wizzy_battles", {
   bet: integer("bet").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 });
+var wizzyFishing = pgTable("wizzy_fishing", {
+  id: serial("id").primaryKey(),
+  botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
+  discordUserId: text("discord_user_id").notNull(),
+  data: jsonb("data").notNull().default({}),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("wizzy_fishing_bot_user_uq").on(t.botId, t.discordUserId)]);
 var webhooks = pgTable("webhooks", {
   id: serial("id").primaryKey(),
   botId: integer("bot_id").notNull().references(() => bots.id, { onDelete: "cascade" }),
@@ -58914,7 +58922,7 @@ authRouter.get("/callback", asyncHandler(async (req, res) => {
     maxAge: 7 * 24 * 3600 * 1e3,
     path: "/"
   });
-  res.redirect(`${env.APP_URL}/dashboard`);
+  res.redirect(new URL("/", env.APP_URL).toString());
 }));
 authRouter.get("/me", requireAuth, (req, res) => {
   res.json({ user: req.user });
