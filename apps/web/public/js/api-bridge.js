@@ -9,8 +9,10 @@
   let guildId = '';
   let config = {};
   let channels = [];
+  let roles = [];
   let stats = { topCommands: [], commands24h: 0 };
   let errors = [];
+  let currentModule = '';
 
   async function api(path, init = {}) {
     let res;
@@ -49,6 +51,239 @@
 
   const fail = (e) => { if (e?.message !== 'Belum login') toast('error', 'API', e?.message || 'Gagal memuat data'); };
   const guildName = () => bot?.guilds?.find((g) => g.discordGuildId === guildId)?.name || bot?.name || 'server';
+
+  const BANK_KEY = { quiz: 'questions', quotes: 'quotes' };
+
+  const MODULE_SPECS = {
+    tickets: {
+      label: 'Tiket', desc: 'Kategori, staf, dan transkrip tiket support',
+      fields: [
+        { key: 'enabled', label: 'Aktifkan tiket', type: 'boolean' },
+        { key: 'categoryId', label: 'Kategori tiket', type: 'channel', types: [4] },
+        { key: 'staffRoleId', label: 'Role staf', type: 'role' },
+        { key: 'transcriptChannelId', label: 'Channel transkrip', type: 'channel' },
+        { key: 'maxOpenPerUser', label: 'Maks tiket per user', type: 'number', min: 1, max: 5 },
+      ],
+    },
+    logging: {
+      label: 'Logging', desc: 'Catat event server ke channel log',
+      fields: [
+        { key: 'enabled', label: 'Aktifkan logging', type: 'boolean' },
+        { key: 'channelId', label: 'Channel log', type: 'channel' },
+        { key: 'logMessageDelete', label: 'Log pesan dihapus', type: 'boolean' },
+        { key: 'logMessageEdit', label: 'Log pesan diedit', type: 'boolean' },
+        { key: 'logMemberJoin', label: 'Log member join', type: 'boolean' },
+        { key: 'logMemberLeave', label: 'Log member leave', type: 'boolean' },
+        { key: 'logRoleChange', label: 'Log perubahan role', type: 'boolean' },
+      ],
+    },
+    leveling: {
+      label: 'Leveling', desc: 'XP, cooldown, pesan naik level, dan role reward',
+      fields: [
+        { key: 'enabled', label: 'Aktifkan leveling', type: 'boolean' },
+        { key: 'xpMin', label: 'XP minimum per pesan', type: 'number', min: 1, max: 50 },
+        { key: 'xpMax', label: 'XP maksimum per pesan', type: 'number', min: 1, max: 50 },
+        { key: 'cooldownSec', label: 'Cooldown (detik)', type: 'number', min: 0, max: 600 },
+        { key: 'announceChannelId', label: 'Channel pengumuman', type: 'channel' },
+        { key: 'levelUpMessage', label: 'Pesan naik level', type: 'text' },
+        { key: 'roleRewards', label: 'Role reward (JSON)', type: 'json', wide: true },
+      ],
+    },
+    economy: {
+      label: 'Ekonomi', desc: 'Mata uang, daily, kerja, dan toko',
+      fields: [
+        { key: 'enabled', label: 'Aktifkan ekonomi', type: 'boolean' },
+        { key: 'currencyName', label: 'Nama mata uang', type: 'text' },
+        { key: 'dailyAmount', label: 'Jumlah daily', type: 'number', min: 1, max: 100000 },
+        { key: 'workMin', label: 'Kerja minimum', type: 'number', min: 1, max: 10000 },
+        { key: 'workMax', label: 'Kerja maksimum', type: 'number', min: 1, max: 10000 },
+        { key: 'workCooldownSec', label: 'Cooldown kerja (detik)', type: 'number', min: 60, max: 86400 },
+        { key: 'shop', label: 'Toko (JSON)', type: 'json', wide: true },
+      ],
+    },
+    quiz: {
+      label: 'Quiz', desc: 'Pengaturan sesi quiz dan bank soal',
+      fields: [
+        { key: 'enabled', label: 'Aktifkan quiz', type: 'boolean' },
+        { key: 'title', label: 'Judul quiz', type: 'text' },
+        { key: 'pointsName', label: 'Nama poin', type: 'text' },
+        { key: 'timePerQuestionSec', label: 'Waktu per soal (detik)', type: 'number', min: 5, max: 600 },
+        { key: 'pointsPerQuestion', label: 'Poin per soal', type: 'number', min: 10, max: 1000 },
+        { key: 'questionsPerSession', label: 'Soal per sesi', type: 'number', min: 1, max: 50 },
+        { key: 'mentionRoleId', label: 'Role yang di-ping', type: 'role' },
+        { key: 'questions', label: 'Bank soal', type: 'bank' },
+      ],
+    },
+    quotes: {
+      label: 'Kutipan', desc: 'Kartu kutipan, jadwal harian, dan bank kutipan',
+      fields: [
+        { key: 'enabled', label: 'Aktifkan kutipan', type: 'boolean' },
+        { key: 'channelId', label: 'Channel kutipan', type: 'channel' },
+        { key: 'daily', label: 'Kirim otomatis tiap hari', type: 'boolean' },
+        { key: 'scheduleHour', label: 'Jam kirim (WIB)', type: 'number', min: 0, max: 23 },
+        { key: 'watermark', label: 'Watermark', type: 'text' },
+        { key: 'font', label: 'Font', type: 'select', options: [['poppins', 'Poppins'], ['playfair', 'Playfair Display']] },
+        { key: 'textSize', label: 'Ukuran teks', type: 'select', options: [['kecil', 'Kecil'], ['sedang', 'Sedang'], ['besar', 'Besar']] },
+        { key: 'photoPosition', label: 'Posisi foto', type: 'select', options: [['kiri', 'Kiri'], ['kanan', 'Kanan']] },
+        { key: 'quotes', label: 'Bank kutipan', type: 'bank' },
+      ],
+    },
+    wizzy: {
+      label: 'Wizzy', desc: 'Ekonomi, hunt, dan pengaturan game Wizzy',
+      fields: [
+        { key: 'enabled', label: 'Aktifkan Wizzy', type: 'boolean' },
+        { key: 'currency', label: 'Nama mata uang', type: 'text' },
+        { key: 'huntCooldownSec', label: 'Cooldown hunt (detik)', type: 'number', min: 1, max: 3600 },
+        { key: 'maxLevel', label: 'Level maksimum', type: 'number', min: 2, max: 200 },
+        { key: 'startingSlots', label: 'Slot awal', type: 'number', min: 1, max: 5 },
+        { key: 'maxSlots', label: 'Slot maksimum', type: 'number', min: 1, max: 10 },
+        { key: 'giveTaxPct', label: 'Pajak give (%)', type: 'number', min: 0, max: 50 },
+        { key: 'maxBet', label: 'Taruhan maksimum', type: 'number', min: 1, max: 1000000 },
+        { key: 'fuseCost', label: 'Biaya fuse', type: 'number', min: 0, max: 1000000 },
+        { key: 'autohuntCost', label: 'Biaya autohunt', type: 'number', min: 0, max: 1000000 },
+        { key: 'autohuntMax', label: 'Autohunt maksimum', type: 'number', min: 1, max: 100 },
+        { key: 'covenCost', label: 'Biaya coven', type: 'number', min: 0, max: 1000000 },
+        { key: 'covenMax', label: 'Anggota coven maksimum', type: 'number', min: 1, max: 200 },
+      ],
+    },
+    customcmd: {
+      label: 'Custom Command', desc: 'Command buatan sendiri untuk server',
+      fields: [
+        { key: 'enabled', label: 'Aktifkan custom command', type: 'boolean' },
+        { key: 'commands', label: 'Daftar command (JSON)', type: 'json', wide: true },
+      ],
+    },
+  };
+
+  function configValue(name, key) {
+    return (config[name] ?? {})[key];
+  }
+
+  function optionList(items, selected, emptyLabel) {
+    return (emptyLabel ? `<option value="">${emptyLabel}</option>` : '') + items.map(([value, label]) =>
+      `<option value="${esc(value)}" ${String(selected ?? '') === String(value) ? 'selected' : ''}>${esc(label)}</option>`).join('');
+  }
+
+  function fieldHTML(name, f) {
+    const value = configValue(name, f.key);
+    const wide = f.wide || f.type === 'json' || f.type === 'bank' ? ' config-wide' : '';
+    const id = `cfg-${name}-${f.key}`;
+    const label = `<label for="${id}">${esc(f.label)}</label>`;
+
+    if (f.type === 'boolean') return `<div class="config-field${wide}"><label>${esc(f.label)}</label><label class="toggle"><input type="checkbox" data-cfg="${f.key}" ${value ? 'checked' : ''}><span class="toggle-slider"></span></label></div>`;
+    if (f.type === 'channel') {
+      const types = f.types ?? [0, 5];
+      const opts = channels.filter((c) => types.includes(c.type)).map((c) => [c.id, `${c.type === 4 ? '📁 ' : '#'}${c.name}`]);
+      return `<div class="config-field${wide}">${label}<select class="select-input" id="${id}" data-cfg="${f.key}">${optionList(opts, value, '— tidak diset —')}</select></div>`;
+    }
+    if (f.type === 'role') {
+      const opts = roles.map((r) => [r.id, `@${r.name}`]);
+      return `<div class="config-field${wide}">${label}<select class="select-input" id="${id}" data-cfg="${f.key}">${optionList(opts, value, '— tidak diset —')}</select></div>`;
+    }
+    if (f.type === 'select') {
+      return `<div class="config-field${wide}">${label}<select class="select-input" id="${id}" data-cfg="${f.key}">${optionList(f.options, value)}</select></div>`;
+    }
+    if (f.type === 'number') {
+      return `<div class="config-field${wide}">${label}<input type="number" class="text-input" id="${id}" data-cfg="${f.key}" value="${esc(value ?? '')}" min="${f.min ?? ''}" max="${f.max ?? ''}"></div>`;
+    }
+    if (f.type === 'json') {
+      return `<div class="config-field${wide}">${label}<textarea class="textarea-input" id="${id}" data-cfg="${f.key}" rows="5">${esc(JSON.stringify(value ?? [], null, 2))}</textarea></div>`;
+    }
+    if (f.type === 'bank') {
+      const module = name;
+      return `<div class="config-field${wide}">${label}<p class="config-note">Dimuat terpisah agar dashboard tetap ringan.</p><div class="input-group"><button class="btn btn-ghost" type="button" data-bank-load="${module}"><i class="fas fa-download"></i> Muat Bank</button><button class="btn btn-primary" type="button" data-bank-save="${module}"><i class="fas fa-upload"></i> Simpan Bank</button></div><textarea class="textarea-input" data-bank="${module}" rows="8" placeholder="Klik Muat Bank untuk melihat isi."></textarea></div>`;
+    }
+    return `<div class="config-field${wide}">${label}<input type="text" class="text-input" id="${id}" data-cfg="${f.key}" value="${esc(value ?? '')}"></div>`;
+  }
+
+  function renderConfig() {
+    const form = $('#configForm');
+    if (!form) return;
+    const title = $('#configTitle');
+    const subtitle = $('#configSubtitle');
+    const spec = MODULE_SPECS[currentModule];
+
+    if (!spec) {
+      if (title) title.textContent = 'Konfigurasi';
+      if (subtitle) subtitle.textContent = 'Pilih modul di sidebar untuk mulai mengatur.';
+      form.innerHTML = '<p class="config-note">Pilih modul di sidebar.</p>';
+      return;
+    }
+    if (title) title.textContent = spec.label;
+    if (subtitle) subtitle.textContent = `${spec.desc} • ${guildName()}`;
+    if (!bot || !guildId) {
+      form.innerHTML = '<p class="config-note">Pilih bot dan server terlebih dahulu.</p>';
+      return;
+    }
+    form.innerHTML = spec.fields.map((f) => fieldHTML(currentModule, f)).join('');
+    $$('[data-bank-load]', form).forEach((btn) => btn.addEventListener('click', () => void loadBank(btn.dataset.bankLoad)));
+    $$('[data-bank-save]', form).forEach((btn) => btn.addEventListener('click', () => void saveBank(btn.dataset.bankSave)));
+  }
+
+  function selectConfigModule(name) {
+    currentModule = MODULE_SPECS[name] ? name : '';
+    $$('.nav-item[data-page="config"]').forEach((item) => {
+      item.classList.toggle('active', item.dataset.module === currentModule);
+    });
+    renderConfig();
+  }
+
+  async function loadBank(name) {
+    if (!bot || !guildId) return;
+    try {
+      const res = await api(`/bots/${bot.id}/guilds/${guildId}/config/${name}`);
+      const bank = res.config?.[BANK_KEY[name]] ?? [];
+      const ta = $(`[data-bank="${name}"]`);
+      if (ta) ta.value = JSON.stringify(bank, null, 2);
+      toast('info', 'Bank dimuat', `${bank.length} item`);
+    } catch (e) { fail(e); }
+  }
+
+  async function saveBank(name) {
+    if (!bot || !guildId) return;
+    const ta = $(`[data-bank="${name}"]`);
+    let bank;
+    try { bank = JSON.parse(ta?.value || '[]'); }
+    catch { return toast('error', 'JSON tidak valid', 'Periksa format bank sebelum menyimpan.'); }
+    try {
+      await api(`/bots/${bot.id}/guilds/${guildId}/config/${name}`, {
+        method: 'PUT',
+        body: JSON.stringify({ ...(config[name] ?? {}), [BANK_KEY[name]]: bank }),
+      });
+      toast('success', 'Tersimpan', `Bank ${MODULE_SPECS[name]?.label || name} diperbarui`);
+      await loadDetail();
+    } catch (e) { fail(e); }
+  }
+
+  async function saveConfigModule() {
+    if (!currentModule) return toast('warning', 'Konfigurasi', 'Pilih modul di sidebar terlebih dahulu.');
+    const spec = MODULE_SPECS[currentModule];
+    const patch = {};
+    for (const f of spec.fields) {
+      if (f.type === 'bank') continue;
+      const el = $(`[data-cfg="${f.key}"]`);
+      if (!el) continue;
+      if (f.type === 'boolean') patch[f.key] = el.checked;
+      else if (f.type === 'number') { if (el.value !== '') patch[f.key] = Number(el.value); }
+      else if (f.type === 'json') {
+        try { patch[f.key] = JSON.parse(el.value || '[]'); }
+        catch { return toast('error', 'JSON tidak valid', `Periksa field "${f.label}".`); }
+      } else patch[f.key] = el.value.trim();
+    }
+    try {
+      const merged = { ...(config[currentModule] ?? {}), ...patch };
+      // Modul dengan bank: ambil bank utuh dulu supaya questions/quotes tidak terhapus.
+      if (BANK_KEY[currentModule]) {
+        const full = await api(`/bots/${bot.id}/guilds/${guildId}/config/${currentModule}`);
+        Object.assign(merged, full.config, patch);
+      }
+      await api(`/bots/${bot.id}/guilds/${guildId}/config/${currentModule}`, {
+        method: 'PUT', body: JSON.stringify(merged),
+      });
+      config[currentModule] = merged;
+      toast('success', 'Tersimpan', `${spec.label} diperbarui`);
+    } catch (e) { fail(e); }
+  }
 
   function renderServers() {
     const list = $('.server-list');
@@ -301,22 +536,24 @@
     if (!bot) return;
     guildId = guildId || bot.guilds?.[0]?.discordGuildId || '';
     if (!guildId) {
-      config = {}; channels = []; stats = { topCommands: [], commands24h: 0 }; errors = [];
+      config = {}; channels = []; roles = []; stats = { topCommands: [], commands24h: 0 }; errors = [];
       toast('warning', 'Bot', 'Bot belum tergabung di server mana pun');
       renderAll();
       return;
     }
     try {
-      const [detail, cfg, ch, st, err] = await Promise.all([
+      const [detail, cfg, ch, rl, st, err] = await Promise.all([
         api(`/bots/${bot.id}`),
         api(`/bots/${bot.id}/guilds/${guildId}/config`),
         api(`/bots/${bot.id}/guilds/${guildId}/channels`),
+        api(`/bots/${bot.id}/guilds/${guildId}/roles`).catch(() => ({ roles: [] })),
         api(`/bots/${bot.id}/stats`),
         api(`/bots/${bot.id}/errors?limit=20`),
       ]);
       bot = detail.bot;
       config = cfg.config;
       channels = ch.channels;
+      roles = rl.roles;
       stats = st;
       errors = err.errors;
       renderAll();
@@ -339,6 +576,7 @@
     }
     updateForms();
     wireCommands();
+    renderConfig();
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
@@ -347,6 +585,8 @@
     wireSettings();
     wireQuickActions();
     wireLogout();
+    $$('.nav-item[data-module]').forEach((item) => item.addEventListener('click', () => selectConfigModule(item.dataset.module)));
+    $('#configSave')?.addEventListener('click', () => void saveConfigModule());
     try {
       const me = await api('/auth/me');
       const u = me.user;

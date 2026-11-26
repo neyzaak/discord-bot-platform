@@ -58,32 +58,9 @@
           <i class="fas fa-th-large"></i>
           <span>Dashboard</span>
         </a>
-        <a href="#" class="nav-item" data-page="analytics">
-          <i class="fas fa-chart-line"></i>
-          <span>Analitik</span>
-          <span class="nav-badge pulse">Live</span>
-        </a>
         <a href="#" class="nav-item" data-page="commands">
           <i class="fas fa-terminal"></i>
           <span>Perintah</span>
-          <span class="nav-count">42</span>
-        </a>
-      </div>
-
-      <div class="nav-section">
-        <span class="nav-label">Moderasi</span>
-        <a href="#" class="nav-item" data-page="automod">
-          <i class="fas fa-shield-halved"></i>
-          <span>Auto-Mod</span>
-        </a>
-        <a href="#" class="nav-item" data-page="modlogs">
-          <i class="fas fa-scroll"></i>
-          <span>Log Moderasi</span>
-          <span class="nav-count warn">3</span>
-        </a>
-        <a href="#" class="nav-item" data-page="warnings">
-          <i class="fas fa-triangle-exclamation"></i>
-          <span>Peringatan</span>
         </a>
       </div>
 
@@ -93,27 +70,50 @@
           <i class="fas fa-door-open"></i>
           <span>Selamat Datang</span>
         </a>
-        <a href="#" class="nav-item" data-page="levels">
+        <a href="#" class="nav-item" data-page="automod">
+          <i class="fas fa-shield-halved"></i>
+          <span>Auto-Mod</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-label">Konfigurasi</span>
+        <a href="#" class="nav-item" data-page="config" data-module="tickets">
+          <i class="fas fa-ticket"></i>
+          <span>Tiket</span>
+        </a>
+        <a href="#" class="nav-item" data-page="config" data-module="logging">
+          <i class="fas fa-scroll"></i>
+          <span>Logging</span>
+        </a>
+        <a href="#" class="nav-item" data-page="config" data-module="leveling">
           <i class="fas fa-ranking-star"></i>
           <span>Leveling</span>
         </a>
-        <a href="#" class="nav-item" data-page="music">
-          <i class="fas fa-music"></i>
-          <span>Musik</span>
+        <a href="#" class="nav-item" data-page="config" data-module="economy">
+          <i class="fas fa-coins"></i>
+          <span>Ekonomi</span>
         </a>
-        <a href="#" class="nav-item" data-page="tickets">
-          <i class="fas fa-ticket"></i>
-          <span>Tiket</span>
-          <span class="nav-count">7</span>
+        <a href="#" class="nav-item" data-page="config" data-module="quiz">
+          <i class="fas fa-circle-question"></i>
+          <span>Quiz</span>
+        </a>
+        <a href="#" class="nav-item" data-page="config" data-module="quotes">
+          <i class="fas fa-quote-left"></i>
+          <span>Kutipan</span>
+        </a>
+        <a href="#" class="nav-item" data-page="config" data-module="wizzy">
+          <i class="fas fa-hat-wizard"></i>
+          <span>Wizzy</span>
+        </a>
+        <a href="#" class="nav-item" data-page="config" data-module="customcmd">
+          <i class="fas fa-code"></i>
+          <span>Custom Command</span>
         </a>
       </div>
 
       <div class="nav-section">
         <span class="nav-label">Sistem</span>
-        <a href="#" class="nav-item" data-page="plugins">
-          <i class="fas fa-puzzle-piece"></i>
-          <span>Plugin</span>
-        </a>
         <a href="#" class="nav-item" data-page="settings">
           <i class="fas fa-gear"></i>
           <span>Pengaturan</span>
@@ -645,6 +645,28 @@
     </div>
 
     <!-- ════════════════════════════════════════════════════════
+         PAGE: MODULE CONFIG
+         ════════════════════════════════════════════════════════ -->
+    <div class="page" id="page-config">
+      <div class="page-header">
+        <div>
+          <h2 id="configTitle">Konfigurasi</h2>
+          <p id="configSubtitle">Pilih modul di sidebar untuk mulai mengatur.</p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-primary" id="configSave"><i class="fas fa-save"></i> Simpan</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div id="configForm" class="config-grid">
+            <p class="config-note">Pilih modul di sidebar.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════
          PAGE: SETTINGS
          ════════════════════════════════════════════════════════ -->
     <div class="page" id="page-settings">
@@ -700,63 +722,6 @@
       </div>
     </div>
 
-    <!-- Generic Placeholder Pages -->
-    <div class="page" id="page-analytics">
-      <div class="page-header"><div><h2>Analitik</h2><p>Statistik mendalam tentang server kamu</p></div></div>
-      <div class="placeholder-content">
-        <div class="placeholder-icon"><i class="fas fa-chart-line"></i></div>
-        <h3>Halaman Analitik</h3>
-        <p>Data untuk halaman ini belum tersedia dari API.</p>
-      </div>
-    </div>
-    <div class="page" id="page-modlogs">
-      <div class="page-header"><div><h2>Log Moderasi</h2><p>Riwayat aksi moderasi</p></div></div>
-      <div class="placeholder-content">
-        <div class="placeholder-icon"><i class="fas fa-scroll"></i></div>
-        <h3>Halaman Log Moderasi</h3>
-        <p>Data untuk halaman ini belum tersedia dari API.</p>
-      </div>
-    </div>
-    <div class="page" id="page-warnings">
-      <div class="page-header"><div><h2>Peringatan</h2><p>Kelola peringatan member</p></div></div>
-      <div class="placeholder-content">
-        <div class="placeholder-icon"><i class="fas fa-triangle-exclamation"></i></div>
-        <h3>Halaman Peringatan</h3>
-        <p>Data untuk halaman ini belum tersedia dari API.</p>
-      </div>
-    </div>
-    <div class="page" id="page-levels">
-      <div class="page-header"><div><h2>Leveling</h2><p>Konfigurasi sistem level dan XP</p></div></div>
-      <div class="placeholder-content">
-        <div class="placeholder-icon"><i class="fas fa-ranking-star"></i></div>
-        <h3>Halaman Leveling</h3>
-        <p>Data untuk halaman ini belum tersedia dari API.</p>
-      </div>
-    </div>
-    <div class="page" id="page-music">
-      <div class="page-header"><div><h2>Musik</h2><p>Kontrol pemutar musik bot</p></div></div>
-      <div class="placeholder-content">
-        <div class="placeholder-icon"><i class="fas fa-music"></i></div>
-        <h3>Halaman Musik</h3>
-        <p>Data untuk halaman ini belum tersedia dari API.</p>
-      </div>
-    </div>
-    <div class="page" id="page-tickets">
-      <div class="page-header"><div><h2>Tiket</h2><p>Kelola tiket support</p></div></div>
-      <div class="placeholder-content">
-        <div class="placeholder-icon"><i class="fas fa-ticket"></i></div>
-        <h3>Halaman Tiket</h3>
-        <p>Data untuk halaman ini belum tersedia dari API.</p>
-      </div>
-    </div>
-    <div class="page" id="page-plugins">
-      <div class="page-header"><div><h2>Plugin</h2><p>Tambah dan kelola plugin bot</p></div></div>
-      <div class="placeholder-content">
-        <div class="placeholder-icon"><i class="fas fa-puzzle-piece"></i></div>
-        <h3>Halaman Plugin</h3>
-        <p>Data untuk halaman ini belum tersedia dari API.</p>
-      </div>
-    </div>
   </main>
 
   <!-- Modal Overlay -->

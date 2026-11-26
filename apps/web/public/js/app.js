@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     music: 'Musik',
     tickets: 'Tiket',
     plugins: 'Plugin',
+    config: 'Konfigurasi',
     settings: 'Pengaturan',
   };
 

@@ -1632,6 +1632,40 @@ body {
 
 .form-group:last-child { margin-bottom: 0; }
 
+/* ── Module Config ───────────────────────────── */
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.config-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.config-field.config-wide {
+  grid-column: 1 / -1;
+}
+
+.config-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.config-field .toggle {
+  align-self: flex-start;
+}
+
+.config-note {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  grid-column: 1 / -1;
+}
+
 .form-label {
   display: block;
   font-size: 0.8rem;
