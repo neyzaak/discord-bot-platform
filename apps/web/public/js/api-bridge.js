@@ -60,7 +60,7 @@
           <span class="server-members">${esc(sub)}</span>
         </div>
         <i class="fas fa-check"></i>
-      </div>`).join('') : '<div class="server-item"><div class="server-info"><span class="server-name">Belum ada bot</span></div></div>';
+      </div>`).join('') : '<div class="server-item"><div class="server-info"><span class="server-name">Belum ada bot untuk akun ini</span></div></div>';
 
     $$('.server-item[data-bot]', list).forEach((el) => el.addEventListener('click', async () => {
       const id = Number(el.dataset.bot);
@@ -351,6 +351,7 @@
       if (avatar && u.avatar) avatar.src = `https://cdn.discordapp.com/avatars/${u.discordId}/${u.avatar}.png?size=64`;
       const data = await api('/bots');
       bots = data.bots;
+      if (!bots.length) toast('warning', 'Belum ada bot', 'Login dengan akun Discord pemilik bot, atau daftarkan bot baru.');
       const saved = JSON.parse(localStorage.getItem('botcaches.selection') || '{}');
       bot = bots.find((b) => b.id === saved.botId) || bots[0] || null;
       guildId = saved.guildId || bot?.guilds[0]?.discordGuildId || '';
