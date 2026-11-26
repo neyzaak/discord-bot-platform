@@ -85,10 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close mobile sidebar
     sidebar.classList.remove('mobile-open');
 
-    // Re-trigger animations for stat values on dashboard
-    if (pageId === 'dashboard') {
-      animateStatValues();
-    }
   }
 
   navItems.forEach(item => {
@@ -306,178 +302,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ══════════════════════════════════════════════════════
-  // STAT VALUE ANIMATION
-  // ══════════════════════════════════════════════════════
-  function animateStatValues() {
-    document.querySelectorAll('.stat-value[data-target]').forEach(el => {
-      const target = parseInt(el.dataset.target);
-      const duration = 1500;
-      const start = performance.now();
-
-      function update(timestamp) {
-        const elapsed = timestamp - start;
-        const progress = Math.min(elapsed / duration, 1);
-        // Ease out cubic
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const current = Math.floor(eased * target);
-        el.textContent = current.toLocaleString('id-ID');
-        if (progress < 1) requestAnimationFrame(update);
-      }
-
-      requestAnimationFrame(update);
-    });
-  }
-
-  // ══════════════════════════════════════════════════════
-  // SPARKLINE MINI CHARTS
-  // ══════════════════════════════════════════════════════
-  function drawSparklines() {
-    document.querySelectorAll('.stat-sparkline[data-values]').forEach(container => {
-      const values = container.dataset.values.split(',').map(Number);
-      const canvas = document.createElement('canvas');
-      canvas.width = 80;
-      canvas.height = 40;
-      container.appendChild(canvas);
-
-      const ctx = canvas.getContext('2d');
-      const max = Math.max(...values);
-      const min = Math.min(...values);
-      const range = max - min || 1;
-
-      ctx.beginPath();
-      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--blurple').trim() || '#5865F2';
-      ctx.lineWidth = 1.5;
-      ctx.lineJoin = 'round';
-
-      values.forEach((val, i) => {
-        const x = (i / (values.length - 1)) * canvas.width;
-        const y = canvas.height - ((val - min) / range) * (canvas.height - 4) - 2;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-
-      ctx.stroke();
-    });
-  }
-
-  // ══════════════════════════════════════════════════════
-  // ACTIVITY CHART (Chart.js)
-  // ══════════════════════════════════════════════════════
-  function initActivityChart() {
-    const canvas = document.getElementById('activityChart');
-    if (!canvas || typeof Chart === 'undefined') return;
-
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const gridColor = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
-    const textColor = isDark ? '#6D7178' : '#8B8D94';
-
-    const labels = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-
-    const gradientBlue = canvas.getContext('2d').createLinearGradient(0, 0, 0, 280);
-    gradientBlue.addColorStop(0, 'rgba(88,101,242,0.2)');
-    gradientBlue.addColorStop(1, 'rgba(88,101,242,0)');
-
-    const gradientGreen = canvas.getContext('2d').createLinearGradient(0, 0, 0, 280);
-    gradientGreen.addColorStop(0, 'rgba(87,242,135,0.15)');
-    gradientGreen.addColorStop(1, 'rgba(87,242,135,0)');
-
-    if (window.activityChart && typeof window.activityChart.destroy === 'function') {
-      window.activityChart.destroy();
-    }
-
-    window.activityChart = new Chart(canvas, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Pesan',
-            data: [3200, 4100, 3800, 4500, 5200, 6100, 4521],
-            borderColor: '#5865F2',
-            backgroundColor: gradientBlue,
-            fill: true,
-            tension: 0.4,
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHoverRadius: 6,
-            pointHoverBackgroundColor: '#5865F2',
-            pointHoverBorderColor: '#fff',
-            pointHoverBorderWidth: 2,
-          },
-          {
-            label: 'Member Aktif',
-            data: [1800, 2200, 2000, 2400, 2800, 3100, 2650],
-            borderColor: '#57F287',
-            backgroundColor: gradientGreen,
-            fill: true,
-            tension: 0.4,
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHoverRadius: 6,
-            pointHoverBackgroundColor: '#57F287',
-            pointHoverBorderColor: '#fff',
-            pointHoverBorderWidth: 2,
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          mode: 'index',
-          intersect: false,
-        },
-        plugins: {
-          legend: {
-            display: true,
-            position: 'top',
-            align: 'end',
-            labels: {
-              color: textColor,
-              usePointStyle: true,
-              pointStyle: 'circle',
-              padding: 16,
-              font: { family: 'Inter', size: 12 },
-            }
-          },
-          tooltip: {
-            backgroundColor: isDark ? '#1E2436' : '#fff',
-            titleColor: isDark ? '#F2F3F5' : '#1A1B1E',
-            bodyColor: isDark ? '#B5BAC1' : '#5C5E66',
-            borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-            borderWidth: 1,
-            padding: 12,
-            cornerRadius: 8,
-            titleFont: { family: 'Inter', weight: 600 },
-            bodyFont: { family: 'Inter' },
-            displayColors: true,
-            usePointStyle: true,
-          }
-        },
-        scales: {
-          x: {
-            grid: { display: false },
-            ticks: {
-              color: textColor,
-              font: { family: 'Inter', size: 12 },
-            },
-            border: { display: false },
-          },
-          y: {
-            grid: { color: gridColor },
-            ticks: {
-              color: textColor,
-              font: { family: 'Inter', size: 11 },
-              callback: (v) => v >= 1000 ? (v / 1000).toFixed(1) + 'K' : v,
-            },
-            border: { display: false },
-          }
-        }
-      }
-    });
-  }
-
-  // ══════════════════════════════════════════════════════
   // COMMANDS PAGE — FILTER
   // ══════════════════════════════════════════════════════
   const filterChips = document.querySelectorAll('.filter-chip[data-filter]');
@@ -663,25 +487,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ══════════════════════════════════════════════════════
-  // OBSERVER — RE-INIT CHART ON THEME CHANGE
-  // ══════════════════════════════════════════════════════
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((m) => {
-      if (m.attributeName === 'data-theme') {
-        initActivityChart();
-      }
-    });
-  });
-
-  observer.observe(document.documentElement, { attributes: true });
-
-  // ══════════════════════════════════════════════════════
   // INIT
   // ══════════════════════════════════════════════════════
-  animateStatValues();
-  drawSparklines();
-  initActivityChart();
-
   // Show welcome toast
   setTimeout(() => {
     showToast('success', 'Selamat Datang! 👋', 'Dashboard Bot Caches berhasil dimuat');
