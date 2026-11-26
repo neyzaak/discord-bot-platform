@@ -352,11 +352,13 @@
       const u = me.user;
       const name = $('.user-name');
       if (name) name.textContent = u.username;
+      const role = $('.user-role');
+      if (role) role.textContent = `ID: ${u.discordId}`;
       const avatar = $('.user-avatar');
       if (avatar && u.avatar) avatar.src = `https://cdn.discordapp.com/avatars/${u.discordId}/${u.avatar}.png?size=64`;
       const data = await api('/bots');
       bots = data.bots;
-      if (!bots.length) toast('warning', 'Belum ada bot', 'Login dengan akun Discord pemilik bot, atau daftarkan bot baru.');
+      if (!bots.length) toast('warning', 'Belum ada bot', `Akun ${u.discordId} bukan owner/manager bot. Login dengan akun pemilik bot.`);
       const saved = JSON.parse(localStorage.getItem('botcaches.selection') || '{}');
       bot = bots.find((b) => b.id === saved.botId) || bots[0] || null;
       guildId = saved.guildId || bot?.guilds[0]?.discordGuildId || '';
