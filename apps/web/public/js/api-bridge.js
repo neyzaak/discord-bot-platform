@@ -560,7 +560,34 @@
     } catch (e) { fail(e); }
   }
 
+  function applyBotScope() {
+    const mods = new Set(bot?.modules ?? []);
+    const allowed = (m) => !m || mods.has(m);
+    const requirement = (el) => el.dataset.requires || (el.dataset.page === 'config' ? el.dataset.module : '');
+    $$('.nav-item[data-page], .cmd-palette-item').forEach((el) => {
+      el.classList.toggle('scope-hidden', !allowed(requirement(el)));
+    });
+    $$('.nav-section').forEach((sec) => {
+      const items = $$('.nav-item', sec);
+      sec.classList.toggle('scope-hidden', items.length > 0 && items.every((el) => el.classList.contains('scope-hidden')));
+    });
+
+    const onConfig = $('#page-config')?.classList.contains('active');
+    if (currentModule && !mods.has(currentModule)) {
+      selectConfigModule('');
+      if (onConfig) $('.nav-item[data-page="dashboard"]')?.click();
+    }
+
+    const active = $('.page.active');
+    const page = active?.id.replace(/^page-/, '');
+    if (page && page !== 'config') {
+      const nav = $(`.nav-item[data-page="${page}"]`);
+      if (nav?.classList.contains('scope-hidden')) $('.nav-item[data-page="dashboard"]')?.click();
+    }
+  }
+
   function renderAll() {
+    applyBotScope();
     renderCurrent();
     renderStats();
     renderChart();

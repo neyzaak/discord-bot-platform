@@ -1666,6 +1666,9 @@ body {
   grid-column: 1 / -1;
 }
 
+/* Nav/halaman yang tidak dipakai bot terpilih. */
+.scope-hidden { display: none !important; }
+
 .form-label {
   display: block;
   font-size: 0.8rem;
