@@ -312,6 +312,11 @@
       const id = Number(el.dataset.bot);
       const gid = el.dataset.guild;
       if (id === bot?.id && gid === guildId) return;
+      // Pindahkan highlight + centang ke item yang diklik, lalu tutup dropdown.
+      $$('.server-item', list).forEach((x) => x.classList.remove('active'));
+      el.classList.add('active');
+      $('#serverCurrent')?.classList.remove('open');
+      $('#serverDropdown')?.classList.remove('open');
       bot = bots.find((b) => b.id === id) || null;
       guildId = gid;
       localStorage.setItem('botcaches.selection', JSON.stringify({ botId: id, guildId: gid }));
