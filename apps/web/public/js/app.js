@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Close mobile sidebar
     sidebar.classList.remove('mobile-open');
+    document.body.classList.remove('sidebar-open');
 
   }
 
@@ -246,6 +247,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!serverCurrent?.contains(e.target) && !serverDropdown?.contains(e.target)) {
       serverCurrent?.classList.remove('open');
       serverDropdown?.classList.remove('open');
+    }
+    // Klik di luar sidebar saat drawer mobile terbuka -> tutup drawer
+    if (
+      sidebar.classList.contains('mobile-open') &&
+      !sidebar.contains(e.target) &&
+      !mobileMenuBtn?.contains(e.target) &&
+      !backdrop?.contains(e.target)
+    ) {
+      sidebar.classList.remove('mobile-open');
+      document.body.classList.remove('sidebar-open');
     }
   });
 

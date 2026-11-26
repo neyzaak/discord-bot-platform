@@ -26,7 +26,7 @@
       throw new Error(`${init.method || 'GET'} ${path}: ${e?.message || 'fetch gagal'}`);
     }
     if (res.status === 401) {
-      location.href = '/api/auth/login';
+      showLoginOverlay();
       throw new Error('Belum login');
     }
     if (!res.ok) {
@@ -50,6 +50,8 @@
   }
 
   const fail = (e) => { if (e?.message !== 'Belum login') toast('error', 'API', e?.message || 'Gagal memuat data'); };
+  const showLoginOverlay = () => { const el = $('#loginOverlay'); if (el) el.style.display = 'flex'; };
+  const hideLoginOverlay = () => { const el = $('#loginOverlay'); if (el) el.style.display = 'none'; };
   const guildName = () => bot?.guilds?.find((g) => g.discordGuildId === guildId)?.name || bot?.name || 'server';
 
   const BANK_KEY = { quiz: 'questions', quotes: 'quotes' };
@@ -213,8 +215,10 @@
     if (subtitle) subtitle.textContent = `${spec.desc} • ${guildName()}`;
     if (!bot || !guildId) {
       form.innerHTML = '<p class="config-note">Pilih bot dan server terlebih dahulu.</p>';
+      $('#configSave')?.setAttribute('disabled', 'disabled');
       return;
     }
+    $('#configSave')?.removeAttribute('disabled');
     form.innerHTML = spec.fields.map((f) => fieldHTML(currentModule, f)).join('');
     $$('[data-bank-load]', form).forEach((btn) => btn.addEventListener('click', () => void loadBank(btn.dataset.bankLoad)));
     $$('[data-bank-save]', form).forEach((btn) => btn.addEventListener('click', () => void saveBank(btn.dataset.bankSave)));
@@ -226,6 +230,8 @@
       item.classList.toggle('active', item.dataset.module === currentModule);
     });
     renderConfig();
+    const bt = document.getElementById('breadcrumbText');
+    if (bt) bt.textContent = name === 'customcmd' ? 'Custom Command' : 'Konfigurasi';
   }
 
   async function loadBank(name) {
@@ -619,13 +625,18 @@
     $('#configSave')?.addEventListener('click', () => void saveConfigModule());
     try {
       const me = await api('/auth/me');
+      hideLoginOverlay();
       const u = me.user;
       const name = $('.user-name');
       if (name) name.textContent = u.username;
       const role = $('.user-role');
       if (role) role.textContent = `ID: ${u.discordId}`;
       const avatar = $('.user-avatar');
-      if (avatar && u.avatar) avatar.src = `https://cdn.discordapp.com/avatars/${u.discordId}/${u.avatar}.png?size=64`;
+      if (avatar) {
+        avatar.onerror = () => { avatar.src = 'https://cdn.discordapp.com/embed/avatars/0.png'; avatar.onerror = null; };
+        if (u.avatar) avatar.src = `https://cdn.discordapp.com/avatars/${u.discordId}/${u.avatar}.png?size=64`;
+        else avatar.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
+      }
       const data = await api('/bots');
       bots = await Promise.all(data.bots.map(async (b) => {
         try { return (await api(`/bots/${b.id}`)).bot; }

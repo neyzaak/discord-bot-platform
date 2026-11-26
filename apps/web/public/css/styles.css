@@ -2375,6 +2375,19 @@ body {
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVE
    ══════════════════════════════════════════════════════════════ */
+/* ── Sidebar Backdrop (mobile drawer overlay) ──────────────── */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 150;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
 @media (max-width: 1200px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .content-grid { grid-template-columns: 1fr; }
@@ -2389,6 +2402,15 @@ body {
 
   .sidebar.mobile-open {
     transform: translateX(0);
+  }
+
+  .sidebar.mobile-open ~ .sidebar-backdrop {
+    display: block;
+    opacity: 1;
+  }
+
+  body.sidebar-open {
+    overflow: hidden;
   }
 
   .main {
@@ -2454,3 +2476,37 @@ body {
   .main { margin-left: 0 !important; }
   .page { padding: 0 !important; }
 }
+
+/* ── Login Overlay (sesi habis / HTTP 401) ─────────────────── */
+.login-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 17, 23, 0.8);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.login-overlay .login-card {
+  width: min(420px, 92%);
+  background: var(--sidebar-bg);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  box-shadow: var(--shadow-xl);
+  text-align: center;
+  animation: fadeIn var(--transition-base);
+}
+.login-overlay .login-header i {
+  font-size: 34px;
+  color: var(--green);
+  margin-bottom: 12px;
+  display: block;
+}
+.login-overlay .login-header h2 { margin: 0 0 8px; font-size: 1.35rem; }
+.login-overlay .login-desc { color: var(--text-secondary); margin: 0 0 24px; font-size: 0.95rem; line-height: 1.5; }
+.login-overlay .btn-login { width: 100%; padding: 12px; font-size: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.login-overlay .login-note { margin-top: 16px; font-size: 0.8rem; color: var(--text-muted); }
