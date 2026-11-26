@@ -49,7 +49,7 @@ authRouter.get('/callback', asyncHandler(async (req, res) => {
   res.cookie('session', signSession({ id: user.id, discordId: user.discordId, username: user.username, avatar: user.avatar }), {
     httpOnly: true, sameSite: 'lax', secure: env.NODE_ENV === 'production', maxAge: 7 * 24 * 3600 * 1000, path: '/',
   });
-  res.redirect(`${env.APP_URL}/dashboard`);
+  res.redirect(new URL('/', env.APP_URL).toString());
 }));
 
 authRouter.get('/me', requireAuth, (req, res) => {
