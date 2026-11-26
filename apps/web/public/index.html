@@ -1027,7 +1027,14 @@ Jangan lupa baca aturan di {channel:#rules} ya!</textarea>
                   <span class="setting-name">Nama Bot</span>
                   <span class="setting-desc">Nama tampilan bot di server</span>
                 </div>
-                <input type="text" class="text-input" value="NexusBot" style="width: 220px;">
+                <input type="text" class="text-input" value="NexusBot" id="botNameInput" style="width: 220px;">
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-name">Prefix Bot</span>
+                  <span class="setting-desc">Awalan perintah teks bot</span>
+                </div>
+                <input type="text" class="text-input" value="!" id="botPrefixInput" style="width: 220px;">
               </div>
               <div class="setting-row">
                 <div class="setting-info">
@@ -1186,5 +1193,6 @@ Jangan lupa baca aturan di {channel:#rules} ya!</textarea>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script src="js/app.js"></script>
+  <script src="js/api-bridge.js"></script>
 </body>
 </html>
