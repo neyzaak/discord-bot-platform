@@ -380,7 +380,8 @@ body {
 .server-item:hover { background: var(--bg-tertiary); }
 .server-item.active { background: rgba(88,101,242,0.1); }
 .server-item.active .server-name { color: var(--blurple); }
-.server-item .fa-check { color: var(--blurple); font-size: 0.75rem; margin-left: auto; }
+.server-item .fa-check { color: var(--blurple); font-size: 0.75rem; margin-left: auto; opacity: 0; }
+.server-item.active .fa-check { opacity: 1; }
 
 /* ── Sidebar Navigation ──────────────────────── */
 .sidebar-nav {
