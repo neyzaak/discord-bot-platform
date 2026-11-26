@@ -13,18 +13,23 @@
   let errors = [];
 
   async function api(path, init = {}) {
-    const res = await fetch(`/api${path}`, {
-      ...init,
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json', ...(init.headers ?? {}) },
-    });
+    let res;
+    try {
+      res = await fetch(`/api${path}`, {
+        ...init,
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', ...(init.headers ?? {}) },
+      });
+    } catch (e) {
+      throw new Error(`${init.method || 'GET'} ${path}: ${e?.message || 'fetch gagal'}`);
+    }
     if (res.status === 401) {
       location.href = '/api/auth/login';
       throw new Error('Belum login');
     }
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      throw new Error(body.error || `HTTP ${res.status}`);
+      throw new Error(`${path}: ${body.error || `HTTP ${res.status}`}`);
     }
     return res.json();
   }
