@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'NexusBot — Dashboard',
+  title: 'Bot Caches — Dashboard',
   description: 'Dashboard bot Discord',
 };
 

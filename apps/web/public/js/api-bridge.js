@@ -1,4 +1,4 @@
-/* NexusBot Dashboard — jembatan ke API platform. Source UI tetap statis; data + aksi dari API. */
+/* Bot Caches Dashboard — jembatan ke API platform. Source UI tetap statis; data + aksi dari API. */
 (() => {
   const $ = (s, root = document) => root.querySelector(s);
   const $$ = (s, root = document) => Array.from(root.querySelectorAll(s));
@@ -68,7 +68,7 @@
       if (id === bot?.id && gid === guildId) return;
       bot = bots.find((b) => b.id === id) || null;
       guildId = gid;
-      localStorage.setItem('nexus.selection', JSON.stringify({ botId: id, guildId: gid }));
+      localStorage.setItem('botcaches.selection', JSON.stringify({ botId: id, guildId: gid }));
       renderCurrent();
       await loadDetail();
     }));
@@ -83,8 +83,8 @@
       $('.server-members', cur).innerHTML = `<i class="fas fa-users"></i> ${bot.guilds.length} server`;
       $('.server-avatar', cur).textContent = label[0]?.toUpperCase() || 'B';
     }
-    const brand = $('.brand-text h1');
-    if (brand) brand.textContent = bot.name;
+    const previewName = $('.discord-bot-name');
+    if (previewName) previewName.textContent = bot.name;
     const status = $('.bot-status .status-text');
     if (status) status.textContent = `${bot.runtimeStatus === 'online' ? 'Online' : 'Offline'} — prefix ${bot.prefix}`;
     $('.bot-status .status-dot')?.classList.toggle('online', bot.runtimeStatus === 'online');
@@ -351,7 +351,7 @@
       if (avatar && u.avatar) avatar.src = `https://cdn.discordapp.com/avatars/${u.discordId}/${u.avatar}.png?size=64`;
       const data = await api('/bots');
       bots = data.bots;
-      const saved = JSON.parse(localStorage.getItem('nexus.selection') || '{}');
+      const saved = JSON.parse(localStorage.getItem('botcaches.selection') || '{}');
       bot = bots.find((b) => b.id === saved.botId) || bots[0] || null;
       guildId = saved.guildId || bot?.guilds[0]?.discordGuildId || '';
       renderServers();

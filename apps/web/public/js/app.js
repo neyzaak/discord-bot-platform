@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   NexusBot Dashboard — Application Logic
+   Bot Caches Dashboard — Application Logic
    ══════════════════════════════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -684,6 +684,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Show welcome toast
   setTimeout(() => {
-    showToast('success', 'Selamat Datang! 👋', 'Dashboard NexusBot berhasil dimuat');
+    showToast('success', 'Selamat Datang! 👋', 'Dashboard Bot Caches berhasil dimuat');
   }, 800);
 });
