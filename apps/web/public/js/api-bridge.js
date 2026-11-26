@@ -441,10 +441,13 @@
       const name = ($('.cmd-name', card)?.textContent || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
       const mod = map[name];
       const input = $('input[type=checkbox]', card);
-      if (!mod || !input || card.dataset.wired) return;
-      card.dataset.wired = '1';
+      if (!mod || !input) return;
       card.dataset.module = mod;
+      // Sinkronkan toggle setiap render agar aktif/nonaktif selaras dengan modules bot yang dipilih.
       input.checked = !!bot?.modules.includes(mod);
+      card.classList.toggle('inactive', !input.checked);
+      if (card.dataset.wired) return;
+      card.dataset.wired = '1';
       input.addEventListener('change', () => {
         const next = new Set(bot?.modules || []);
         input.checked ? next.add(mod) : next.delete(mod);

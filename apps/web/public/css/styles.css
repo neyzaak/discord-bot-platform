@@ -1453,6 +1453,11 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.command-card.inactive {
+  opacity: 0.6;
+  filter: grayscale(0.45);
+}
+
 .cmd-header {
   display: flex;
   align-items: center;
