@@ -58778,7 +58778,18 @@ var webhooks = pgTable("webhooks", {
 });
 
 // packages/core/src/db/client.ts
-var pool = new Pool({ connectionString: env.DATABASE_URL, max: 10 });
+function databaseUrl(raw) {
+  if (!process.env.VERCEL) return raw;
+  try {
+    const url = new URL(raw);
+    if (url.hostname.endsWith(".pooler.supabase.com") && url.port === "5432") url.port = "6543";
+    return url.toString();
+  } catch {
+    return raw;
+  }
+}
+var serverless = Boolean(process.env.VERCEL);
+var pool = new Pool({ connectionString: databaseUrl(env.DATABASE_URL), max: serverless ? 2 : 10 });
 var db = drizzle(pool, { schema: schema_exports });
 
 // apps/api/src/lib/limiter.ts
