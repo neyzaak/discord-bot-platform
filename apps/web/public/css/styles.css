@@ -2471,6 +2471,16 @@ body {
   .welcome-banner h2 { font-size: 1.2rem; }
 }
 
+/* ── Managers Page ──────────────────────────────── */
+.managers-list { display: flex; flex-direction: column; gap: 10px; }
+.manager-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: var(--radius-md); }
+.manager-avatar img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+.manager-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.manager-name { font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.manager-id { font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); }
+.manager-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.owner-badge { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-full); background: linear-gradient(135deg, var(--amber), #F97316); color: #000; }
+
 /* ── Print ─────────────────────────────────────── */
 @media print {
   .sidebar, .topbar, .mobile-menu-btn { display: none !important; }

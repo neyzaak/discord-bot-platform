@@ -523,6 +523,61 @@
     }));
   }
 
+  function wireManagers() {
+    const list = $('#managersList');
+    const addBtn = $('#addManagerBtn');
+    if (!list || !addBtn) return;
+
+    function renderManagers() {
+      if (!bot) return;
+      const managers = bot.managers || [];
+      const ownerId = bot.userId;
+      list.innerHTML = managers.length
+        ? managers.map((id) => `
+            <div class="manager-item" data-id="${esc(id)}">
+              <div class="manager-avatar">
+                <img src="https://cdn.discordapp.com/avatars/${esc(id)}/0.png?size=32" alt="" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+              </div>
+              <div class="manager-info">
+                <span class="manager-name">User ${esc(id)}</span>
+                <span class="manager-id">${esc(id)}</span>
+              </div>
+              <div class="manager-actions">
+                ${id !== ownerId ? `<button class="btn btn-ghost btn-sm btn-remove-manager" data-id="${esc(id)}"><i class="fas fa-trash"></i> Hapus</button>` : '<span class="owner-badge">Owner</span>'}
+              </div>
+            </div>
+          `).join('')
+        : '<p class="config-note">Belum ada pengelola tambahan.</p>';
+      $$('.btn-remove-manager', list).forEach((btn) => btn.addEventListener('click', () => removeManager(btn.dataset.id)));
+    }
+
+    async function addManager() {
+      if (!bot) return;
+      const discordId = prompt('Masukkan Discord ID user yang akan dijadikan pengelola:');
+      if (!discordId || !/^\d{17,19}$/.test(discordId)) return toast('error', 'ID tidak valid', 'Discord ID harus berupa angka 17-19 digit');
+      try {
+        const res = await api(`/bots/${bot.id}/managers`, { method: 'POST', body: JSON.stringify({ discordId }) });
+        bot.managers = res.managers;
+        renderManagers();
+        toast('success', 'Ditambahkan', 'Pengelola berhasil ditambahkan');
+      } catch (e) { fail(e); }
+    }
+
+    async function removeManager(id) {
+      if (!bot) return;
+      if (!confirm('Hapus pengelola ini?')) return;
+      try {
+        const res = await api(`/bots/${bot.id}/managers/${id}`, { method: 'DELETE' });
+        bot.managers = res.managers;
+        renderManagers();
+        toast('success', 'Dihapus', 'Pengelola berhasil dihapus');
+      } catch (e) { fail(e); }
+    }
+
+    addBtn.addEventListener('click', addManager);
+    renderManagers();
+  }
+
   function wireQuickActions() {
     const restart = $('.quick-action[data-action="restart"]');
     if (!restart) return;
@@ -626,6 +681,7 @@
     wireSettings();
     wireQuickActions();
     wireLogout();
+    wireManagers();
     $$('.nav-item[data-module]').forEach((item) => item.addEventListener('click', () => selectConfigModule(item.dataset.module)));
     $('#configSave')?.addEventListener('click', () => void saveConfigModule());
     try {

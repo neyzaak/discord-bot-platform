@@ -115,6 +115,10 @@
 
       <div class="nav-section">
         <span class="nav-label">Sistem</span>
+        <a href="#" class="nav-item" data-page="managers">
+          <i class="fas fa-user-shield"></i>
+          <span>Pengelola</span>
+        </a>
         <a href="#" class="nav-item" data-page="settings">
           <i class="fas fa-gear"></i>
           <span>Pengaturan</span>
@@ -725,8 +729,37 @@
         </div>
       </div>
     </div>
+  </div>
+</main>
 
-  </main>
+    <!-- ══════════════════════════════════════════════════════════════
+         PAGE: MANAGERS
+         ════════════════════════════════════════════════════════════════ -->
+    <div class="page" id="page-managers">
+      <div class="page-header">
+        <div>
+          <h2>Pengelola Bot</h2>
+          <p>Kelola user yang dapat mengakses dan mengatur bot ini</p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-primary" id="addManagerBtn"><i class="fas fa-plus"></i> Tambah Pengelola</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <h3>Daftar Pengelola</h3>
+            <p>Maksimal 10 pengelola per bot. Owner bot otomatis memiliki akses penuh.</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="managersList" class="managers-list">
+            <div class="loading-placeholder">Memuat daftar pengelola...</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
   <!-- Modal Overlay -->
   <div class="modal-overlay" id="modalOverlay">
@@ -755,6 +788,7 @@
           <button class="cmd-palette-item" data-action="nav:commands"><i class="fas fa-terminal"></i> Perintah</button>
           <button class="cmd-palette-item" data-action="nav:automod" data-requires="moderation"><i class="fas fa-shield-halved"></i> Auto-Mod</button>
           <button class="cmd-palette-item" data-action="nav:welcome" data-requires="welcome"><i class="fas fa-door-open"></i> Selamat Datang</button>
+          <button class="cmd-palette-item" data-action="nav:managers"><i class="fas fa-user-shield"></i> Pengelola</button>
           <button class="cmd-palette-item" data-action="nav:settings"><i class="fas fa-gear"></i> Pengaturan</button>
         </div>
         <div class="cmd-palette-group">

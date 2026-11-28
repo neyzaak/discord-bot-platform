@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tickets: 'Tiket',
     plugins: 'Plugin',
     config: 'Konfigurasi',
+    managers: 'Pengelola',
     settings: 'Pengaturan',
   };
 
